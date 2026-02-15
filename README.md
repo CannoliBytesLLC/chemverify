@@ -1,4 +1,4 @@
-# Chemical Verification Engine (AEGIS)
+# Chemical Verification Engine (ChemVerify)
 
 A deterministic validation layer for **AI-generated chemistry**.
 
