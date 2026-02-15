@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chemical Verification Report — AEGIS</title>
+    <style>
+        /* ── Reset & Base ───────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Source Sans Pro', 'Inter', 'Segoe UI', system-ui, sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 3rem 2.5rem;
+        }
+
+        /* ── Document Title ─────────────────────────────────── */
+        .report-title {
+            font-family: 'Georgia', 'Cambria', 'Times New Roman', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #111;
+            border-bottom: 2px solid #111;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .report-meta {
+            font-size: 0.82rem;
+            color: #666;
+            margin-bottom: 2.5rem;
+            line-height: 1.9;
+        }
+
+        .report-meta span { margin-right: 2rem; }
+
+        /* ── Section Headers ────────────────────────────────── */
+        .section-title {
+            font-family: 'Georgia', 'Cambria', 'Times New Roman', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e3a5f;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1px solid #d0d0d0;
+            padding-bottom: 0.3rem;
+            margin-top: 2.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        /* ── Body Text ──────────────────────────────────────── */
+        .verdict-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #222;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-line {
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .risk-value {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .risk-label {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .risk-label-Low { color: #15803d; }
+        .risk-label-Medium { color: #b45309; }
+        .risk-label-High { color: #dc2626; }
+        .risk-label-Critical { color: #991b1b; }
+
+        .risk-scale {
+            font-size: 0.78rem;
+            color: #777;
+            line-height: 1.8;
+            margin-top: 0.5rem;
+        }
+
+        /* ── Findings Lists ─────────────────────────────────── */
+        .finding-category {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .finding-list {
+            list-style: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .finding-list li {
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .finding-none {
+            font-size: 0.9rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* ── Attention Block ────────────────────────────────── */
+        .attention-block {
+            border-left: 3px solid #b45309;
+            padding: 0.6rem 1rem;
+            margin-top: 0.5rem;
+            background: #fffbf5;
+        }
+
+        .attention-block li {
+            font-size: 0.95rem;
+            color: #92400e;
+        }
+
+        /* ── Claims Table ───────────────────────────────────── */
+        .claims-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin-top: 0.5rem;
+        }
+
+        .claims-table th {
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.72rem;
+            border-bottom: 2px solid #ccc;
+            padding: 0.4rem 0.6rem;
+        }
+
+        .claims-table td {
+            padding: 0.35rem 0.6rem;
+            border-bottom: 1px solid #e8e8e8;
+            vertical-align: top;
+        }
+
+        .claims-table code {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #333;
+            background: none;
+        }
+
+        /* ── Questions ──────────────────────────────────────── */
+        .questions-list {
+            list-style: decimal;
+            padding-left: 1.5rem;
+        }
+
+        .questions-list li {
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        /* ── Provenance ─────────────────────────────────────── */
+        .provenance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem 2rem;
+            font-size: 0.82rem;
+            margin-top: 0.5rem;
+        }
+
+        .prov-label {
+            color: #888;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .prov-value {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.78rem;
+            color: #333;
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── Analyzed Text ──────────────────────────────────── */
+        .analyzed-text {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #555;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 0.8rem 0 0.8rem 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ── Footer ─────────────────────────────────────────── */
+        .report-footer {
+            margin-top: 3rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid #ccc;
+            font-size: 0.72rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        /* ── Loading / Error ────────────────────────────────── */
+        .loading-state {
+            text-align: center;
+            padding: 4rem 0;
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 4rem 0;
+            color: #dc2626;
+            font-size: 0.95rem;
+        }
+
+        /* ── Print ──────────────────────────────────────────── */
+        @media print {
+            body { padding: 1.5cm 2cm; font-size: 11pt; max-width: none; }
+            .report-title { font-size: 16pt; }
+            .section-title { font-size: 11pt; break-after: avoid; }
+            .claims-table { font-size: 8pt; }
+            .report-footer { font-size: 7pt; }
+            .attention-block { background: none; border-left-color: #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loadingState" class="loading-state">Loading verification report…</div>
+<div id="errorState" class="error-state" style="display:none;"></div>
+
+<div id="reportContent" style="display:none;">
+
+    <!-- Title Block -->
+    <div class="report-title">Chemical Verification Report</div>
+    <div style="font-size:0.82rem; font-style:italic; color:#888; margin-bottom:0.6rem;">Generated by AEGIS — AI Scientific Verification Engine</div>
+    <div class="report-meta">
+        <span>Verification ID: <strong id="metaRunId"></strong></span><br>
+        <span>Generated: <strong id="metaTimestamp"></strong></span><br>
+        <span>Policy Profile: <strong id="metaPolicy"></strong></span>
+    </div>
+
+    <!-- Overall Assessment -->
+    <div class="section-title">Overall Assessment</div>
+    <p class="verdict-text" id="verdictText"></p>
+
+    <!-- Risk Assessment -->
+    <div class="section-title">Risk Assessment</div>
+    <p class="risk-line">
+        Risk Score: <span class="risk-value" id="riskScore"></span>
+        (<span class="risk-label" id="severityLabel"></span>)
+    </p>
+    <p class="risk-interpretation" id="riskInterpretation" style="font-size:0.92rem; color:#444; margin-top:0.3rem;"></p>
+
+    <!-- Findings -->
+    <div class="section-title">Findings</div>
+
+    <div class="finding-category">Validated Claims</div>
+    <ul class="finding-list" id="confirmedList"></ul>
+    <p class="finding-none" id="noConfirmed" style="display:none;">No claims confirmed.</p>
+
+    <div class="finding-category">Claims Requiring Additional Evidence</div>
+    <ul class="finding-list" id="notVerifiableList"></ul>
+    <p class="finding-none" id="noNotVerifiable" style="display:none;">All claims had sufficient cross-reference data.</p>
+
+    <!-- Interpretation -->
+    <div class="section-title" id="attentionTitle" style="display:none;">Interpretation</div>
+    <div class="attention-block" id="attentionBlock" style="display:none;">
+        <ul class="finding-list" id="attentionList" style="margin-bottom:0;"></ul>
+    </div>
+
+    <!-- Extracted Claims -->
+    <div class="section-title">Extracted Claims (<span id="claimCount">0</span>)</div>
+    <table class="claims-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Reported Value</th>
+                <th>Normalized Value</th>
+                <th>Unit</th>
+                <th>Context</th>
+                <th>Text Location</th>
+            </tr>
+        </thead>
+        <tbody id="claimsTable"></tbody>
+    </table>
+
+    <!-- Points Requiring Author Clarification -->
+    <div class="section-title" id="questionsTitle" style="display:none;">Points Requiring Author Clarification</div>
+    <ol class="questions-list" id="questionsList"></ol>
+
+    <!-- Verification Record -->
+    <div class="section-title">Verification Record</div>
+    <p style="font-size:0.85rem; color:#555; margin-bottom:0.8rem;">This report is reproducible from the analyzed text and policy profile. Re-running the verification under the same policy profile will produce identical findings.</p>
+    <div class="provenance-grid">
+        <div>
+            <div class="prov-label">Verification ID</div>
+            <div class="prov-value" id="provRunId"></div>
+        </div>
+        <div>
+            <div class="prov-label">Status</div>
+            <div class="prov-value" id="provStatus"></div>
+        </div>
+        <div>
+            <div class="prov-label">Model</div>
+            <div class="prov-value" id="provModel"></div>
+        </div>
+        <div>
+            <div class="prov-label">Connector</div>
+            <div class="prov-value" id="provConnector"></div>
+        </div>
+        <div>
+            <div class="prov-label">Artifact Hash</div>
+            <div class="prov-value" id="provArtifactHash"></div>
+        </div>
+        <div>
+            <div class="prov-label">Chain Hash</div>
+            <div class="prov-value" id="provChainHash"></div>
+        </div>
+    </div>
+
+    <!-- Source Passage -->
+    <div class="section-title">Source Passage</div>
+    <p style="font-size:0.82rem; font-style:italic; color:#888; margin-bottom:0.4rem;">Analyzed verbatim input</p>
+    <div class="analyzed-text" id="analyzedText"></div>
+
+    <div class="report-footer">
+        AEGIS v0 — AI Governance Gateway · On-Premises Deployment · This report was generated automatically.
+    </div>
+
+</div>
+
+<script>
+    (async function () {
+        const params = new URLSearchParams(window.location.search);
+        const runId = params.get('id');
+
+        if (!runId) {
+            showError('No run ID specified. Use ?id={runId} in the URL.');
+            return;
+        }
+
+        try {
+            const res = await fetch(`/runs/${runId}/report`);
+            if (!res.ok) {
+                throw new Error(res.status === 404 ? 'Run not found.' : `HTTP ${res.status}`);
+            }
+            const data = await res.json();
+            renderReport(data);
+        } catch (err) {
+            showError(err.message);
+        }
+    })();
+
+    function showError(msg) {
+        document.getElementById('loadingState').style.display = 'none';
+        const el = document.getElementById('errorState');
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function renderReport(data) {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('reportContent').style.display = 'block';
+
+        const report = data.report;
+        const run = data.artifact.run;
+
+        // Meta (archival header — no debug info)
+        document.getElementById('metaRunId').textContent = data.runId;
+        document.getElementById('metaTimestamp').textContent = new Date(data.artifact.generatedUtc).toLocaleString();
+        document.getElementById('metaPolicy').textContent = run.policyProfile || '—';
+
+        // Overall Assessment
+        document.getElementById('verdictText').textContent = report.verdict;
+
+        // Risk Assessment with interpretive sentence
+        document.getElementById('riskScore').textContent = data.riskScore.toFixed(4);
+        const label = document.getElementById('severityLabel');
+        label.textContent = report.severity;
+        label.classList.add(`risk-label-${report.severity}`);
+        document.getElementById('riskInterpretation').textContent = report.summary;
+
+        // Validated Claims
+        renderList('confirmedList', 'noConfirmed', report.confirmed);
+
+        // Claims Requiring Additional Evidence
+        renderList('notVerifiableList', 'noNotVerifiable', report.notVerifiable);
+
+        // Interpretation
+        if (report.attention.length > 0) {
+            document.getElementById('attentionTitle').style.display = '';
+            document.getElementById('attentionBlock').style.display = '';
+            const al = document.getElementById('attentionList');
+            report.attention.forEach(a => {
+                const li = document.createElement('li');
+                li.textContent = a;
+                al.appendChild(li);
+            });
+        }
+
+        // Claims (sorted by context for analytical presentation)
+        const contextOrder = { temp: 0, time: 1, conc: 2, yield: 3 };
+        const claims = (data.artifact.claims || []).slice().sort((a, b) => {
+            const ctxA = getCtx(a);
+            const ctxB = getCtx(b);
+            const oA = contextOrder[ctxA] ?? (a.claimType === 'CitationDoi' ? 99 : 50);
+            const oB = contextOrder[ctxB] ?? (b.claimType === 'CitationDoi' ? 99 : 50);
+            return oA - oB;
+        });
+        document.getElementById('claimCount').textContent = claims.length;
+        const tbody = document.getElementById('claimsTable');
+        claims.forEach(c => {
+            let ctx = '';
+            if (c.jsonPayload) {
+                try { ctx = JSON.parse(c.jsonPayload).contextKey || ''; } catch {}
+            }
+            const typeLabel = c.claimType === 'CitationDoi' ? 'DOI' : 'Numeric';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${esc(typeLabel)}</td>
+                <td><code>${esc(c.rawText)}</code></td>
+                <td>${esc(c.normalizedValue || '—')}</td>
+                <td>${esc(c.unit || '—')}</td>
+                <td>${esc(ctx || '—')}</td>
+                <td><code>${esc(c.sourceLocator || '—')}</code></td>`;
+            tbody.appendChild(tr);
+        });
+
+        // Questions
+        if (report.nextQuestions.length > 0) {
+            document.getElementById('questionsTitle').style.display = '';
+            const ql = document.getElementById('questionsList');
+            report.nextQuestions.forEach(q => {
+                const li = document.createElement('li');
+                li.textContent = q;
+                ql.appendChild(li);
+            });
+        }
+
+        // Verification Record
+        document.getElementById('provRunId').textContent = data.runId;
+        document.getElementById('provStatus').textContent = run.status;
+        document.getElementById('provModel').textContent = run.modelName || '—';
+        document.getElementById('provConnector').textContent = run.connectorName || '—';
+        document.getElementById('provArtifactHash').textContent = data.artifact.artifactHash;
+        document.getElementById('provChainHash').textContent = run.currentHash;
+
+        // Analyzed text
+        document.getElementById('analyzedText').textContent = run.output;
+
+        // Update page title
+        document.title = `Verification Report — ${data.runId}`;
+    }
+
+    function renderList(listId, noneId, items) {
+        const ul = document.getElementById(listId);
+        if (items.length === 0) {
+            ul.style.display = 'none';
+            document.getElementById(noneId).style.display = '';
+        } else {
+            items.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                ul.appendChild(li);
+            });
+        }
+    }
+
+    function getCtx(c) {
+        if (!c.jsonPayload) return '';
+        try { return JSON.parse(c.jsonPayload).contextKey || ''; } catch { return ''; }
+    }
+
+    function esc(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+</script>
+
+</body>
+</html>

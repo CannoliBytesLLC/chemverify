@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Aegis.API/Aegis.API.csproj" />
+  <Project Path="Aegis.Core/Aegis.Core.csproj" />
+  <Project Path="Aegis.Infrastructure/Aegis.Infrastructure.csproj" />
+</Solution>
