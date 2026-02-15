@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ChemVerify.API/ChemVerify.API.csproj" />
+  <Project Path="ChemVerify.Core/ChemVerify.Core.csproj" />
+  <Project Path="ChemVerify.Infrastructure/ChemVerify.Infrastructure.csproj" />
+</Solution>
