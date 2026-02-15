@@ -38,7 +38,7 @@ The current system is intentionally deterministic and policy-driven so outputs a
 
 ### Run locally
 ```bash
-git clone <YOUR_REPO_URL>
-cd <YOUR_REPO_FOLDER>
+git clone https://github.com/CannoliBytesLLC/chemverify.git
+cd ChemVerify.API
 dotnet restore
-dotnet run --project <YOUR_WEB_PROJECT_PATH>
+dotnet run --project ChemVerify.API.csproj
