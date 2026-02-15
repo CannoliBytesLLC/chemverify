@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ChemVerify.Abstractions\ChemVerify.Abstractions.csproj" />
     <ProjectReference Include="..\ChemVerify.Core\ChemVerify.Core.csproj" />
     <ProjectReference Include="..\ChemVerify.Infrastructure\ChemVerify.Infrastructure.csproj" />
   </ItemGroup>

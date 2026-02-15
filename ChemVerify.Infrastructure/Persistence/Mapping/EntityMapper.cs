@@ -1,4 +1,4 @@
-using ChemVerify.Core.Models;
+using ChemVerify.Abstractions.Models;
 using ChemVerify.Infrastructure.Persistence.Entities;
 
 namespace ChemVerify.Infrastructure.Persistence.Mapping;
@@ -12,6 +12,7 @@ internal static class EntityMapper
             Id = run.Id,
             CreatedUtc = run.CreatedUtc,
             Status = run.Status,
+            Mode = run.Mode,
             UserId = run.UserId,
             ModelName = run.ModelName,
             PolicyProfile = run.PolicyProfile,
@@ -19,6 +20,7 @@ internal static class EntityMapper
             ModelVersion = run.ModelVersion,
             ParametersJson = run.ParametersJson,
             Prompt = run.Prompt,
+            InputText = run.InputText,
             Output = run.Output,
             PreviousHash = run.PreviousHash,
             CurrentHash = run.CurrentHash,
@@ -33,6 +35,7 @@ internal static class EntityMapper
             Id = entity.Id,
             CreatedUtc = entity.CreatedUtc,
             Status = entity.Status,
+            Mode = entity.Mode,
             UserId = entity.UserId,
             ModelName = entity.ModelName,
             PolicyProfile = entity.PolicyProfile,
@@ -40,6 +43,7 @@ internal static class EntityMapper
             ModelVersion = entity.ModelVersion,
             ParametersJson = entity.ParametersJson,
             Prompt = entity.Prompt,
+            InputText = entity.InputText,
             Output = entity.Output,
             PreviousHash = entity.PreviousHash,
             CurrentHash = entity.CurrentHash,
@@ -58,7 +62,9 @@ internal static class EntityMapper
             NormalizedValue = claim.NormalizedValue,
             Unit = claim.Unit,
             SourceLocator = claim.SourceLocator,
-            JsonPayload = claim.JsonPayload
+            JsonPayload = claim.JsonPayload,
+            EntityKey = claim.EntityKey,
+            StepIndex = claim.StepIndex
         };
     }
 
@@ -73,7 +79,9 @@ internal static class EntityMapper
             NormalizedValue = entity.NormalizedValue,
             Unit = entity.Unit,
             SourceLocator = entity.SourceLocator,
-            JsonPayload = entity.JsonPayload
+            JsonPayload = entity.JsonPayload,
+            EntityKey = entity.EntityKey,
+            StepIndex = entity.StepIndex
         };
     }
 
@@ -89,7 +97,13 @@ internal static class EntityMapper
             Message = finding.Message,
             Confidence = finding.Confidence,
             EvidenceRef = finding.EvidenceRef,
-            Kind = finding.Kind
+            Kind = finding.Kind,
+            JsonPayload = finding.JsonPayload,
+            EvidenceStartOffset = finding.EvidenceStartOffset,
+            EvidenceEndOffset = finding.EvidenceEndOffset,
+            EvidenceStepIndex = finding.EvidenceStepIndex,
+            EvidenceEntityKey = finding.EvidenceEntityKey,
+            EvidenceSnippet = finding.EvidenceSnippet
         };
     }
 
@@ -105,7 +119,13 @@ internal static class EntityMapper
             Message = entity.Message,
             Confidence = entity.Confidence,
             EvidenceRef = entity.EvidenceRef,
-            Kind = entity.Kind
+            Kind = entity.Kind,
+            JsonPayload = entity.JsonPayload,
+            EvidenceStartOffset = entity.EvidenceStartOffset,
+            EvidenceEndOffset = entity.EvidenceEndOffset,
+            EvidenceStepIndex = entity.EvidenceStepIndex,
+            EvidenceEntityKey = entity.EvidenceEntityKey,
+            EvidenceSnippet = entity.EvidenceSnippet
         };
     }
 }

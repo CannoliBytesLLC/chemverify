@@ -4,6 +4,21 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!-- NuGet packaging -->
+    <PackageId>ChemVerify.Infrastructure</PackageId>
+    <Version>0.2.0</Version>
+    <Authors>CannoliBytes LLC</Authors>
+    <Description>EF Core persistence, audit orchestration, and infrastructure services for the ChemVerify scientific verification engine.</Description>
+    <RepositoryUrl>https://github.com/CannoliBytesLLC/chemverify</RepositoryUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
+    <!-- Deterministic build + symbols -->
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ChemVerify.Abstractions\ChemVerify.Abstractions.csproj" />
     <ProjectReference Include="..\ChemVerify.Core\ChemVerify.Core.csproj" />
   </ItemGroup>
 

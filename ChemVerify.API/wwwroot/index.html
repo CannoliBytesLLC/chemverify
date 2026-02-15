@@ -39,6 +39,7 @@
         .claim-badge { font-size: 0.7rem; padding: 0.2em 0.5em; border-radius: 4px; }
         .claim-badge-doi { background: rgba(99,102,241,0.15); color: var(--cv-info); }
         .claim-badge-numeric { background: rgba(59,130,246,0.15); color: var(--cv-accent); }
+        .evidence-highlight { background: rgba(245,158,11,0.25); border-bottom: 2px solid var(--cv-warn); padding: 0 1px; }
         #reportSection { display: none; }
     </style>
 </head>
@@ -63,21 +64,43 @@
     <div class="row mb-4">
         <div class="col-lg-8">
             <div class="card-section p-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Input</h5>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Verify Text</h5>
                     <span class="badge bg-primary">StrictChemistryV0</span>
                 </div>
-                <div class="prompt-display mb-3" id="promptDisplay">
-                    Describe the Suzuki-Miyaura coupling reaction conditions including temperature, time, solvent, yield, and cite relevant literature with DOIs.
-                </div>
+                <p class="text-secondary mb-3" style="font-size:0.8rem;">Paste an AI response, protocol draft, or literature excerpt.</p>
+                <textarea class="form-control mb-3" id="verifyTextArea" rows="6"
+                    style="background:#12141c; border:1px solid #2d3348; color:#e2e8f0; font-family:'Cascadia Code','Fira Code',monospace; font-size:0.85rem;"
+                    placeholder="Paste text to verify…"></textarea>
                 <div class="d-flex gap-2 align-items-center">
-                    <button class="btn btn-primary px-4" id="runBtn" onclick="runVerification()">
-                        Run Verification
+                    <button class="btn btn-primary px-4" id="verifyBtn" onclick="runVerifyText()">
+                        Verify Text
                     </button>
                     <a class="btn btn-outline-secondary btn-sm" id="reportLink" href="#" target="_blank" style="display:none;">
                         View Formal Report ↗
                     </a>
                     <span class="text-secondary" style="font-size:0.8rem;" id="statusText">Ready</span>
+                </div>
+            </div>
+
+            <!-- Generate + Verify (collapsible) -->
+            <div class="mt-3">
+                <a class="json-toggle" data-bs-toggle="collapse" href="#generateSection" role="button" aria-expanded="false">
+                    Generate then verify ▾
+                </a>
+                <div class="collapse mt-2" id="generateSection">
+                    <div class="card-section p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Generate + Verify</h6>
+                        </div>
+                        <p class="text-secondary mb-3" style="font-size:0.78rem;">Convenience only — verification is deterministic and can run on any text.</p>
+                        <div class="prompt-display mb-3" id="promptDisplay">
+                            Describe the Suzuki-Miyaura coupling reaction conditions including temperature, time, solvent, yield, and cite relevant literature with DOIs.
+                        </div>
+                        <button class="btn btn-outline-primary px-4" id="runBtn" onclick="runGenerateVerification()">
+                            Run Verification
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -200,6 +223,14 @@
                     <div class="meta-value" id="metaRunId">—</div>
                 </div>
                 <div class="col-md-4">
+                    <div class="meta-label">Mode</div>
+                    <div class="meta-value" id="metaMode">—</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="meta-label">Engine</div>
+                    <div class="meta-value" id="metaEngine">—</div>
+                </div>
+                <div class="col-md-4">
                     <div class="meta-label">Connector</div>
                     <div class="meta-value" id="metaConnector">—</div>
                 </div>
@@ -241,8 +272,51 @@
     ChemVerify v0 — AI Governance Gateway &middot; On-Premises Deployment
 </footer>
 
+<script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    async function runVerification() {
+    async function runVerifyText() {
+        const btn = document.getElementById('verifyBtn');
+        const status = document.getElementById('statusText');
+        const text = document.getElementById('verifyTextArea').value.trim();
+
+        if (!text) {
+            status.textContent = 'Please paste text to verify.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border" role="status"></span> Verifying…';
+        status.textContent = 'Submitting to pipeline…';
+
+        const request = {
+            textToVerify: text,
+            policyProfile: "StrictChemistryV0"
+        };
+
+        try {
+            const res = await fetch('/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(request)
+            });
+
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+            }
+
+            const data = await res.json();
+            renderReport(data);
+            status.textContent = 'Verification complete';
+        } catch (err) {
+            status.textContent = `Error: ${err.message}`;
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Verify Text';
+        }
+    }
+
+    async function runGenerateVerification() {
         const btn = document.getElementById('runBtn');
         const status = document.getElementById('statusText');
 
@@ -279,6 +353,13 @@
             btn.disabled = false;
             btn.innerHTML = 'Run Verification';
         }
+    }
+
+    // Analyzed text display: show output or inputText
+    function getAnalyzedText(run) {
+        if (run.output && run.output.length > 0) return run.output;
+        if (run.inputText && run.inputText.length > 0) return run.inputText;
+        return '';
     }
 
     function renderReport(data) {
@@ -399,17 +480,64 @@
         // Verification Record
         const run = data.artifact.run;
         document.getElementById('metaRunId').textContent = data.runId;
+        document.getElementById('metaMode').textContent = run.mode || '—';
+        document.getElementById('metaEngine').textContent = data.artifact.engineVersion || '—';
         document.getElementById('metaConnector').textContent = run.connectorName || '—';
         document.getElementById('metaStatus').textContent = run.status;
         document.getElementById('metaHash').textContent = data.artifact.artifactHash;
         document.getElementById('metaChainHash').textContent = run.currentHash;
         document.getElementById('metaTimestamp').textContent = new Date(data.artifact.generatedUtc).toLocaleString();
 
-        // Analyzed text (hidden by default)
-        document.getElementById('modelOutput').textContent = run.output;
+        // Analyzed text with evidence highlighting (hidden by default)
+        const analysisText = getAnalyzedText(run);
+        const outputEl = document.getElementById('modelOutput');
+        renderHighlightedText(outputEl, analysisText, findings);
 
         // Raw JSON
         document.getElementById('jsonContent').textContent = JSON.stringify(data, null, 2);
+    }
+
+    function renderHighlightedText(el, text, findings) {
+        if (!text) { el.textContent = ''; return; }
+
+        const spans = findings
+            .filter(f => f.evidenceStartOffset != null && f.evidenceEndOffset != null
+                      && f.evidenceStartOffset >= 0 && f.evidenceEndOffset <= text.length)
+            .map(f => ({ id: f.id, start: f.evidenceStartOffset, end: f.evidenceEndOffset }))
+            .sort((a, b) => a.start - b.start);
+
+        if (spans.length === 0) {
+            el.textContent = text;
+            return;
+        }
+
+        const merged = [spans[0]];
+        for (let i = 1; i < spans.length; i++) {
+            const prev = merged[merged.length - 1];
+            if (spans[i].start <= prev.end) {
+                prev.end = Math.max(prev.end, spans[i].end);
+                prev.id = prev.id || spans[i].id;
+            } else {
+                merged.push({ ...spans[i] });
+            }
+        }
+
+        el.innerHTML = '';
+        let cursor = 0;
+        merged.forEach(s => {
+            if (s.start > cursor) {
+                el.appendChild(document.createTextNode(text.slice(cursor, s.start)));
+            }
+            const mark = document.createElement('mark');
+            mark.className = 'evidence-highlight';
+            mark.id = `ev-${s.id}`;
+            mark.textContent = text.slice(s.start, s.end);
+            el.appendChild(mark);
+            cursor = s.end;
+        });
+        if (cursor < text.length) {
+            el.appendChild(document.createTextNode(text.slice(cursor)));
+        }
     }
 
     function toggleJson() {

@@ -1,8 +1,9 @@
 using ChemVerify.API.Contracts;
-using ChemVerify.API.Services;
-using ChemVerify.Core.Enums;
-using ChemVerify.Core.Interfaces;
-using ChemVerify.Core.Models;
+using ChemVerify.Abstractions.Contracts;
+using ChemVerify.Abstractions.Enums;
+using ChemVerify.Abstractions.Interfaces;
+using ChemVerify.Abstractions.Models;
+using ChemVerify.Core.Services;
 using ChemVerify.Infrastructure.Persistence;
 
 namespace ChemVerify.API.Endpoints;
@@ -36,6 +37,13 @@ public static class RunEndpoints
             .WithName("ListRuns")
             .WithDescription("List runs with pagination.")
             .Produces<List<RunSummary>>(StatusCodes.Status200OK);
+
+        app.MapPost("/verify", VerifyTextAsync)
+            .WithTags("Verify")
+            .WithName("VerifyText")
+            .WithDescription("Verify pre-existing text without calling a model connector.")
+            .Produces<CreateRunResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
     }
 
     private static async Task<IResult> CreateRunAsync(
@@ -106,6 +114,37 @@ public static class RunEndpoints
         {
             return Results.NotFound(new { error = "Run not found." });
         }
+
+        ReportDto report = ReportBuilder.Build(
+            artifact.Run.RiskScore,
+            artifact.Claims,
+            artifact.Findings);
+
+        CreateRunResponse response = new()
+        {
+            RunId = artifact.RunId,
+            RiskScore = artifact.Run.RiskScore,
+            Report = report,
+            Artifact = artifact
+        };
+
+        return Results.Ok(response);
+    }
+
+    private static async Task<IResult> VerifyTextAsync(
+        VerifyTextRequest request,
+        IAuditService auditService,
+        CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(request.TextToVerify))
+        {
+            return Results.BadRequest(new { error = "TextToVerify is required." });
+        }
+
+        AuditArtifact artifact = await auditService.VerifyTextAsync(
+            request.TextToVerify,
+            request.PolicyProfile,
+            ct);
 
         ReportDto report = ReportBuilder.Build(
             artifact.Run.RiskScore,

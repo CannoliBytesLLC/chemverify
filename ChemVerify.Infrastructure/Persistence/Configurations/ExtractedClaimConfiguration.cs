@@ -16,6 +16,8 @@ public class ExtractedClaimConfiguration : IEntityTypeConfiguration<ExtractedCla
         builder.Property(c => c.Unit).HasMaxLength(50);
         builder.Property(c => c.SourceLocator).HasMaxLength(500);
         builder.Property(c => c.JsonPayload);
+        builder.Property(c => c.EntityKey).HasMaxLength(200);
+        builder.Property(c => c.StepIndex);
     }
 }
 

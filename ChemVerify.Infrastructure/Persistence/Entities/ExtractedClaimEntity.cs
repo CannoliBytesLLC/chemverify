@@ -1,4 +1,4 @@
-using ChemVerify.Core.Enums;
+using ChemVerify.Abstractions.Enums;
 
 namespace ChemVerify.Infrastructure.Persistence.Entities;
 
@@ -12,6 +12,8 @@ public class ExtractedClaimEntity
     public string? Unit { get; set; }
     public string? SourceLocator { get; set; }
     public string? JsonPayload { get; set; }
+    public string? EntityKey { get; set; }
+    public int? StepIndex { get; set; }
 
     public AiRunEntity Run { get; set; } = null!;
 }

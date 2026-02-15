@@ -15,6 +15,13 @@ public class ValidationFindingConfiguration : IEntityTypeConfiguration<Validatio
         builder.Property(f => f.Message).IsRequired();
         builder.Property(f => f.EvidenceRef).HasMaxLength(500);
         builder.Property(f => f.Kind).HasMaxLength(50);
+        builder.Property(f => f.JsonPayload);
+
+        builder.Property(f => f.EvidenceStartOffset);
+        builder.Property(f => f.EvidenceEndOffset);
+        builder.Property(f => f.EvidenceStepIndex);
+        builder.Property(f => f.EvidenceEntityKey).HasMaxLength(200);
+        builder.Property(f => f.EvidenceSnippet).HasMaxLength(200);
 
         builder.HasOne(f => f.Claim)
             .WithMany()

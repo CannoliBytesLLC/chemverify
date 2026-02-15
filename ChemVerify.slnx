@@ -1,5 +1,10 @@
 <Solution>
+  <Folder Name="/Docs/">
+    <File Path="ARCHITECTURE_ROADMAP.md" />
+  </Folder>
+  <Project Path="ChemVerify.Abstractions/ChemVerify.Abstractions.csproj" />
   <Project Path="ChemVerify.API/ChemVerify.API.csproj" />
   <Project Path="ChemVerify.Core/ChemVerify.Core.csproj" />
   <Project Path="ChemVerify.Infrastructure/ChemVerify.Infrastructure.csproj" />
+  <Project Path="ChemVerify.Tests/ChemVerify.Tests.csproj" />
 </Solution>

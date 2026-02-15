@@ -1,4 +1,5 @@
-using ChemVerify.Core.Models;
+using ChemVerify.Abstractions.Contracts;
+using ChemVerify.Abstractions.Models;
 
 namespace ChemVerify.API.Contracts;
 

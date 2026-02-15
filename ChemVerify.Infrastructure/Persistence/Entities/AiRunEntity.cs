@@ -1,4 +1,4 @@
-using ChemVerify.Core.Enums;
+using ChemVerify.Abstractions.Enums;
 
 namespace ChemVerify.Infrastructure.Persistence.Entities;
 
@@ -7,6 +7,7 @@ public class AiRunEntity
     public Guid Id { get; set; }
     public DateTimeOffset CreatedUtc { get; set; }
     public RunStatus Status { get; set; }
+    public RunMode Mode { get; set; }
     public string? UserId { get; set; }
     public string ModelName { get; set; } = string.Empty;
     public string? PolicyProfile { get; set; }
@@ -14,7 +15,8 @@ public class AiRunEntity
     public string? ModelVersion { get; set; }
     public string? ParametersJson { get; set; }
     public string Prompt { get; set; } = string.Empty;
-    public string Output { get; set; } = string.Empty;
+    public string? InputText { get; set; }
+    public string? Output { get; set; }
     public string? PreviousHash { get; set; }
     public string CurrentHash { get; set; } = string.Empty;
     public double RiskScore { get; set; }

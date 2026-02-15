@@ -40,3 +40,5 @@ app.MapRunEndpoints();
 
 app.Run();
 
+public partial class Program { }
+

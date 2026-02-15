@@ -211,6 +211,12 @@
             margin-top: 0.5rem;
         }
 
+        .evidence-highlight {
+            background: #fff3cd;
+            border-bottom: 2px solid #b45309;
+            padding: 0 1px;
+        }
+
         /* ── Footer ─────────────────────────────────────────── */
         .report-footer {
             margin-top: 3rem;
@@ -415,9 +421,24 @@
             document.getElementById('attentionTitle').style.display = '';
             document.getElementById('attentionBlock').style.display = '';
             const al = document.getElementById('attentionList');
+            const findings = data.artifact.findings || [];
+            let fIdx = 0;
             report.attention.forEach(a => {
                 const li = document.createElement('li');
                 li.textContent = a;
+                // Link finding-level attention items to evidence anchors
+                if (!a.startsWith('   ') && fIdx < findings.length) {
+                    const f = findings[fIdx];
+                    if (f.evidenceStartOffset != null) {
+                        const anchor = document.createElement('a');
+                        anchor.href = `#ev-${f.id}`;
+                        anchor.textContent = ' ↓';
+                        anchor.style.fontSize = '0.8rem';
+                        anchor.style.color = '#b45309';
+                        li.appendChild(anchor);
+                    }
+                    fIdx++;
+                }
                 al.appendChild(li);
             });
         }
@@ -469,11 +490,62 @@
         document.getElementById('provArtifactHash').textContent = data.artifact.artifactHash;
         document.getElementById('provChainHash').textContent = run.currentHash;
 
-        // Analyzed text
-        document.getElementById('analyzedText').textContent = run.output;
+        // Analyzed text with evidence highlighting
+        const analyzedText = run.output && run.output.length > 0
+            ? run.output
+            : (run.inputText && run.inputText.length > 0 ? run.inputText : '');
+        const findings = data.artifact.findings || [];
+        renderHighlightedText('analyzedText', analyzedText, findings);
 
         // Update page title
         document.title = `Verification Report — ${data.runId}`;
+    }
+
+    function renderHighlightedText(elementId, text, findings) {
+        const el = document.getElementById(elementId);
+        if (!text) { el.textContent = ''; return; }
+
+        // Collect spans that have offsets, sort by start descending to insert from end
+        const spans = findings
+            .filter(f => f.evidenceStartOffset != null && f.evidenceEndOffset != null
+                      && f.evidenceStartOffset >= 0 && f.evidenceEndOffset <= text.length)
+            .map(f => ({ id: f.id, start: f.evidenceStartOffset, end: f.evidenceEndOffset }))
+            .sort((a, b) => a.start - b.start);
+
+        if (spans.length === 0) {
+            el.textContent = text;
+            return;
+        }
+
+        // Merge overlapping spans
+        const merged = [spans[0]];
+        for (let i = 1; i < spans.length; i++) {
+            const prev = merged[merged.length - 1];
+            if (spans[i].start <= prev.end) {
+                prev.end = Math.max(prev.end, spans[i].end);
+                prev.id = prev.id || spans[i].id;
+            } else {
+                merged.push({ ...spans[i] });
+            }
+        }
+
+        // Build HTML with highlights
+        el.innerHTML = '';
+        let cursor = 0;
+        merged.forEach(s => {
+            if (s.start > cursor) {
+                el.appendChild(document.createTextNode(text.slice(cursor, s.start)));
+            }
+            const mark = document.createElement('mark');
+            mark.className = 'evidence-highlight';
+            mark.id = `ev-${s.id}`;
+            mark.textContent = text.slice(s.start, s.end);
+            el.appendChild(mark);
+            cursor = s.end;
+        });
+        if (cursor < text.length) {
+            el.appendChild(document.createTextNode(text.slice(cursor)));
+        }
     }
 
     function renderList(listId, noneId, items) {

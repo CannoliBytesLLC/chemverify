@@ -1,4 +1,4 @@
-using ChemVerify.Core.Enums;
+using ChemVerify.Abstractions.Enums;
 
 namespace ChemVerify.API.Contracts;
 

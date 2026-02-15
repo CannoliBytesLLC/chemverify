@@ -1,4 +1,4 @@
-using ChemVerify.Core.Models;
+using ChemVerify.Abstractions.Models;
 using ChemVerify.Infrastructure.Persistence.Mapping;
 using Microsoft.EntityFrameworkCore;
 
