@@ -1,5 +1,9 @@
 #TEST PROMPTS
 
+These Tests were outputs from Gemini 3 and are obtained by asking for gemini to give a chemical synthesis produre with literature precedents. 
+
+When copied and pasted as plain text, the formatting is lost. The original formatting is usually correct and can be found in the Gemini 3 output, which is available upon request, but any critical errors for literature or chemical relavence are unchanged.
+
 # Test 1
 The reduction of carbonyl compounds to their corresponding alcohols represents a cornerstone of organic synthesis, with **sodium borohydride ()** remaining the benchmark reagent for this transformation due to its mildness, safety, and high degree of chemoselectivity (Ward & Rhee, 1989; Lamm et al., 2013). While  is inherently capable of reducing both aldehydes and ketones, literature precedents demonstrate that exceptional selectivity for aldehydes over ketones can be achieved by modulating reaction conditions such as temperature and solvent composition (Ward & Rhee, 1989).
 
