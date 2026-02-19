@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
         string connectionString = configuration.GetConnectionString("ChemVerifyDb")
             ?? "Data Source=ChemVerify.db";
 
-        services.AddChemVerifyCore();
+        services.AddChemVerifyCore(configuration);
         services.AddChemVerifyInfrastructure(connectionString);
 
         return services;

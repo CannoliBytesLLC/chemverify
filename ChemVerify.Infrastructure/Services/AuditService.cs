@@ -19,6 +19,7 @@ public class AuditService : IAuditService
     private readonly ICanonicalizer _canonicalizer;
     private readonly IRiskScorer _riskScorer;
     private readonly ChemVerifyRunRepository _repository;
+    private readonly PolicyProfileResolver _resolver;
 
     public AuditService(
         IModelConnector modelConnector,
@@ -27,7 +28,8 @@ public class AuditService : IAuditService
         IHashService hashService,
         ICanonicalizer canonicalizer,
         IRiskScorer riskScorer,
-        ChemVerifyRunRepository repository)
+        ChemVerifyRunRepository repository,
+        PolicyProfileResolver resolver)
     {
         _modelConnector = modelConnector;
         _claimExtractor = claimExtractor;
@@ -36,6 +38,7 @@ public class AuditService : IAuditService
         _canonicalizer = canonicalizer;
         _riskScorer = riskScorer;
         _repository = repository;
+        _resolver = resolver;
     }
 
     public async Task<AuditArtifact> CreateRunAndAuditAsync(RunCommand command, CancellationToken ct)
@@ -57,7 +60,7 @@ public class AuditService : IAuditService
         };
 
         // Resolve policy profile into concrete pipeline settings
-        PolicySettings policySettings = PolicyProfileResolver.Resolve(command.PolicyProfile);
+        PolicySettings policySettings = _resolver.Resolve(command.PolicyProfile);
 
         // Policy may override the caller-supplied output contract
         OutputContract effectiveContract = policySettings.RequiredContract != OutputContract.FreeText
@@ -235,7 +238,7 @@ public class AuditService : IAuditService
         }
 
         // Resolve policy profile
-        PolicySettings policySettings = PolicyProfileResolver.Resolve(policyProfile);
+        PolicySettings policySettings = _resolver.Resolve(policyProfile);
 
         // Run validators
         RunValidators(run, claims, allFindings, policySettings);

@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+// Load optional PolicyProfiles.json for enterprise policy configuration
+builder.Configuration.AddJsonFile("PolicyProfiles.json", optional: true, reloadOnChange: false);
+
 // Register ChemVerify services (EF Core, connectors, extractors, validators, audit service)
 builder.Services.AddChemVerifyServices(builder.Configuration);
 

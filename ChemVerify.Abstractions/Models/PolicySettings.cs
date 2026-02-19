@@ -41,4 +41,11 @@ public class PolicySettings
     /// Whether to dampen DOI-fail severity in risk scoring (for literature/text profiles).
     /// </summary>
     public bool DampenDoiFailSeverity { get; set; }
+
+    /// <summary>
+    /// Per-validator weight overrides for risk scoring.
+    /// Key is the validator name or metadata Id; value is the weight.
+    /// If empty, default weights from validator metadata apply.
+    /// </summary>
+    public Dictionary<string, double> WeightOverrides { get; set; } = new();
 }

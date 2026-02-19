@@ -1,0 +1,40 @@
+{
+  "ChemVerify": {
+    "PolicyProfiles": {
+      "StrictChemistryV0": {
+        "RequiredContract": "JsonClaimsBlockV1",
+        "AllowContractRetry": true,
+        "MaxContractRetries": 1,
+        "DampenDoiFailSeverity": false,
+        "EnabledValidators": [],
+        "ExcludedValidators": [],
+        "WeightOverrides": {}
+      },
+      "ScientificTextV0": {
+        "RequiredContract": "FreeText",
+        "AllowContractRetry": false,
+        "MaxContractRetries": 0,
+        "DampenDoiFailSeverity": true,
+        "EnabledValidators": [],
+        "ExcludedValidators": [
+          "IncompatibleReagentSolventValidator",
+          "MissingSolventValidator",
+          "MissingTemperatureWhenImpliedValidator",
+          "QuenchWhenReactiveReagentValidator",
+          "DryInertMismatchValidator",
+          "EquivalentsConsistencyValidator"
+        ],
+        "WeightOverrides": {}
+      },
+      "LenientV0": {
+        "RequiredContract": "FreeText",
+        "AllowContractRetry": false,
+        "MaxContractRetries": 0,
+        "DampenDoiFailSeverity": false,
+        "EnabledValidators": [],
+        "ExcludedValidators": [],
+        "WeightOverrides": {}
+      }
+    }
+  }
+}
