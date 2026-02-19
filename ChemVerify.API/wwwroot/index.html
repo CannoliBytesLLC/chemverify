@@ -446,10 +446,14 @@
                 } catch { }
             }
 
+            const normalizedDisplay = c.claimType === 'CitationDoi' && c.normalizedValue
+                ? `<a href="https://doi.org/${escHtml(c.normalizedValue)}" target="_blank" rel="noopener">${escHtml(c.normalizedValue)}</a>`
+                : escHtml(c.normalizedValue || '—');
+
             tbody.innerHTML += `<tr>
                 <td>${typeBadge}</td>
                 <td><code>${escHtml(c.rawText)}</code></td>
-                <td>${escHtml(c.normalizedValue || '—')}</td>
+                <td>${normalizedDisplay}</td>
                 <td>${escHtml(c.unit || '—')}</td>
                 <td>${escHtml(ctx || '—')}</td>
                 <td><code style="font-size:0.75rem;">${escHtml(c.sourceLocator || '—')}</code></td>

@@ -227,6 +227,138 @@
             text-align: center;
         }
 
+        /* ── Procedure Map ──────────────────────────────────── */
+        .procedure-map { margin-top: 0.5rem; }
+
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .step-index {
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: #1e3a5f;
+            min-width: 3rem;
+            flex-shrink: 0;
+            padding-top: 0.1rem;
+        }
+
+        .step-body { flex: 1; }
+
+        .step-snippet {
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        .step-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
+        }
+
+        .claim-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.1rem 0.45rem;
+            border-radius: 3px;
+            background: #e8f0fe;
+            color: #1a56db;
+            border: 1px solid #bdd4f7;
+        }
+
+        .claim-badge-temp { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+        .claim-badge-time { background: #dbeafe; color: #1e40af; border-color: #3b82f6; }
+        .claim-badge-yield { background: #d1fae5; color: #065f46; border-color: #10b981; }
+        .claim-badge-conc { background: #ede9fe; color: #5b21b6; border-color: #8b5cf6; }
+
+        .cluster-summary {
+            border-left: 3px solid #1e3a5f;
+            padding: 0.6rem 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.8rem;
+            background: #f8fafc;
+        }
+
+        .cluster-item {
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .cluster-label {
+            font-weight: 700;
+            color: #1e3a5f;
+        }
+
+        .issue-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.8rem 1rem;
+            margin-top: 0.5rem;
+            background: #fffbf5;
+        }
+
+        .issue-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #92400e;
+        }
+
+        .issue-confidence {
+            font-size: 0.82rem;
+            color: #666;
+            margin-top: 0.2rem;
+        }
+
+        .issue-why {
+            list-style: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .issue-why li {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 0.15rem;
+        }
+
+        /* ── Risk Drivers ────────────────────────────────────── */
+        .risk-drivers {
+            margin-top: 0.6rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.6rem 0.8rem;
+            background: #f9fafb;
+        }
+
+        .risk-driver {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .risk-driver-delta {
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            min-width: 3.5rem;
+            text-align: right;
+        }
+
+        .risk-driver-delta.positive { color: #dc2626; }
+        .risk-driver-delta.negative { color: #15803d; }
+        .risk-driver-delta.neutral { color: #6b7280; }
+
+        .risk-driver-label { color: #333; }
+
         /* ── Loading / Error ────────────────────────────────── */
         .loading-state {
             text-align: center;
@@ -250,6 +382,8 @@
             .claims-table { font-size: 8pt; }
             .report-footer { font-size: 7pt; }
             .attention-block { background: none; border-left-color: #000; }
+            .cluster-summary { background: none; border-left-color: #000; }
+            .issue-card { background: none; }
         }
     </style>
 </head>
@@ -280,6 +414,7 @@
         (<span class="risk-label" id="severityLabel"></span>)
     </p>
     <p class="risk-interpretation" id="riskInterpretation" style="font-size:0.92rem; color:#444; margin-top:0.3rem;"></p>
+    <div id="riskDriversSection" class="risk-drivers" style="display:none;"></div>
 
     <!-- Findings -->
     <div class="section-title">Findings</div>
@@ -296,6 +431,14 @@
     <div class="section-title" id="attentionTitle" style="display:none;">Interpretation</div>
     <div class="attention-block" id="attentionBlock" style="display:none;">
         <ul class="finding-list" id="attentionList" style="margin-bottom:0;"></ul>
+    </div>
+
+    <!-- Procedure Map -->
+    <div id="procedureMapSection" style="display:none;">
+        <div class="section-title">Procedure Map</div>
+        <div id="clusterSummary" class="cluster-summary" style="display:none;"></div>
+        <div id="topIssues"></div>
+        <div id="procedureMap" class="procedure-map"></div>
     </div>
 
     <!-- Extracted Claims -->
@@ -410,6 +553,36 @@
         label.classList.add(`risk-label-${report.severity}`);
         document.getElementById('riskInterpretation').textContent = report.summary;
 
+        // Risk Drivers
+        if (report.riskDrivers && report.riskDrivers.length > 0) {
+            const rd = document.getElementById('riskDriversSection');
+            rd.style.display = '';
+            const heading = document.createElement('div');
+            heading.style.fontWeight = '600';
+            heading.style.fontSize = '0.82rem';
+            heading.style.textTransform = 'uppercase';
+            heading.style.letterSpacing = '0.5px';
+            heading.style.color = '#555';
+            heading.style.marginBottom = '0.3rem';
+            heading.textContent = 'Risk Drivers';
+            rd.appendChild(heading);
+            report.riskDrivers.forEach(d => {
+                const row = document.createElement('div');
+                row.className = 'risk-driver';
+                const delta = document.createElement('span');
+                delta.className = 'risk-driver-delta';
+                if (d.delta > 0) { delta.classList.add('positive'); delta.textContent = `+${d.delta.toFixed(2)}`; }
+                else if (d.delta < 0) { delta.classList.add('negative'); delta.textContent = d.delta.toFixed(2); }
+                else { delta.classList.add('neutral'); delta.textContent = '  0.00'; }
+                row.appendChild(delta);
+                const lbl = document.createElement('span');
+                lbl.className = 'risk-driver-label';
+                lbl.textContent = d.label;
+                row.appendChild(lbl);
+                rd.appendChild(row);
+            });
+        }
+
         // Validated Claims
         renderList('confirmedList', 'noConfirmed', report.confirmed);
 
@@ -452,6 +625,89 @@
             const oB = contextOrder[ctxB] ?? (b.claimType === 'CitationDoi' ? 99 : 50);
             return oA - oB;
         });
+
+        // Procedure Map
+        const ps = data.procedureSummary;
+        if (ps && ps.steps && ps.steps.length > 0) {
+            document.getElementById('procedureMapSection').style.display = '';
+
+            // Render cluster summary
+            if (ps.clusters && ps.clusters.length > 0) {
+                const cs = document.getElementById('clusterSummary');
+                cs.style.display = '';
+                const header = document.createElement('div');
+                header.style.fontWeight = '700';
+                header.style.marginBottom = '0.4rem';
+                header.textContent = `Detected ${ps.clusters.length} condition cluster${ps.clusters.length > 1 ? 's' : ''}`;
+                cs.appendChild(header);
+
+                ps.clusters.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'cluster-item';
+                    const sigParts = Object.values(c.signature || {});
+                    const stepsLabel = c.stepIndexes.length === 1
+                        ? `Step ${c.stepIndexes[0]}`
+                        : `Steps ${c.stepIndexes.join(', ')}`;
+                    div.innerHTML = `<span class="cluster-label">${esc(c.label)}:</span> ${sigParts.map(s => '<strong>' + esc(s) + '</strong>').join(', ')} (${esc(stepsLabel)})`;
+                    cs.appendChild(div);
+                });
+            }
+
+            // Render top issues
+            if (ps.topIssues && ps.topIssues.length > 0) {
+                const ti = document.getElementById('topIssues');
+                ps.topIssues.forEach(issue => {
+                    const card = document.createElement('div');
+                    card.className = 'issue-card';
+                    let html = `<div class="issue-title">${esc(issue.severity)} \u2014 ${esc(issue.title)}</div>`;
+                    html += `<div class="issue-confidence">Confidence: ${issue.confidence.toFixed(2)}</div>`;
+                    if (issue.why && issue.why.length > 0) {
+                        html += '<ul class="issue-why">';
+                        issue.why.forEach(w => { html += `<li>${esc(w)}</li>`; });
+                        html += '</ul>';
+                    }
+                    card.innerHTML = html;
+                    ti.appendChild(card);
+                });
+            }
+
+            // Render step rows
+            const map = document.getElementById('procedureMap');
+            ps.steps.forEach(step => {
+                const row = document.createElement('div');
+                row.className = 'step-row';
+
+                const idx = document.createElement('div');
+                idx.className = 'step-index';
+                idx.textContent = `Step ${step.stepIndex}`;
+                row.appendChild(idx);
+
+                const body = document.createElement('div');
+                body.className = 'step-body';
+
+                const snippet = document.createElement('div');
+                snippet.className = 'step-snippet';
+                snippet.textContent = step.stepSnippet;
+                body.appendChild(snippet);
+
+                if (step.claims && step.claims.length > 0) {
+                    const badges = document.createElement('div');
+                    badges.className = 'step-badges';
+                    step.claims.forEach(c => {
+                        const badge = document.createElement('span');
+                        const ctx = (c.contextKey || '').toLowerCase();
+                        badge.className = `claim-badge claim-badge-${ctx}`;
+                        badge.textContent = c.rawText;
+                        badges.appendChild(badge);
+                    });
+                    body.appendChild(badges);
+                }
+
+                row.appendChild(body);
+                map.appendChild(row);
+            });
+        }
+
         document.getElementById('claimCount').textContent = claims.length;
         const tbody = document.getElementById('claimsTable');
         claims.forEach(c => {
@@ -460,11 +716,14 @@
                 try { ctx = JSON.parse(c.jsonPayload).contextKey || ''; } catch {}
             }
             const typeLabel = c.claimType === 'CitationDoi' ? 'DOI' : 'Numeric';
+            const normalizedDisplay = c.claimType === 'CitationDoi' && c.normalizedValue
+                ? `<a href="https://doi.org/${esc(c.normalizedValue)}" target="_blank" rel="noopener">${esc(c.normalizedValue)}</a>`
+                : esc(c.normalizedValue || '—');
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${esc(typeLabel)}</td>
                 <td><code>${esc(c.rawText)}</code></td>
-                <td>${esc(c.normalizedValue || '—')}</td>
+                <td>${normalizedDisplay}</td>
                 <td>${esc(c.unit || '—')}</td>
                 <td>${esc(ctx || '—')}</td>
                 <td><code>${esc(c.sourceLocator || '—')}</code></td>`;
