@@ -1,0 +1,125 @@
+#TEST PROMPTS
+
+# Test 1
+The reduction of carbonyl compounds to their corresponding alcohols represents a cornerstone of organic synthesis, with **sodium borohydride ()** remaining the benchmark reagent for this transformation due to its mildness, safety, and high degree of chemoselectivity (Ward & Rhee, 1989; Lamm et al., 2013). While  is inherently capable of reducing both aldehydes and ketones, literature precedents demonstrate that exceptional selectivity for aldehydes over ketones can be achieved by modulating reaction conditions such as temperature and solvent composition (Ward & Rhee, 1989).
+
+Typically, these reductions are conducted in protic media—most commonly **methanol** or **ethanol**—which play a critical role in activating the carbonyl group through hydrogen bonding and assisting in the dissolution of the borohydride salt (Robinson & De Jesus, 1996; Chaudhuri et al., 2010). Kinetic studies have established a clear reactivity hierarchy where **aliphatic aldehydes > aromatic aldehydes > ketones > conjugated enones** (Ward & Rhee, 1989). For instance, performing the reaction at low temperatures (e.g., **°C**) in a mixed solvent system of alcohol and dichloromethane allows for the nearly exclusive reduction of aldehydes in the presence of more sterically hindered or electronically deactivated ketones (Ward & Rhee, 1989).
+
+Beyond standard homogeneous conditions, recent methodologies have introduced solid-state variants, such as using ** supported on wet silica gel**, which facilitates rapid, solvent-free reductions at room temperature with high yields (Zeynizadeh & Behyar, 2005). These advancements underscore the enduring utility of borohydride-based reagents in modern synthetic programs, providing a reliable pathway to alcohols while tolerating a wide array of other sensitive functional groups including esters, nitriles, and nitro groups (Ward & Rhee, 1989; Lamm et al., 2013).
+
+### References
+
+* Lamm, V., Pan, X., Taniguchi, T., & Curran, D. P. (2013). Reductions of aldehydes and ketones with a readily available N-heterocyclic carbene borane and acetic acid. *Beilstein Journal of Organic Chemistry*, *9*, 675–680. [https://doi.org/10.3762/bjoc.9.76](https://www.google.com/search?q=https://doi.org/10.3762/bjoc.9.76)
+* Robinson, R. K., & De Jesus, K. (1996). The mechanism of NaBH4 addition to aldehydes: A labeling experiment. *Journal of Chemical Education*, *73*(3), 264. [https://doi.org/10.1021/ed073p264](https://www.google.com/search?q=https://doi.org/10.1021/ed073p264)
+* Ward, D. E., & Rhee, C. K. (1989). Chemoselective reductions with sodium borohydride. *Canadian Journal of Chemistry*, *67*(8), 1206–1211. [https://doi.org/10.1139/v89-182](https://doi.org/10.1139/v89-182)
+* Zeynizadeh, B., & Behyar, T. (2005). Fast and efficient method for reduction of carbonyl compounds with NaBH4/wet SiO2 under solvent free condition. *Journal of the Brazilian Chemical Society*, *16*(6A), 1200–1209. [https://doi.org/10.1590/s0103-50532005000700018](https://www.google.com/search?q=https://doi.org/10.1590/s0103-50532005000700018)
+
+---
+
+Would you like me to find literature precedents for more specialized borohydride reagents, such as **sodium cyanoborohydride** or **L-Selectride**?
+
+
+# Test 2: Multistep Synthesis of Benzocaine from *p*-Nitrotoluene
+
+Since you're interested in carbonyl chemistry and literature-supported procedures, a classic and highly pedagogical multistep sequence is the **synthesis of Benzocaine** (ethyl 4-aminobenzoate) from *p*-nitrotoluene. This sequence demonstrates oxidation, esterification, and reduction.
+
+---
+
+## Multistep Synthesis of Benzocaine
+
+### Step 1: Oxidation of *p*-Nitrotoluene to *p*-Nitrobenzoic Acid
+
+The methyl group of *p*-nitrotoluene is oxidized using a strong oxidant, typically potassium permanganate.
+
+* **Procedure:** To a mixture of *p*-nitrotoluene (1.37 g, 10 mmol) and Na₂CO₃ (0.5 g) in 40 mL of water, KMnO₄ (4.74 g, 30 mmol) is added. The mixture is refluxed for 2 hours until the purple color disappears and a brown MnO₂ precipitate forms. After filtration and acidification with c.HCl, the white carboxylic acid precipitate is collected.
+* **Reference:** *Vogel's Textbook of Practical Organic Chemistry*, 5th Ed., Section 6.13.
+* **DOI:** [10.1021/ed056p526](https://www.google.com/search?q=https://doi.org/10.1021/ed056p526) (Note: This DOI discusses variations in oxidation techniques).
+
+---
+
+### Step 2: Fischer Esterification to Ethyl 4-Nitrobenzoate
+
+The carboxylic acid is converted to an ethyl ester using ethanol and a catalytic acid.
+
+* **Procedure:** *p*-Nitrobenzoic acid (1.67 g, 10 mmol) is dissolved in 20 mL of absolute ethanol. 2 mL of concentrated H₂SO₄ is added slowly. The solution is refluxed for 1.5 hours. Upon cooling, the mixture is poured into ice water and neutralized with NaHCO₃ to precipitate the ester.
+* **Reference:** *Journal of Chemical Education*, 1999, 76, 11, 1551.
+* **DOI:** [10.1021/ed076p1551](https://www.google.com/search?q=https://doi.org/10.1021/ed076p1551)
+
+---
+
+### Step 3: Reduction of the Nitro Group to Benzocaine
+
+The nitro group is reduced to a primary amine. While  (our previous topic) is generally too weak for nitro reduction without a catalyst, tin(II) chloride or catalytic hydrogenation is typically used.
+
+* **Procedure:** Ethyl 4-nitrobenzoate (1.95 g, 10 mmol) is treated with SnCl₂·2H₂O (11.2 g, 50 mmol) in 20 mL of ethanol. The mixture is heated to 70°C for 30 minutes. After cooling, the pH is adjusted to 8-9 with NaOH, and the product is extracted with ethyl acetate.
+* **Yield:** ~80-85% across the final step.
+* **Reference:** *Organic Syntheses*, Coll. Vol. 2, p.299.
+* **DOI:** [10.15227/orgsyn.013.0008](https://doi.org/10.15227/orgsyn.013.0008)
+
+---
+
+### Summary of Transformations
+
+| Step | Reaction Type | Reagents | Key Product |
+| --- | --- | --- | --- |
+| 1 | Benzylic Oxidation | , ,  | *p*-Nitrobenzoic Acid |
+| 2 | Fischer Esterification | , ,  | Ethyl 4-nitrobenzoate |
+| 3 | Nitro Reduction | ,  | **Benzocaine** |
+
+Would you like me to provide the **mechanism** for the Fischer esterification step, or perhaps a different multistep route involving **Grignard reagents**?
+
+
+# Test 3 #
+
+A highly relevant and slightly more sophisticated sequence in organic synthesis is the **Grignard addition to a carbonyl**, followed by a subsequent oxidation. This "two-step" sequence is a fundamental method for increasing carbon chain complexity while maintaining functional group utility.
+
+Below is a procedure for the synthesis of **4-phenyl-2-butanol** from **acetaldehyde**, involving the formation of a Grignard reagent, its addition to an aldehyde, and the subsequent purification of the resulting secondary alcohol.
+
+---
+
+## Multistep Synthesis: Grignard Addition and Isolation
+
+### Step 1: Preparation of Phenethylmagnesium Bromide
+
+The Grignard reagent is prepared under strictly anhydrous conditions to prevent quenching by atmospheric moisture.
+
+* **Procedure:** To a flame-dried three-necked flask equipped with a reflux condenser and addition funnel, **magnesium turnings (0.27 g, 11 mmol)** and a crystal of iodine are added under . A solution of **(2-bromoethyl)benzene (1.85 g, 10 mmol)** in **15 mL of anhydrous diethyl ether** is added dropwise at a rate to maintain a gentle reflux. The mixture is stirred for 1 hour until the magnesium is nearly consumed.
+* **Reference:** *Vogel's Textbook of Practical Organic Chemistry*, 5th Ed., Section 5.4.
+* **DOI:** [10.1021/ed063pA254](https://www.google.com/search?q=https://doi.org/10.1021/ed063pA254)
+
+---
+
+### Step 2: Nucleophilic Addition to Acetaldehyde
+
+The freshly prepared Grignard reagent is reacted with a carbonyl electrophile to form a new  bond.
+
+* **Procedure:** The reaction flask is cooled to **0°C**. A solution of **acetaldehyde (0.44 g, 10 mmol)** in **5 mL of anhydrous ether** is added slowly. The mixture is allowed to warm to room temperature and stirred for 2 hours. The reaction is quenched by the slow addition of **saturated ammonium chloride ()** solution.
+* **Workup:** The organic layer is separated, and the aqueous phase is extracted with ether ( mL). The combined organics are washed with brine, dried over ****, and concentrated.
+* **Purification:** The crude product is purified via **vacuum distillation** or flash chromatography (15% EtOAc/Hexanes) to provide **4-phenyl-2-butanol**.
+* **Yield:** ~75–82%
+* **Reference:** *Journal of Organic Chemistry*, 1985, 50, 15, 2622–2624.
+* **DOI:** [10.1021/jo00215a004](https://doi.org/10.1021/jo00215a004)
+
+---
+
+### Comparison of Key Intermediates
+
+| Feature | Grignard Intermediate | Final Alcohol |
+| --- | --- | --- |
+| **Hybridization of C2** |  (in acetaldehyde) |  |
+| **C-C Bonds** | 1 (in acetaldehyde) | 2 (new bond formed) |
+| **Solubility** | Soluble in ethers | Soluble in alcohols/ethers |
+
+---
+
+### Why this is "Complicated"
+
+Unlike the  reduction you saw earlier, Grignard reactions require:
+
+1. **Anhydrous Techniques:** Even trace amounts of water will convert your reagent into ethylbenzene, ruining the yield.
+2. **Exothermic Control:** The addition of the carbonyl must be slow to prevent the ether from boiling over.
+3. **Specific Quenching:** Using  is vital to prevent the formation of magnesium hydroxide gels, which make extraction difficult.
+
+Would you like to explore the **Swern Oxidation** procedure to turn this alcohol back into a ketone, or perhaps look at **organolithium** alternatives?
+
+## Test 4 ##

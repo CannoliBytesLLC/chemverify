@@ -3,6 +3,7 @@ using ChemVerify.Abstractions;
 using ChemVerify.Abstractions.Enums;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Abstractions.Models;
+using ChemVerify.Core.Services;
 
 namespace ChemVerify.Core.Validators;
 
@@ -29,10 +30,32 @@ public class IncompatibleReagentSolventValidator : IValidator
             return findings;
         }
 
-        Match reagentMatch = MoistureSensitiveRegex.Match(text);
-        Match proticMatch = ProticMediaRegex.Match(text);
+        // Segment steps and classify roles so we only check procedural text
+        IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
+        ProceduralContext ctx = ProceduralContextDetector.Detect(text, steps);
+        IReadOnlyDictionary<int, StepRole> roles = StepRoleClassifier.Classify(text, steps, ctx.ReferencesStartOffset);
 
-        if (reagentMatch.Success && proticMatch.Success)
+        // Only match within steps classified as Procedure
+        Match? reagentMatch = null;
+        Match? proticMatch = null;
+
+        foreach (TextStep step in steps)
+        {
+            if (!roles.TryGetValue(step.Index, out StepRole role) || role != StepRole.Procedure)
+                continue;
+
+            string stepText = text[step.StartOffset..step.EndOffset];
+
+            reagentMatch ??= MoistureSensitiveRegex.Match(stepText) is { Success: true } rm
+                ? rm : null;
+            proticMatch ??= ProticMediaRegex.Match(stepText) is { Success: true } pm
+                ? pm : null;
+
+            if (reagentMatch is not null && proticMatch is not null)
+                break;
+        }
+
+        if (reagentMatch is not null && proticMatch is not null)
         {
             findings.Add(new ValidationFinding
             {

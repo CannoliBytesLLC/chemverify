@@ -23,12 +23,20 @@ public class NumericContradictionValidator : IValidator
         "temp", "time", "yield", "conc"
     };
 
+    private static readonly HashSet<string> ConditionContextKeys = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "temp", "time"
+    };
+
     public IReadOnlyList<ValidationFinding> Validate(
         Guid runId,
         IReadOnlyList<ExtractedClaim> claims,
         AiRun run)
     {
         List<ValidationFinding> findings = new();
+
+        // Build cluster map for scoping condition (temp/time) comparisons
+        IReadOnlyDictionary<int, string> clusterMap = ProcedureSummaryBuilder.BuildStepClusterMap(claims);
 
         List<ExtractedClaim> numericClaims = claims
             .Where(c => c.ClaimType == ClaimType.NumericWithUnit && c.Unit is not null)
@@ -90,6 +98,12 @@ public class NumericContradictionValidator : IValidator
                 continue;
             }
 
+            // Determine if this is a condition group (temp/time) that needs step/cluster scoping
+            string groupContextKey = ExtractContextKey(groupList[0]);
+            bool isConditionGroup = ConditionContextKeys.Contains(groupContextKey);
+            bool crossScopeConflictFound = false;
+            bool emittedGroupLevel = false;
+
             // Compare pairs for contradictions
             for (int i = 0; i < groupList.Count; i++)
             {
@@ -127,8 +141,17 @@ public class NumericContradictionValidator : IValidator
                     double diff = Math.Abs(valA - valB);
                     bool isContradiction = average > 0 && (diff / average) * 100.0 > ContradictionThresholdPercent;
 
+                    bool crossScope = isConditionGroup && !AreInSameScope(groupList[i], groupList[j], clusterMap);
+
                     if (isContradiction)
                     {
+                        // For condition groups across different scopes, defer to post-loop handling
+                        if (crossScope)
+                        {
+                            crossScopeConflictFound = true;
+                            continue;
+                        }
+
                         // Check for multi-scenario language near either claim
                         bool multiScenario = HasMultiScenarioContext(run.GetAnalyzedText(), groupList[i]) ||
                                              HasMultiScenarioContext(run.GetAnalyzedText(), groupList[j]);
@@ -152,8 +175,8 @@ public class NumericContradictionValidator : IValidator
                                 Kind = FindingKind.MultiScenario
                             });
 
-                            // Skip remaining pairs in this group — already handled at group level
-                            goto NextGroup;
+                            emittedGroupLevel = true;
+                            break;
                         }
 
                         // Emit a single canonical finding per pair (i < j ensures no duplication)
@@ -206,9 +229,50 @@ public class NumericContradictionValidator : IValidator
                         }
                     }
                 }
+
+                if (emittedGroupLevel) break;
             }
 
-            NextGroup:;
+            // Cross-step/cross-cluster condition differences ? check for multi-scenario language first
+            if (crossScopeConflictFound && !emittedGroupLevel)
+            {
+                string claimRefs = string.Join("+", groupList.Select(c => $"Claim:{c.Id}"));
+                string rawValues = string.Join(", ", groupList.Select(c => c.RawText));
+                string analyzedText = run.GetAnalyzedText();
+
+                bool multiScenario = groupList.Any(c => HasMultiScenarioContext(analyzedText, c));
+
+                if (multiScenario)
+                {
+                    findings.Add(new ValidationFinding
+                    {
+                        Id = Guid.NewGuid(),
+                        RunId = runId,
+                        ClaimId = null,
+                        ValidatorName = nameof(NumericContradictionValidator),
+                        Status = ValidationStatus.Unverified,
+                        Message = $"Multiple scenarios detected ({rawValues}); values may refer to different conditions.",
+                        Confidence = 0.5,
+                        EvidenceRef = claimRefs,
+                        Kind = FindingKind.MultiScenario
+                    });
+                }
+                else
+                {
+                    findings.Add(new ValidationFinding
+                    {
+                        Id = Guid.NewGuid(),
+                        RunId = runId,
+                        ClaimId = null,
+                        ValidatorName = nameof(NumericContradictionValidator),
+                        Status = ValidationStatus.Unverified,
+                        Message = $"Multiple distinct {groupContextKey} values observed across steps ({rawValues}); expected for multistep synthesis.",
+                        Confidence = 0.4,
+                        EvidenceRef = claimRefs,
+                        Kind = FindingKind.CrossStepConditionVariation
+                    });
+                }
+            }
         }
 
         return findings;
@@ -266,6 +330,30 @@ public class NumericContradictionValidator : IValidator
         string canonicalUnit = UnitNormalizer.GetCanonicalUnit(claim.Unit ?? string.Empty);
 
         return $"{contextKey}|{canonicalUnit}";
+    }
+
+    /// <summary>
+    /// Returns true if two claims are in the same step or the same condition cluster.
+    /// </summary>
+    private static bool AreInSameScope(ExtractedClaim a, ExtractedClaim b,
+        IReadOnlyDictionary<int, string> clusterMap)
+    {
+        int stepA = a.StepIndex ?? -1;
+        int stepB = b.StepIndex ?? -1;
+
+        // Same step (including both step-less ? both -1)
+        if (stepA == stepB) return true;
+
+        // Same cluster label
+        if (stepA >= 0 && stepB >= 0
+            && clusterMap.TryGetValue(stepA, out string? labelA)
+            && clusterMap.TryGetValue(stepB, out string? labelB)
+            && string.Equals(labelA, labelB, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>

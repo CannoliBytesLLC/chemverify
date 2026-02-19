@@ -48,4 +48,7 @@ public static class FindingKind
 
     /// <summary>Equivalents claim is inconsistent with the mmol values present.</summary>
     public const string EquivInconsistent = "EquivInconsistent";
+
+    /// <summary>Condition values (temp/time) differ across steps or clusters — expected in multistep synthesis, not a contradiction.</summary>
+    public const string CrossStepConditionVariation = "CrossStepConditionVariation";
 }

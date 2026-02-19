@@ -6,6 +6,7 @@ using ChemVerify.Abstractions.Models;
 using ChemVerify.Core.Services;
 using ChemVerify.Infrastructure.Persistence;
 
+
 namespace ChemVerify.API.Endpoints;
 
 public static class RunEndpoints
@@ -72,20 +73,7 @@ public static class RunEndpoints
 
         AuditArtifact artifact = await auditService.CreateRunAndAuditAsync(command, ct);
 
-        ReportDto report = ReportBuilder.Build(
-            artifact.Run.RiskScore,
-            artifact.Claims,
-            artifact.Findings);
-
-        CreateRunResponse response = new()
-        {
-            RunId = artifact.RunId,
-            RiskScore = artifact.Run.RiskScore,
-            Report = report,
-            Artifact = artifact
-        };
-
-        return Results.Ok(response);
+        return Results.Ok(BuildResponse(artifact));
     }
 
     private static async Task<IResult> GetRunAsync(
@@ -115,20 +103,7 @@ public static class RunEndpoints
             return Results.NotFound(new { error = "Run not found." });
         }
 
-        ReportDto report = ReportBuilder.Build(
-            artifact.Run.RiskScore,
-            artifact.Claims,
-            artifact.Findings);
-
-        CreateRunResponse response = new()
-        {
-            RunId = artifact.RunId,
-            RiskScore = artifact.Run.RiskScore,
-            Report = report,
-            Artifact = artifact
-        };
-
-        return Results.Ok(response);
+        return Results.Ok(BuildResponse(artifact));
     }
 
     private static async Task<IResult> VerifyTextAsync(
@@ -146,20 +121,31 @@ public static class RunEndpoints
             request.PolicyProfile,
             ct);
 
+        return Results.Ok(BuildResponse(artifact));
+    }
+
+    private static CreateRunResponse BuildResponse(AuditArtifact artifact)
+    {
         ReportDto report = ReportBuilder.Build(
             artifact.Run.RiskScore,
             artifact.Claims,
             artifact.Findings);
 
-        CreateRunResponse response = new()
+        string analyzedText = artifact.Run.GetAnalyzedText();
+        IReadOnlyList<TextStep> rawSteps = StepSegmenter.Segment(analyzedText);
+        ProceduralContext ctx = ProceduralContextDetector.Detect(analyzedText, rawSteps);
+        IReadOnlyList<TextStep> steps = StepMerger.MergeReferenceBlocks(analyzedText, rawSteps, ctx.ReferencesStartOffset);
+        IReadOnlyDictionary<int, StepRole> stepRoles = StepRoleClassifier.Classify(
+            analyzedText, steps, ctx.ReferencesStartOffset);
+
+        return new CreateRunResponse
         {
             RunId = artifact.RunId,
             RiskScore = artifact.Run.RiskScore,
             Report = report,
-            Artifact = artifact
+            Artifact = artifact,
+            ProcedureSummary = ProcedureSummaryBuilder.Build(analyzedText, steps, artifact.Claims, ctx, stepRoles)
         };
-
-        return Results.Ok(response);
     }
 
     private static async Task<IResult> ListRunsAsync(
