@@ -12,14 +12,4 @@ public class ReportDto
     public List<string> NotVerifiable { get; set; } = [];
     public List<string> Attention { get; set; } = [];
     public List<string> NextQuestions { get; set; } = [];
-    public List<RiskDriverDto> RiskDrivers { get; set; } = [];
-}
-
-/// <summary>
-/// A single explainable risk driver contributing to (or mitigating) the overall risk score.
-/// </summary>
-public class RiskDriverDto
-{
-    public double Delta { get; set; }
-    public string Label { get; set; } = string.Empty;
 }

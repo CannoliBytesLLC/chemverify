@@ -22,7 +22,6 @@ public class DoiClaimExtractor : IClaimExtractor
     public IReadOnlyList<ExtractedClaim> Extract(Guid runId, string text)
     {
         List<ExtractedClaim> claims = new();
-        HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
         MatchCollection matches = DoiRegex.Matches(text);
 
         foreach (Match match in matches)
@@ -38,18 +37,13 @@ public class DoiClaimExtractor : IClaimExtractor
 
             raw = raw.TrimEnd(TrailingPunctuation);
 
-            // Skip if this DOI was already captured (handles markdown link + URL duplicates)
-            string normalized = raw.ToLowerInvariant();
-            if (!seen.Add(normalized))
-                continue;
-
             claims.Add(new ExtractedClaim
             {
                 Id = Guid.NewGuid(),
                 RunId = runId,
                 ClaimType = ClaimType.CitationDoi,
                 RawText = raw,
-                NormalizedValue = normalized,
+                NormalizedValue = raw.ToLowerInvariant(),
                 SourceLocator = $"AnalyzedText:{match.Index}-{match.Index + raw.Length}"
             });
         }

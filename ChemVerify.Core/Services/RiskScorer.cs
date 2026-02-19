@@ -81,7 +81,7 @@ public class RiskScorer : IRiskScorer
                 ValidationStatus.Fail when dampenDoi && f.ValidatorName == "DoiFormatValidator"
                     => DampenedDoiFailWeight,
                 ValidationStatus.Fail => FailWeight,
-                ValidationStatus.Unverified => f.Kind is FindingKind.NotCheckable or FindingKind.NotComparable or FindingKind.CrossStepConditionVariation ? NotCheckableWeight : UnverifiedWeight,
+                ValidationStatus.Unverified => f.Kind is FindingKind.NotCheckable or FindingKind.NotComparable ? NotCheckableWeight : UnverifiedWeight,
                 _ => PassWeight
             });
 

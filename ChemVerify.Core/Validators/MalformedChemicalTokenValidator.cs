@@ -9,9 +9,9 @@ namespace ChemVerify.Core.Validators;
 
 public class MalformedChemicalTokenValidator : IValidator
 {
-    // Any word followed by empty parentheses, e.g. "benzene ()" or "borohydride ()"
+    // Chemical name followed by empty parentheses, e.g. "benzene ()" or "NaOH ()"
     private static readonly Regex EmptyParensRegex = new(
-        @"\b[a-zA-Z][a-zA-Z0-9]{1,}\s*\(\s*\)",
+        @"\b[A-Z][a-zA-Z0-9]{1,}\s*\(\s*\)",
         RegexOptions.Compiled);
 
     // Standalone °C without a preceding numeric value
@@ -23,17 +23,6 @@ public class MalformedChemicalTokenValidator : IValidator
     // unmatched single backtick, or lone backslash followed by nothing useful
     private static readonly Regex DanglingFormattingRegex = new(
         @"(?<!\w)_(?!\w)|(?<![`])`(?![`])|\\(?=[,.\s]|$)",
-        RegexOptions.Compiled);
-
-    // Two or more consecutive horizontal spaces between word characters — suggests a dropped token.
-    // Uses [ \t] instead of \s to avoid matching paragraph breaks (\n\n).
-    private static readonly Regex DroppedTokenRegex = new(
-        @"(?<=\w)[ \t]{2,}(?=\w)",
-        RegexOptions.Compiled);
-
-    // Empty bold markers: ** immediately followed by ** with at most whitespace between
-    private static readonly Regex EmptyBoldRegex = new(
-        @"\*\*\s*\*\*",
         RegexOptions.Compiled);
 
     public IReadOnlyList<ValidationFinding> Validate(
@@ -68,18 +57,6 @@ public class MalformedChemicalTokenValidator : IValidator
         foreach (Match m in DanglingFormattingRegex.Matches(text))
         {
             findings.Add(BuildFinding(runId, m, "Dangling markdown/LaTeX formatting fragment"));
-        }
-
-        foreach (Match m in DroppedTokenRegex.Matches(text))
-        {
-            findings.Add(BuildFinding(runId, m,
-                "Consecutive spaces suggest a dropped chemical formula or token"));
-        }
-
-        foreach (Match m in EmptyBoldRegex.Matches(text))
-        {
-            findings.Add(BuildFinding(runId, m,
-                "Empty bold marker — expected chemical name or formula between markers"));
         }
 
         return findings;

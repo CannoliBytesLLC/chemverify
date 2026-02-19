@@ -9,6 +9,5 @@ public class CreateRunResponse
     public double RiskScore { get; set; }
     public ReportDto Report { get; set; } = null!;
     public AuditArtifact Artifact { get; set; } = null!;
-    public ProcedureSummaryDto? ProcedureSummary { get; set; }
 }
 

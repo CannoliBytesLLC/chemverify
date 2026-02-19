@@ -19,7 +19,7 @@ public static class ReportBuilder
     {
         ReportDto report = new()
         {
-            Severity = ClassifySeverity(riskScore, findings)
+            Severity = ClassifySeverity(riskScore)
         };
 
         // ── Confirmed (Pass findings) ───────────────────────────────────
@@ -90,12 +90,6 @@ public static class ReportBuilder
         {
             report.Attention.Add($"\u26a0\ufe0f {HumanizeMessage(f)}");
             AppendEvidenceLine(report, f);
-        }
-
-        foreach (ValidationFinding f in findings.Where(f =>
-            f.Kind == FindingKind.CrossStepConditionVariation))
-        {
-            report.Attention.Add($"\u2139\ufe0f {f.Message}");
         }
 
         // ── Chemistry-specific attention ─────────────────────────────────
@@ -218,9 +212,6 @@ public static class ReportBuilder
                 "Single-mention numeric claims could not be cross-checked — is additional data available?");
         }
 
-        // ── Risk drivers ─────────────────────────────────────────────────
-        report.RiskDrivers = BuildRiskDrivers(findings);
-
         // ── Summary + Verdict ───────────────────────────────────────────
         int attentionFindingCount = report.Attention.Count(a => !a.StartsWith("   "));
         report.Summary = BuildSummary(report, claims.Count, attentionFindingCount);
@@ -229,70 +220,13 @@ public static class ReportBuilder
         return report;
     }
 
-    private static List<RiskDriverDto> BuildRiskDrivers(IReadOnlyList<ValidationFinding> findings)
+    private static string ClassifySeverity(double riskScore) => riskScore switch
     {
-        List<RiskDriverDto> drivers = [];
-
-        int contradictions = findings.Count(f => f.Kind == FindingKind.Contradiction);
-        if (contradictions > 0)
-            drivers.Add(new RiskDriverDto { Delta = 0.35, Label = $"{contradictions} unresolved contradiction(s) (same-step)" });
-
-        int chemHigh = findings.Count(f => f.Kind is FindingKind.IncompatibleReagentSolvent or FindingKind.MissingQuench);
-        if (chemHigh > 0)
-            drivers.Add(new RiskDriverDto { Delta = 0.20, Label = $"{chemHigh} reactive-reagent safety finding(s) (procedure step)" });
-
-        int chemMedium = findings.Count(f => f.Kind is FindingKind.MissingSolvent or FindingKind.MissingTemperature
-            or FindingKind.AmbiguousWorkupTransition or FindingKind.EquivInconsistent);
-        if (chemMedium > 0)
-            drivers.Add(new RiskDriverDto { Delta = 0.15, Label = $"{chemMedium} chemistry completeness finding(s)" });
-
-        int textIntegrity = findings.Count(f => f.Kind is FindingKind.MalformedChemicalToken
-            or FindingKind.UnsupportedOrIncompleteClaim or FindingKind.CitationTraceabilityWeak);
-        if (textIntegrity > 0)
-            drivers.Add(new RiskDriverDto { Delta = 0.10, Label = $"{textIntegrity} text-integrity issue(s)" });
-
-        int multiScenario = findings.Count(f => f.Kind == FindingKind.MultiScenario);
-        if (multiScenario > 0)
-            drivers.Add(new RiskDriverDto { Delta = 0.0, Label = $"{multiScenario} multi-scenario regime(s) (informational)" });
-
-        int crossStep = findings.Count(f => f.Kind == FindingKind.CrossStepConditionVariation);
-        if (crossStep > 0)
-            drivers.Add(new RiskDriverDto { Delta = 0.0, Label = $"{crossStep} cross-step condition variation(s) (expected for multistep)" });
-
-        int confirmed = findings.Count(f => f.Status == ValidationStatus.Pass);
-        if (confirmed > 0)
-            drivers.Add(new RiskDriverDto { Delta = -0.10, Label = $"{confirmed} claim(s) cross-referenced and confirmed" });
-
-        bool hasStepSegmentation = findings.Any(f => f.EvidenceStepIndex.HasValue);
-        if (hasStepSegmentation)
-            drivers.Add(new RiskDriverDto { Delta = -0.05, Label = "Clear step segmentation detected" });
-
-        return drivers;
-    }
-
-    private static string ClassifySeverity(double riskScore, IReadOnlyList<ValidationFinding> findings)
-    {
-        // If every failed finding is purely text-integrity (formatting noise),
-        // cap severity at "Low" regardless of risk score.
-        bool hasFailedFindings = findings.Any(f => f.Status == ValidationStatus.Fail);
-        if (hasFailedFindings)
-        {
-            bool allTextIntegrity = findings
-                .Where(f => f.Status == ValidationStatus.Fail)
-                .All(f => f.Kind is not null && TextIntegrityKinds.Contains(f.Kind));
-
-            if (allTextIntegrity)
-                return "Low";
-        }
-
-        return riskScore switch
-        {
-            <= 0.10 => "Low",
-            <= 0.35 => "Medium",
-            <= 0.65 => "High",
-            _ => "Critical"
-        };
-    }
+        <= 0.10 => "Low",
+        <= 0.35 => "Medium",
+        <= 0.65 => "High",
+        _ => "Critical"
+    };
 
     private static string HumanizeMessage(ValidationFinding f)
     {
@@ -361,8 +295,7 @@ public static class ReportBuilder
                        .All(f => f.Status == ValidationStatus.Pass
                               || (f.Kind is not null && TextIntegrityKinds.Contains(f.Kind))
                               || f.Kind == FindingKind.NotCheckable
-                              || f.Kind == FindingKind.NotComparable
-                              || f.Kind == FindingKind.CrossStepConditionVariation);
+                              || f.Kind == FindingKind.NotComparable);
 
         if (hasOnlyTextIntegrity)
         {

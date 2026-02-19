@@ -13,18 +13,6 @@ public class NumericUnitExtractor : IClaimExtractor
         @"(?<num>-?\d+(?:\.\d+)?)\s*(?<unit>%|°?C|M|h|min|mg|mL|g|L|K|mol|mmol|kPa|atm|ppm)",
         RegexOptions.Compiled);
 
-    // Case 1: preceding text ends with a digit when the primary regex consumed '-' as negative sign
-    // e.g., "~80" preceding "-85%"
-    private static readonly Regex HyphenRangePrecedingRegex = new(
-        @"[~?]?(\d+(?:\.\d+)?)\s*$",
-        RegexOptions.Compiled);
-
-    // Case 2: preceding text ends with digit + en-dash/em-dash when the number is positive
-    // e.g., "60–" preceding "65 °C"
-    private static readonly Regex UnicodeDashRangePrecedingRegex = new(
-        @"[~?]?(\d+(?:\.\d+)?)\s*[–—]\s*$",
-        RegexOptions.Compiled);
-
     // Context labels commonly found near numeric values in chemistry text
     private static readonly Regex ContextLabelRegex = new(
         @"\b(yield|temp(?:erature)?|time|equiv|conc(?:entration)?|pressure|mass|volume|purity|conversion|selectivity|ee|dr)\b",
@@ -84,70 +72,6 @@ public class NumericUnitExtractor : IClaimExtractor
         {
             string numericPart = match.Groups["num"].Value;
             string unitPart = match.Groups["unit"].Value;
-
-            // Detect range patterns: "80-85%" (hyphen consumed by regex) or "60–65 °C" (en-dash in preceding text)
-            bool isRange = false;
-            string? rangeLowValue = null;
-            int rangePrefixLen = 0;
-
-            if (match.Index > 0)
-            {
-                string preceding = text[..match.Index];
-
-                if (numericPart.StartsWith('-'))
-                {
-                    // Case 1: "80-85%" — the hyphen '-' was consumed by the primary regex as a negative sign.
-                    // Preceding text ends with the low digit (e.g., "~80").
-                    Match pfx = HyphenRangePrecedingRegex.Match(preceding);
-                    if (pfx.Success)
-                    {
-                        isRange = true;
-                        rangeLowValue = pfx.Groups[1].Value;
-                        rangePrefixLen = pfx.Length;
-                    }
-                }
-                else
-                {
-                    // Case 2: "60–65 °C" — en-dash/em-dash is NOT a '-', so the number is positive.
-                    // Preceding text ends with the low digit + dash (e.g., "60–").
-                    Match pfx = UnicodeDashRangePrecedingRegex.Match(preceding);
-                    if (pfx.Success)
-                    {
-                        isRange = true;
-                        rangeLowValue = pfx.Groups[1].Value;
-                        rangePrefixLen = pfx.Length;
-                    }
-                }
-            }
-
-            if (isRange && rangeLowValue is not null)
-            {
-                string highValue = numericPart.StartsWith('-') ? numericPart[1..] : numericPart;
-                int rangeStart = match.Index - rangePrefixLen;
-                string rangeRaw = text[rangeStart..(match.Index + match.Length)];
-
-                string rangeContextKey = ResolveContextKey(text, rangeStart, unitPart);
-                string? rangeTimeAction = rangeContextKey == "time" ? ResolveTimeAction(text, rangeStart) : null;
-                string? rangeEntityKey = ResolveEntityKey(text, rangeStart, unitPart);
-                int? rangeStepIndex = StepSegmenter.GetStepIndex(steps, rangeStart);
-
-                string rangePayload = BuildRangeJsonPayload(rangeContextKey, rangeTimeAction, rangeLowValue, highValue);
-
-                claims.Add(new ExtractedClaim
-                {
-                    Id = Guid.NewGuid(),
-                    RunId = runId,
-                    ClaimType = ClaimType.NumericWithUnit,
-                    RawText = rangeRaw.Trim(),
-                    NormalizedValue = highValue,
-                    Unit = unitPart == "C" ? "°C" : unitPart,
-                    SourceLocator = $"AnalyzedText:{rangeStart}-{match.Index + match.Length}",
-                    JsonPayload = rangePayload,
-                    EntityKey = rangeEntityKey,
-                    StepIndex = rangeStepIndex
-                });
-                continue;
-            }
 
             // Normalize bare C ? °C for temperature
             if (unitPart == "C")
@@ -327,23 +251,6 @@ public class NumericUnitExtractor : IClaimExtractor
             || token.Equals("the", StringComparison.OrdinalIgnoreCase)
             || token.Equals("into", StringComparison.OrdinalIgnoreCase)
             || token.Equals("from", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string BuildRangeJsonPayload(string contextKey, string? timeAction, string low, string high)
-    {
-        string rangePart = $",\"rangeLow\":\"{low}\",\"rangeHigh\":\"{high}\"";
-
-        if (contextKey.Length == 0 && timeAction is null)
-        {
-            return $"{{\"rangeLow\":\"{low}\",\"rangeHigh\":\"{high}\"}}";
-        }
-
-        if (timeAction is not null)
-        {
-            return $"{{\"contextKey\":\"{contextKey}\",\"timeAction\":\"{timeAction}\"{rangePart}}}";
-        }
-
-        return $"{{\"contextKey\":\"{contextKey}\"{rangePart}}}";
     }
 }
 
