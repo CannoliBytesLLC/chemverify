@@ -1,0 +1,484 @@
+{
+  "runId": "00000000-0000-0000-0000-000000000001",
+  "riskScore": 0.225,
+  "report": {
+    "engineVersion": "NORMALIZED",
+    "ruleSetVersion": "0.2.0",
+    "policyProfileName": null,
+    "policyProfileVersion": "0.2.0",
+    "severity": "Medium",
+    "verdict": "Internal inconsistencies detected. Manual review recommended before relying on this output.",
+    "summary": "2 item(s) require attention. verification limited by incomplete cross-referencing of numeric parameters. Analysis performed on 13 extracted quantitative and citation claims.",
+    "confirmed": [
+      "Valid DOI formats detected (1)",
+      "No contradiction detected between 30 min and 45 min.",
+      "No contradiction detected between 85% and 71%."
+    ],
+    "notVerifiable": [
+      "Single-instance numeric claims (60%) \u2014 no cross-reference available"
+    ],
+    "attention": [
+      "\u274C DOI format is invalid or exceeds maximum length.",
+      "   \uD83D\uDD0E Evidence: \u0022\u2026riant was also reported (DOI: 10.1038/INVALID#DOI).\u0022, pos 500-519",
+      "\u26A0\uFE0F Multiple experimental regimes identified (78 \u00B0C, -78 \u00B0C); values may refer to different conditions.. These likely correspond to alternative reaction pathways rather than a single procedure"
+    ],
+    "nextQuestions": [
+      "Are 78 \u00B0C and -78 \u00B0C alternative routes or sequential steps?",
+      "What reagents/solvent correspond to each condition scenario?",
+      "1 DOI(s) failed format validation \u2014 are the identifiers correct?",
+      "Single-mention numeric claims could not be cross-checked \u2014 is additional data available?"
+    ],
+    "riskDrivers": [
+      {
+        "delta": 0,
+        "label": "1 multi-scenario regime(s) (informational)"
+      },
+      {
+        "delta": -0.1,
+        "label": "3 claim(s) cross-referenced and confirmed"
+      },
+      {
+        "delta": -0.05,
+        "label": "Clear step segmentation detected"
+      }
+    ]
+  },
+  "artifact": {
+    "runId": "00000000-0000-0000-0000-000000000001",
+    "run": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "createdUtc": "2000-01-01T00:00:00+00:00",
+      "status": "Completed",
+      "mode": "VerifyOnly",
+      "userId": null,
+      "modelName": "verify-only",
+      "policyProfile": "StrictChemistryV0",
+      "connectorName": null,
+      "modelVersion": null,
+      "parametersJson": null,
+      "prompt": "",
+      "inputText": "The alkylation of cyclohexanone was performed at 78 \u00B0C in DMF using NaH (60% dispersion, 1.2 equiv) as the base, followed by addition of methyl iodide (1.5 equiv) over 30 min, affording C-alkylated product in 85% yield.\r\n\r\nIn an alternative route, the enolate was generated at -78 \u00B0C in THF by treatment with LDA (1.1 equiv) for 45 min before quenching with allyl bromide (2.0 equiv), providing O-alkylated product in 71% yield (DOI: 10.1021/jo00983a045). The thermal variant was also reported (DOI: 10.1038/INVALID#DOI).",
+      "output": null,
+      "previousHash": null,
+      "currentHash": "NORMALIZED",
+      "riskScore": 0.225
+    },
+    "claims": [
+      {
+        "id": "00000000-0000-0000-0000-000000000002",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "CitationDoi",
+        "rawText": "10.1021/jo00983a045",
+        "normalizedValue": "10.1021/jo00983a045",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:434-453",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": null
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000003",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "CitationDoi",
+        "rawText": "10.1038/INVALID#DOI",
+        "normalizedValue": "10.1038/invalid#doi",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:500-519",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": null
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000004",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "78 \u00B0C",
+        "normalizedValue": "78",
+        "unit": "\u00B0C",
+        "sourceLocator": "AnalyzedText:49-54",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022temp\u0022}",
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000005",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "60%",
+        "normalizedValue": "60",
+        "unit": "%",
+        "sourceLocator": "AnalyzedText:73-76",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022conc\u0022}",
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000006",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "30 min",
+        "normalizedValue": "30",
+        "unit": "min",
+        "sourceLocator": "AnalyzedText:168-174",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022time\u0022}",
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000007",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "85%",
+        "normalizedValue": "85",
+        "unit": "%",
+        "sourceLocator": "AnalyzedText:209-212",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022yield\u0022}",
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000008",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "-78 \u00B0C",
+        "normalizedValue": "-78",
+        "unit": "\u00B0C",
+        "sourceLocator": "AnalyzedText:277-283",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022temp\u0022}",
+        "entityKey": null,
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000009",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "45 min",
+        "normalizedValue": "45",
+        "unit": "min",
+        "sourceLocator": "AnalyzedText:329-335",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022time\u0022}",
+        "entityKey": null,
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000010",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "71%",
+        "normalizedValue": "71",
+        "unit": "%",
+        "sourceLocator": "AnalyzedText:418-421",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022yield\u0022}",
+        "entityKey": null,
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000011",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "ReagentMention",
+        "rawText": "NaH",
+        "normalizedValue": "NaH",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:68-71",
+        "jsonPayload": "{\u0022role\u0022:\u0022base\u0022,\u0022token\u0022:\u0022NaH\u0022}",
+        "entityKey": "nah",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000012",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "ReagentMention",
+        "rawText": "LDA",
+        "normalizedValue": "LDA",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:309-312",
+        "jsonPayload": "{\u0022role\u0022:\u0022base\u0022,\u0022token\u0022:\u0022LDA\u0022}",
+        "entityKey": "lda",
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000013",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "SolventMention",
+        "rawText": "DMF",
+        "normalizedValue": "DMF",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:58-61",
+        "jsonPayload": "{\u0022role\u0022:\u0022solvent\u0022,\u0022token\u0022:\u0022DMF\u0022}",
+        "entityKey": "dmf",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000014",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "SolventMention",
+        "rawText": "THF",
+        "normalizedValue": "THF",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:287-290",
+        "jsonPayload": "{\u0022role\u0022:\u0022solvent\u0022,\u0022token\u0022:\u0022THF\u0022}",
+        "entityKey": "thf",
+        "stepIndex": 1
+      }
+    ],
+    "findings": [
+      {
+        "id": "00000000-0000-0000-0000-000000000015",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000002",
+        "validatorName": "DoiFormatValidator",
+        "status": "Pass",
+        "message": "DOI format is valid.",
+        "confidence": 1,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000002",
+        "kind": null,
+        "jsonPayload": null,
+        "ruleId": "DOI_FORMAT",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 434,
+        "evidenceEndOffset": 453,
+        "evidenceStepIndex": null,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026ed product in 71% yield (DOI: 10.1021/jo00983a045). The thermal variant was als\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000016",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000003",
+        "validatorName": "DoiFormatValidator",
+        "status": "Fail",
+        "message": "DOI format is invalid or exceeds maximum length.",
+        "confidence": 0.9,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000003",
+        "kind": null,
+        "jsonPayload": null,
+        "ruleId": "DOI_FORMAT",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 500,
+        "evidenceEndOffset": 519,
+        "evidenceStepIndex": null,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026riant was also reported (DOI: 10.1038/INVALID#DOI)."
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000017",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": null,
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Multiple scenarios detected (78 \u00B0C, -78 \u00B0C); values may refer to different conditions.",
+        "confidence": 0.5,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000004\u002BClaim:00000000-0000-0000-0000-000000000008",
+        "kind": "MultiScenario",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": null,
+        "evidenceEndOffset": null,
+        "evidenceStepIndex": null,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": null
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000018",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000005",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Single numeric claim for this context\u002Bunit; cannot check for contradictions.",
+        "confidence": 0.5,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000005",
+        "kind": "NotCheckable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 73,
+        "evidenceEndOffset": 76,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026ed at 78 \u00B0C in DMF using NaH (60% dispersion, 1.2 equiv) as the\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000019",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000006",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Pass",
+        "message": "No contradiction detected between 30 min and 45 min.",
+        "confidence": 0.8,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000006\u002BClaim:00000000-0000-0000-0000-000000000009",
+        "kind": null,
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 168,
+        "evidenceEndOffset": 174,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026ethyl iodide (1.5 equiv) over 30 min, affording C-alkylated produc\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000020",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000007",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Pass",
+        "message": "No contradiction detected between 85% and 71%.",
+        "confidence": 0.8,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000007\u002BClaim:00000000-0000-0000-0000-000000000010",
+        "kind": null,
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 209,
+        "evidenceEndOffset": 212,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026ording C-alkylated product in 85% yield.\r\n\r\nIn an alternative r\u2026"
+      }
+    ],
+    "artifactHash": "NORMALIZED",
+    "engineVersion": "NORMALIZED",
+    "generatedUtc": "2000-01-01T00:00:00+00:00"
+  },
+  "procedureSummary": {
+    "isProcedural": false,
+    "referencesStartOffset": null,
+    "steps": [
+      {
+        "stepIndex": 0,
+        "stepSnippet": "The alkylation of cyclohexanone was performed at 78 \u00B0C in DMF using NaH (60% dispersion, 1.2 equiv) as the base, followe\u2026",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "78 \u00B0C",
+            "normalizedValue": "78",
+            "unit": "\u00B0C",
+            "contextKey": "temp"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "60%",
+            "normalizedValue": "60",
+            "unit": "%",
+            "contextKey": "conc"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "30 min",
+            "normalizedValue": "30",
+            "unit": "min",
+            "contextKey": "time"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "85%",
+            "normalizedValue": "85",
+            "unit": "%",
+            "contextKey": "yield"
+          },
+          {
+            "claimType": "ReagentMention",
+            "rawText": "NaH",
+            "normalizedValue": "NaH",
+            "unit": null,
+            "contextKey": ""
+          },
+          {
+            "claimType": "SolventMention",
+            "rawText": "DMF",
+            "normalizedValue": "DMF",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      },
+      {
+        "stepIndex": 1,
+        "stepSnippet": "In an alternative route, the enolate was generated at -78 \u00B0C in THF by treatment with LDA (1.1 equiv) for 45 min before\u2026",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "-78 \u00B0C",
+            "normalizedValue": "-78",
+            "unit": "\u00B0C",
+            "contextKey": "temp"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "45 min",
+            "normalizedValue": "45",
+            "unit": "min",
+            "contextKey": "time"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "71%",
+            "normalizedValue": "71",
+            "unit": "%",
+            "contextKey": "yield"
+          },
+          {
+            "claimType": "ReagentMention",
+            "rawText": "LDA",
+            "normalizedValue": "LDA",
+            "unit": null,
+            "contextKey": ""
+          },
+          {
+            "claimType": "SolventMention",
+            "rawText": "THF",
+            "normalizedValue": "THF",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      },
+      {
+        "stepIndex": 2,
+        "stepSnippet": "The thermal variant was also reported (DOI: 10.1038/INVALID#DOI).",
+        "role": "Narrative",
+        "claims": []
+      }
+    ],
+    "clusters": [
+      {
+        "label": "Cluster A",
+        "signature": {
+          "temp": "78 \u00B0C",
+          "time": "30 min"
+        },
+        "stepIndexes": [
+          0
+        ]
+      },
+      {
+        "label": "Cluster B",
+        "signature": {
+          "temp": "-78 \u00B0C",
+          "time": "45 min"
+        },
+        "stepIndexes": [
+          1
+        ]
+      }
+    ],
+    "topIssues": [
+      {
+        "severity": "Low",
+        "title": "Detected 2 condition clusters",
+        "confidence": 0.1,
+        "why": [
+          "Branching language detected (e.g., \u2018alternatively\u2019, \u2018route A\u2019).",
+          "One cluster appears in only a single step."
+        ],
+        "evidence": {
+          "stepIndex": 0,
+          "snippet": "The alkylation of cyclohexanone was performed at 78 \u00B0C in DMF using NaH (60% dispersion, 1.2 equiv) as the base, followe\u2026"
+        }
+      }
+    ]
+  }
+}

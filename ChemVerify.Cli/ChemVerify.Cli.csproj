@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>chemverify</AssemblyName>
+    <RootNamespace>ChemVerify.Cli</RootNamespace>
+    <PackageId>ChemVerify.Cli</PackageId>
+    <Version>0.2.0</Version>
+    <Authors>CannoliBytes LLC</Authors>
+    <Description>Enterprise-friendly CLI for the ChemVerify scientific verification engine.</Description>
+    <RepositoryUrl>https://github.com/CannoliBytesLLC/chemverify</RepositoryUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta5.25306.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChemVerify.Abstractions\ChemVerify.Abstractions.csproj" />
+    <ProjectReference Include="..\ChemVerify.Core\ChemVerify.Core.csproj" />
+  </ItemGroup>
+</Project>

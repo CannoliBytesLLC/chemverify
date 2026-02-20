@@ -1,0 +1,3 @@
+The alkylation of cyclohexanone was performed at 78 °C in DMF using NaH (60% dispersion, 1.2 equiv) as the base, followed by addition of methyl iodide (1.5 equiv) over 30 min, affording C-alkylated product in 85% yield.
+
+In an alternative route, the enolate was generated at -78 °C in THF by treatment with LDA (1.1 equiv) for 45 min before quenching with allyl bromide (2.0 equiv), providing O-alkylated product in 71% yield (DOI: 10.1021/jo00983a045). The thermal variant was also reported (DOI: 10.1038/INVALID#DOI).

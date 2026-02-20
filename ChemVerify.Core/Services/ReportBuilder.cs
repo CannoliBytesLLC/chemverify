@@ -15,10 +15,25 @@ public static class ReportBuilder
     public static ReportDto Build(
         double riskScore,
         IReadOnlyList<ExtractedClaim> claims,
-        IReadOnlyList<ValidationFinding> findings)
+        IReadOnlyList<ValidationFinding> findings,
+        string? policyProfileName = null,
+        string? policyProfileVersion = null)
     {
+        string ruleSetVersion = EngineVersionProvider.RuleSetVersion;
+
+        // Back-fill finding-level provenance for findings not created via ValidatorBase
+        foreach (ValidationFinding f in findings)
+        {
+            f.RuleId ??= f.ValidatorName;
+            f.RuleVersion ??= ruleSetVersion;
+        }
+
         ReportDto report = new()
         {
+            EngineVersion = EngineVersionProvider.GetAssemblyVersion(),
+            RuleSetVersion = ruleSetVersion,
+            PolicyProfileName = policyProfileName,
+            PolicyProfileVersion = policyProfileVersion ?? ruleSetVersion,
             Severity = ClassifySeverity(riskScore, findings)
         };
 

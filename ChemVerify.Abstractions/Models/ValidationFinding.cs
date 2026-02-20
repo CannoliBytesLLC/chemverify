@@ -15,6 +15,10 @@ public class ValidationFinding
     public string? Kind { get; set; }
     public string? JsonPayload { get; set; }
 
+    // ── Provenance (populated by ValidatorBase / ReportBuilder) ───
+    public string? RuleId { get; set; }
+    public string? RuleVersion { get; set; }
+
     // ── Evidence span (populated post-validation) ────────────────────
     public int? EvidenceStartOffset { get; set; }
     public int? EvidenceEndOffset { get; set; }

@@ -1,10 +1,14 @@
 <Solution>
+  <Folder Name="/CLIScripts/">
+    <File Path="TestCli.ps1" />
+  </Folder>
   <Folder Name="/Docs/">
     <File Path="ARCHITECTURE_ROADMAP.md" />
     <File Path="TestPrompts.txt" />
   </Folder>
   <Project Path="ChemVerify.Abstractions/ChemVerify.Abstractions.csproj" />
   <Project Path="ChemVerify.API/ChemVerify.API.csproj" />
+  <Project Path="ChemVerify.Cli/ChemVerify.Cli.csproj" />
   <Project Path="ChemVerify.Core/ChemVerify.Core.csproj" />
   <Project Path="ChemVerify.Infrastructure/ChemVerify.Infrastructure.csproj" />
   <Project Path="ChemVerify.Tests/ChemVerify.Tests.csproj" />

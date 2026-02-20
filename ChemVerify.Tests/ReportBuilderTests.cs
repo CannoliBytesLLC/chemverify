@@ -21,13 +21,24 @@ public class ReportBuilderTests
                 Status = ValidationStatus.Fail,
                 Message = "[TEXT.MALFORMED_CHEMICAL_TOKEN] Standalone °C without numeric value.",
                 Confidence = 0.8,
-                Kind = FindingKind.MalformedChemicalToken
+                Kind = FindingKind.MalformedChemicalToken,
+                RuleId = "MALFORMED_CHEMICAL_TOKEN"
             }
         ];
 
-        var report = ReportBuilder.Build(0.10, claims, findings);
+        var report = ReportBuilder.Build(0.10, claims, findings,
+            policyProfileName: "ScientificTextV0",
+            policyProfileVersion: "2025.1");
 
         Assert.Equal("Scientific writing/format issues detected. Manual cleanup recommended.", report.Verdict);
+
+        // Provenance — report level
+        Assert.Equal("ScientificTextV0", report.PolicyProfileName);
+        Assert.Equal("2025.1", report.PolicyProfileVersion);
+
+        // Provenance — finding level (pre-populated RuleId preserved)
+        Assert.Equal("MALFORMED_CHEMICAL_TOKEN", findings[0].RuleId);
+        Assert.Equal(EngineVersionProvider.RuleSetVersion, findings[0].RuleVersion);
     }
 
     [Fact]
@@ -113,9 +124,21 @@ public class ReportBuilderTests
             }
         ];
 
-        var report = ReportBuilder.Build(0.0, claims, findings);
+        var report = ReportBuilder.Build(0.0, claims, findings,
+            policyProfileName: "StrictChemistryV0");
 
         Assert.Equal("No internal inconsistencies detected. Extracted claims are well-formed and mutually consistent.", report.Verdict);
+
+        // Provenance — report level
+        Assert.False(string.IsNullOrWhiteSpace(report.EngineVersion));
+        Assert.Equal(EngineVersionProvider.RuleSetVersion, report.RuleSetVersion);
+        Assert.Equal("StrictChemistryV0", report.PolicyProfileName);
+        Assert.Equal(EngineVersionProvider.RuleSetVersion, report.PolicyProfileVersion);
+
+        // Provenance — finding level (back-filled from ValidatorName)
+        var finding = findings[0];
+        Assert.Equal("DoiFormatValidator", finding.RuleId);
+        Assert.Equal(EngineVersionProvider.RuleSetVersion, finding.RuleVersion);
     }
 
     [Fact]

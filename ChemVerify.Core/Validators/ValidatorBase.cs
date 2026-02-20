@@ -1,3 +1,4 @@
+using ChemVerify.Abstractions;
 using ChemVerify.Abstractions.Enums;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Abstractions.Models;
@@ -88,6 +89,8 @@ public abstract class ValidatorBase : IValidator
         Kind = kind,
         EvidenceRef = evidenceRef,
         JsonPayload = jsonPayload,
+        RuleId = Metadata?.Id ?? ValidatorName,
+        RuleVersion = EngineVersionProvider.RuleSetVersion,
         EvidenceStartOffset = evidenceStartOffset,
         EvidenceEndOffset = evidenceEndOffset,
         EvidenceStepIndex = evidenceStepIndex,

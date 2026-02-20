@@ -5,6 +5,13 @@ namespace ChemVerify.Abstractions.Contracts;
 /// </summary>
 public class ReportDto
 {
+    // ── Provenance ──────────────────────────────────────────────────
+    public string EngineVersion { get; set; } = string.Empty;
+    public string RuleSetVersion { get; set; } = string.Empty;
+    public string? PolicyProfileName { get; set; }
+    public string? PolicyProfileVersion { get; set; }
+
+    // ── Report body ─────────────────────────────────────────────────
     public string Severity { get; set; } = string.Empty;
     public string Verdict { get; set; } = string.Empty;
     public string Summary { get; set; } = string.Empty;

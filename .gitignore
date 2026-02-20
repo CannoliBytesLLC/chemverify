@@ -361,4 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/TestCli.ps1
+
+# ChemVerify CLI test outputs
+out/

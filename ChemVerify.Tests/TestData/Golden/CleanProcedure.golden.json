@@ -1,0 +1,859 @@
+{
+  "runId": "00000000-0000-0000-0000-000000000001",
+  "riskScore": 0.04666666666666667,
+  "report": {
+    "engineVersion": "NORMALIZED",
+    "ruleSetVersion": "0.2.0",
+    "policyProfileName": null,
+    "policyProfileVersion": "0.2.0",
+    "severity": "Low",
+    "verdict": "Scientific writing/format issues detected. Manual cleanup recommended.",
+    "summary": "1 item(s) require attention. verification limited by incomplete cross-referencing of numeric parameters. Analysis performed on 23 extracted quantitative and citation claims.",
+    "confirmed": [
+      "Valid DOI formats detected (1)"
+    ],
+    "notVerifiable": [
+      "Single-instance numeric claims (12 h, 1.70 g, 92%) \u2014 no cross-reference available"
+    ],
+    "attention": [
+      "\u2139\uFE0F Multiple distinct temp values observed across steps (80 \u00B0C, 4C); expected for multistep synthesis."
+    ],
+    "nextQuestions": [
+      "Single-mention numeric claims could not be cross-checked \u2014 is additional data available?"
+    ],
+    "riskDrivers": [
+      {
+        "delta": 0,
+        "label": "1 cross-step condition variation(s) (expected for multistep)"
+      },
+      {
+        "delta": -0.1,
+        "label": "1 claim(s) cross-referenced and confirmed"
+      },
+      {
+        "delta": -0.05,
+        "label": "Clear step segmentation detected"
+      }
+    ]
+  },
+  "artifact": {
+    "runId": "00000000-0000-0000-0000-000000000001",
+    "run": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "createdUtc": "2000-01-01T00:00:00+00:00",
+      "status": "Completed",
+      "mode": "VerifyOnly",
+      "userId": null,
+      "modelName": "verify-only",
+      "policyProfile": "StrictChemistryV0",
+      "connectorName": null,
+      "modelVersion": null,
+      "parametersJson": null,
+      "prompt": "",
+      "inputText": "To a solution of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixture was heated to 80 \u00B0C under nitrogen for 12 h. The reaction was quenched with saturated NH4Cl (10 mL) and extracted with ethyl acetate (3 \u00D7 15 mL). The combined organic phases were dried over Na2SO4 and concentrated under reduced pressure. Purification by column chromatography (hexanes/EtOAc 9:1) afforded 4-methoxybiphenyl (1.70 g, 92% yield) as a white solid (DOI: 10.1021/ja00269a018).",
+      "output": null,
+      "previousHash": null,
+      "currentHash": "NORMALIZED",
+      "riskScore": 0.04666666666666667
+    },
+    "claims": [
+      {
+        "id": "00000000-0000-0000-0000-000000000002",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "CitationDoi",
+        "rawText": "10.1021/ja00269a018",
+        "normalizedValue": "10.1021/ja00269a018",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:532-551",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": null
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000003",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "1.87 g",
+        "normalizedValue": "1.87",
+        "unit": "g",
+        "sourceLocator": "AnalyzedText:33-39",
+        "jsonPayload": null,
+        "entityKey": "to",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000004",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "10 mmol",
+        "normalizedValue": "10",
+        "unit": "mmol",
+        "sourceLocator": "AnalyzedText:41-48",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000005",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "1.34 g",
+        "normalizedValue": "1.34",
+        "unit": "g",
+        "sourceLocator": "AnalyzedText:74-80",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000006",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "11 mmol",
+        "normalizedValue": "11",
+        "unit": "mmol",
+        "sourceLocator": "AnalyzedText:82-89",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000007",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "20 mL",
+        "normalizedValue": "20",
+        "unit": "mL",
+        "sourceLocator": "AnalyzedText:99-104",
+        "jsonPayload": null,
+        "entityKey": "thf",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000008",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "0.23 g",
+        "normalizedValue": "0.23",
+        "unit": "g",
+        "sourceLocator": "AnalyzedText:127-133",
+        "jsonPayload": null,
+        "entityKey": "pph3",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000009",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "0.2 mmol",
+        "normalizedValue": "0.2",
+        "unit": "mmol",
+        "sourceLocator": "AnalyzedText:135-143",
+        "jsonPayload": null,
+        "entityKey": "pph3",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000010",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "2 mol",
+        "normalizedValue": "2",
+        "unit": "mol",
+        "sourceLocator": "AnalyzedText:145-150",
+        "jsonPayload": null,
+        "entityKey": "pph3",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000011",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "80 \u00B0C",
+        "normalizedValue": "80",
+        "unit": "\u00B0C",
+        "sourceLocator": "AnalyzedText:180-185",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022temp\u0022}",
+        "entityKey": null,
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000012",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "12 h",
+        "normalizedValue": "12",
+        "unit": "h",
+        "sourceLocator": "AnalyzedText:205-209",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022time\u0022,\u0022timeAction\u0022:\u0022heat\u0022}",
+        "entityKey": null,
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000013",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "4C",
+        "normalizedValue": "4",
+        "unit": "\u00B0C",
+        "sourceLocator": "AnalyzedText:254-256",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022temp\u0022}",
+        "entityKey": null,
+        "stepIndex": 2
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000014",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "10 mL",
+        "normalizedValue": "10",
+        "unit": "mL",
+        "sourceLocator": "AnalyzedText:259-264",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": 2
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000015",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "15 mL",
+        "normalizedValue": "15",
+        "unit": "mL",
+        "sourceLocator": "AnalyzedText:304-309",
+        "jsonPayload": null,
+        "entityKey": "acetate",
+        "stepIndex": 2
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000016",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "1.70 g",
+        "normalizedValue": "1.70",
+        "unit": "g",
+        "sourceLocator": "AnalyzedText:490-496",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022yield\u0022}",
+        "entityKey": null,
+        "stepIndex": 4
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000017",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "92%",
+        "normalizedValue": "92",
+        "unit": "%",
+        "sourceLocator": "AnalyzedText:498-501",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022yield\u0022}",
+        "entityKey": null,
+        "stepIndex": 4
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000018",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "ReagentMention",
+        "rawText": "Pd(PPh3)4",
+        "normalizedValue": "Pd(PPh3)4",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:116-125",
+        "jsonPayload": "{\u0022role\u0022:\u0022catalyst\u0022,\u0022token\u0022:\u0022Pd(PPh3)4\u0022}",
+        "entityKey": "pd(pph3)4",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000019",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "SolventMention",
+        "rawText": "THF",
+        "normalizedValue": "THF",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:94-97",
+        "jsonPayload": "{\u0022role\u0022:\u0022solvent\u0022,\u0022token\u0022:\u0022THF\u0022}",
+        "entityKey": "thf",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000020",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "SolventMention",
+        "rawText": "ethyl acetate",
+        "normalizedValue": "ethyl acetate",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:285-298",
+        "jsonPayload": "{\u0022role\u0022:\u0022solvent\u0022,\u0022token\u0022:\u0022ethyl acetate\u0022}",
+        "entityKey": "ethyl acetate",
+        "stepIndex": 2
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000021",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "SolventMention",
+        "rawText": "hexanes",
+        "normalizedValue": "hexanes",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:443-450",
+        "jsonPayload": "{\u0022role\u0022:\u0022solvent\u0022,\u0022token\u0022:\u0022hexanes\u0022}",
+        "entityKey": "hexanes",
+        "stepIndex": 4
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000022",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "SolventMention",
+        "rawText": "EtOAc",
+        "normalizedValue": "EtOAc",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:451-456",
+        "jsonPayload": "{\u0022role\u0022:\u0022solvent\u0022,\u0022token\u0022:\u0022EtOAc\u0022}",
+        "entityKey": "etoac",
+        "stepIndex": 4
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000023",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "AtmosphereCondition",
+        "rawText": "under nitrogen",
+        "normalizedValue": "nitrogen",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:186-200",
+        "jsonPayload": "{\u0022role\u0022:\u0022atmosphere\u0022,\u0022token\u0022:\u0022under nitrogen\u0022}",
+        "entityKey": "nitrogen",
+        "stepIndex": 1
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000024",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "DrynessCondition",
+        "rawText": "dried",
+        "normalizedValue": "dried",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:345-350",
+        "jsonPayload": "{\u0022role\u0022:\u0022dryness\u0022,\u0022token\u0022:\u0022dried\u0022}",
+        "entityKey": "dried",
+        "stepIndex": 3
+      }
+    ],
+    "findings": [
+      {
+        "id": "00000000-0000-0000-0000-000000000025",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000002",
+        "validatorName": "DoiFormatValidator",
+        "status": "Pass",
+        "message": "DOI format is valid.",
+        "confidence": 1,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000002",
+        "kind": null,
+        "jsonPayload": null,
+        "ruleId": "DOI_FORMAT",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 532,
+        "evidenceEndOffset": 551,
+        "evidenceStepIndex": null,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026yield) as a white solid (DOI: 10.1021/ja00269a018)."
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000026",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000003",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (1.87 g) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000003",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 33,
+        "evidenceEndOffset": 39,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": "to",
+        "evidenceSnippet": "\u2026a solution of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic a\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000027",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000004",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (10 mmol) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000004",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 41,
+        "evidenceEndOffset": 48,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026on of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic acid (1.34\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000028",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000005",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (1.34 g) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000005",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 74,
+        "evidenceEndOffset": 80,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was \u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000029",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000006",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (11 mmol) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000006",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 82,
+        "evidenceEndOffset": 89,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026d phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000030",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000007",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (20 mL) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000007",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 99,
+        "evidenceEndOffset": 104,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": "thf",
+        "evidenceSnippet": "\u2026cid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(PPh3)4 (0.23 g,\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000031",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000008",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (0.23 g) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000008",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 127,
+        "evidenceEndOffset": 133,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": "pph3",
+        "evidenceSnippet": "\u2026 (20 mL) was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixtu\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000032",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000009",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (0.2 mmol) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000009",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 135,
+        "evidenceEndOffset": 143,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": "pph3",
+        "evidenceSnippet": "\u2026 was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixture was hea\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000033",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000010",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (2 mol) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000010",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 145,
+        "evidenceEndOffset": 150,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": "pph3",
+        "evidenceSnippet": "\u2026 Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixture was heated to \u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000034",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000014",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (10 mL) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000014",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 259,
+        "evidenceEndOffset": 264,
+        "evidenceStepIndex": 2,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026uenched with saturated NH4Cl (10 mL) and extracted with ethyl ace\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000035",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000015",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Numeric claim (15 mL) has no comparable context; skipped for contradiction checking.",
+        "confidence": 0.3,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000015",
+        "kind": "NotComparable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 304,
+        "evidenceEndOffset": 309,
+        "evidenceStepIndex": 2,
+        "evidenceEntityKey": "acetate",
+        "evidenceSnippet": "\u2026acted with ethyl acetate (3 \u00D7 15 mL). The combined organic phases\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000036",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": null,
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Multiple distinct temp values observed across steps (80 \u00B0C, 4C); expected for multistep synthesis.",
+        "confidence": 0.4,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000011\u002BClaim:00000000-0000-0000-0000-000000000013",
+        "kind": "CrossStepConditionVariation",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": null,
+        "evidenceEndOffset": null,
+        "evidenceStepIndex": null,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": null
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000037",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000012",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Single numeric claim for this context\u002Bunit; cannot check for contradictions.",
+        "confidence": 0.5,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000012",
+        "kind": "NotCheckable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 205,
+        "evidenceEndOffset": 209,
+        "evidenceStepIndex": 1,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026d to 80 \u00B0C under nitrogen for 12 h. The reaction was quenched wi\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000038",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000016",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Single numeric claim for this context\u002Bunit; cannot check for contradictions.",
+        "confidence": 0.5,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000016",
+        "kind": "NotCheckable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 490,
+        "evidenceEndOffset": 496,
+        "evidenceStepIndex": 4,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026) afforded 4-methoxybiphenyl (1.70 g, 92% yield) as a white solid \u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000039",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000017",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Unverified",
+        "message": "Single numeric claim for this context\u002Bunit; cannot check for contradictions.",
+        "confidence": 0.5,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000017",
+        "kind": "NotCheckable",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 498,
+        "evidenceEndOffset": 501,
+        "evidenceStepIndex": 4,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026ed 4-methoxybiphenyl (1.70 g, 92% yield) as a white solid (DOI:\u2026"
+      }
+    ],
+    "artifactHash": "NORMALIZED",
+    "engineVersion": "NORMALIZED",
+    "generatedUtc": "2000-01-01T00:00:00+00:00"
+  },
+  "procedureSummary": {
+    "isProcedural": true,
+    "referencesStartOffset": null,
+    "steps": [
+      {
+        "stepIndex": 0,
+        "stepSnippet": "To a solution of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(P\u2026",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "1.87 g",
+            "normalizedValue": "1.87",
+            "unit": "g",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "10 mmol",
+            "normalizedValue": "10",
+            "unit": "mmol",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "1.34 g",
+            "normalizedValue": "1.34",
+            "unit": "g",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "11 mmol",
+            "normalizedValue": "11",
+            "unit": "mmol",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "20 mL",
+            "normalizedValue": "20",
+            "unit": "mL",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "0.23 g",
+            "normalizedValue": "0.23",
+            "unit": "g",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "0.2 mmol",
+            "normalizedValue": "0.2",
+            "unit": "mmol",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "2 mol",
+            "normalizedValue": "2",
+            "unit": "mol",
+            "contextKey": ""
+          },
+          {
+            "claimType": "ReagentMention",
+            "rawText": "Pd(PPh3)4",
+            "normalizedValue": "Pd(PPh3)4",
+            "unit": null,
+            "contextKey": ""
+          },
+          {
+            "claimType": "SolventMention",
+            "rawText": "THF",
+            "normalizedValue": "THF",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      },
+      {
+        "stepIndex": 1,
+        "stepSnippet": "The mixture was heated to 80 \u00B0C under nitrogen for 12 h.",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "80 \u00B0C",
+            "normalizedValue": "80",
+            "unit": "\u00B0C",
+            "contextKey": "temp"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "12 h",
+            "normalizedValue": "12",
+            "unit": "h",
+            "contextKey": "time"
+          },
+          {
+            "claimType": "AtmosphereCondition",
+            "rawText": "under nitrogen",
+            "normalizedValue": "nitrogen",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      },
+      {
+        "stepIndex": 2,
+        "stepSnippet": "The reaction was quenched with saturated NH4Cl (10 mL) and extracted with ethyl acetate (3 \u00D7 15 mL).",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "4C",
+            "normalizedValue": "4",
+            "unit": "\u00B0C",
+            "contextKey": "temp"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "10 mL",
+            "normalizedValue": "10",
+            "unit": "mL",
+            "contextKey": ""
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "15 mL",
+            "normalizedValue": "15",
+            "unit": "mL",
+            "contextKey": ""
+          },
+          {
+            "claimType": "SolventMention",
+            "rawText": "ethyl acetate",
+            "normalizedValue": "ethyl acetate",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      },
+      {
+        "stepIndex": 3,
+        "stepSnippet": "The combined organic phases were dried over Na2SO4 and concentrated under reduced pressure.",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "DrynessCondition",
+            "rawText": "dried",
+            "normalizedValue": "dried",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      },
+      {
+        "stepIndex": 4,
+        "stepSnippet": "Purification by column chromatography (hexanes/EtOAc 9:1) afforded 4-methoxybiphenyl (1.70 g, 92% yield) as a white soli\u2026",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "1.70 g",
+            "normalizedValue": "1.70",
+            "unit": "g",
+            "contextKey": "yield"
+          },
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "92%",
+            "normalizedValue": "92",
+            "unit": "%",
+            "contextKey": "yield"
+          },
+          {
+            "claimType": "SolventMention",
+            "rawText": "hexanes",
+            "normalizedValue": "hexanes",
+            "unit": null,
+            "contextKey": ""
+          },
+          {
+            "claimType": "SolventMention",
+            "rawText": "EtOAc",
+            "normalizedValue": "EtOAc",
+            "unit": null,
+            "contextKey": ""
+          }
+        ]
+      }
+    ],
+    "clusters": [
+      {
+        "label": "Cluster A",
+        "signature": {
+          "temp": "80 \u00B0C",
+          "time": "12 h"
+        },
+        "stepIndexes": [
+          1
+        ]
+      },
+      {
+        "label": "Cluster B",
+        "signature": {
+          "temp": "4C"
+        },
+        "stepIndexes": [
+          2
+        ]
+      }
+    ],
+    "topIssues": [
+      {
+        "severity": "Medium",
+        "title": "Detected 2 condition clusters",
+        "confidence": 0.5,
+        "why": [
+          "Text is procedural (lab-action verbs or \u22654 steps).",
+          "One cluster appears in only a single step."
+        ],
+        "evidence": {
+          "stepIndex": 1,
+          "snippet": "The mixture was heated to 80 \u00B0C under nitrogen for 12 h."
+        }
+      }
+    ]
+  }
+}

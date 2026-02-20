@@ -22,8 +22,14 @@
   <ItemGroup>
     <ProjectReference Include="..\ChemVerify.Abstractions\ChemVerify.Abstractions.csproj" />
     <ProjectReference Include="..\ChemVerify.API\ChemVerify.API.csproj" />
+    <ProjectReference Include="..\ChemVerify.Cli\ChemVerify.Cli.csproj" />
     <ProjectReference Include="..\ChemVerify.Core\ChemVerify.Core.csproj" />
     <ProjectReference Include="..\ChemVerify.Infrastructure\ChemVerify.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <!-- Golden regression test fixtures (input text + expected output) -->
+  <ItemGroup>
+    <None Include="TestData\**\*" />
   </ItemGroup>
 
 </Project>

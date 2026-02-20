@@ -1,0 +1,180 @@
+{
+  "runId": "00000000-0000-0000-0000-000000000001",
+  "riskScore": 0.5,
+  "report": {
+    "engineVersion": "NORMALIZED",
+    "ruleSetVersion": "0.2.0",
+    "policyProfileName": null,
+    "policyProfileVersion": "0.2.0",
+    "severity": "High",
+    "verdict": "Internal inconsistencies detected. Manual review recommended before relying on this output.",
+    "summary": "1 item(s) require attention. Analysis performed on 3 extracted quantitative and citation claims.",
+    "confirmed": [
+      "Valid DOI formats detected (1)"
+    ],
+    "notVerifiable": [],
+    "attention": [
+      "\u274C Contradiction detected: 82% vs 15%.",
+      "   \uD83D\uDD0E Evidence: \u0022The product was isolated in 82% yield after column chromatogr\u2026\u0022, pos 28-31, step 0"
+    ],
+    "nextQuestions": [],
+    "riskDrivers": [
+      {
+        "delta": 0.35,
+        "label": "1 unresolved contradiction(s) (same-step)"
+      },
+      {
+        "delta": -0.1,
+        "label": "1 claim(s) cross-referenced and confirmed"
+      },
+      {
+        "delta": -0.05,
+        "label": "Clear step segmentation detected"
+      }
+    ]
+  },
+  "artifact": {
+    "runId": "00000000-0000-0000-0000-000000000001",
+    "run": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "createdUtc": "2000-01-01T00:00:00+00:00",
+      "status": "Completed",
+      "mode": "VerifyOnly",
+      "userId": null,
+      "modelName": "verify-only",
+      "policyProfile": "StrictChemistryV0",
+      "connectorName": null,
+      "modelVersion": null,
+      "parametersJson": null,
+      "prompt": "",
+      "inputText": "The product was isolated in 82% yield after column chromatography (DOI: 10.1021/ja00269a018). The overall yield of the process was 15%.",
+      "output": null,
+      "previousHash": null,
+      "currentHash": "NORMALIZED",
+      "riskScore": 0.5
+    },
+    "claims": [
+      {
+        "id": "00000000-0000-0000-0000-000000000002",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "CitationDoi",
+        "rawText": "10.1021/ja00269a018",
+        "normalizedValue": "10.1021/ja00269a018",
+        "unit": null,
+        "sourceLocator": "AnalyzedText:72-91",
+        "jsonPayload": null,
+        "entityKey": null,
+        "stepIndex": null
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000003",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "82%",
+        "normalizedValue": "82",
+        "unit": "%",
+        "sourceLocator": "AnalyzedText:28-31",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022yield\u0022}",
+        "entityKey": null,
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000004",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
+        "rawText": "15%",
+        "normalizedValue": "15",
+        "unit": "%",
+        "sourceLocator": "AnalyzedText:131-134",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022yield\u0022}",
+        "entityKey": null,
+        "stepIndex": 2
+      }
+    ],
+    "findings": [
+      {
+        "id": "00000000-0000-0000-0000-000000000005",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000002",
+        "validatorName": "DoiFormatValidator",
+        "status": "Pass",
+        "message": "DOI format is valid.",
+        "confidence": 1,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000002",
+        "kind": null,
+        "jsonPayload": null,
+        "ruleId": "DOI_FORMAT",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 72,
+        "evidenceEndOffset": 91,
+        "evidenceStepIndex": null,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026r column chromatography (DOI: 10.1021/ja00269a018). The overall yield of the pr\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000006",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000003",
+        "validatorName": "NumericContradictionValidator",
+        "status": "Fail",
+        "message": "Possible contradiction: 82% vs 15%.",
+        "confidence": 0.7,
+        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000003\u002BClaim:00000000-0000-0000-0000-000000000004",
+        "kind": "Contradiction",
+        "jsonPayload": null,
+        "ruleId": "NumericContradictionValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 28,
+        "evidenceEndOffset": 31,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "The product was isolated in 82% yield after column chromatogr\u2026"
+      }
+    ],
+    "artifactHash": "NORMALIZED",
+    "engineVersion": "NORMALIZED",
+    "generatedUtc": "2000-01-01T00:00:00+00:00"
+  },
+  "procedureSummary": {
+    "isProcedural": false,
+    "referencesStartOffset": null,
+    "steps": [
+      {
+        "stepIndex": 0,
+        "stepSnippet": "The product was isolated in 82% yield",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "82%",
+            "normalizedValue": "82",
+            "unit": "%",
+            "contextKey": "yield"
+          }
+        ]
+      },
+      {
+        "stepIndex": 1,
+        "stepSnippet": "column chromatography (DOI: 10.1021/ja00269a018).",
+        "role": "Narrative",
+        "claims": []
+      },
+      {
+        "stepIndex": 2,
+        "stepSnippet": "The overall yield of the process was 15%.",
+        "role": "Procedure",
+        "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "15%",
+            "normalizedValue": "15",
+            "unit": "%",
+            "contextKey": "yield"
+          }
+        ]
+      }
+    ],
+    "clusters": [],
+    "topIssues": []
+  }
+}
