@@ -51,10 +51,30 @@ public class ReagentRoleExtractor : IClaimExtractor
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     // ── Atmosphere patterns ──────────────────────────────────────────────
+    // Require contextual prepositions (under, in, purged with, etc.) for bare gas names
+    // to avoid false positives on structural descriptors like "nitrogen-containing".
+    // Accepts both ASCII (N2) and Unicode subscript (N₂) forms.
+    // The trailing boundary uses (?:\b|(?<=₂)) because \b doesn't fire after
+    // Unicode subscript digits (U+2082 is not in the \w class).
     private static readonly Regex AtmosphereRegex = new(
-        @"\b((?:under\s+)?(?:N2|nitrogen|argon|Ar|inert\s+atmosphere|inert\s+gas)|"
-        + @"(?:in|under)\s+(?:an?\s+)?(?:atmosphere\s+of\s+)?(?:nitrogen|argon|N2|Ar)|"
-        + @"(?:open\s+to\s+)?air)\b",
+        @"\b((?:under|in|purged\s+with|flushed\s+with|degassed\s+with|blanketed\s+with|sparged\s+with|atmosphere\s+of)\s+(?:an?\s+)?(?:N[2₂]|nitrogen|argon|Ar|hydrogen|H[2₂]|inert\s+(?:atmosphere|gas))|"
+        + @"(?:under\s+)?(?:an?\s+)?(?:hydrogen|H[2₂])\s+balloon|"
+        + @"inert\s+atmosphere|inert\s+gas|"
+        + @"(?:open\s+to\s+)?air)(?:\b|(?<=[₂]))",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Characters after a gas-name match that indicate structural/descriptor usage, not atmosphere
+    private static readonly Regex StructuralSuffixRegex = new(
+        @"\G[-‑](containing|based|rich|bearing|doped|bridged|functionali[sz])",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // ── Symbolic temperature patterns ─────────────────────────────────────
+    // These represent temperature conditions specified non-numerically.
+    // Emitted as SymbolicTemperature claims with contextKey "temp" so that
+    // downstream validators (e.g. MissingTemperatureWhenImpliedValidator)
+    // see them as satisfied temperature specifications.
+    private static readonly Regex SymbolicTemperatureRegex = new(
+        @"\b(room\s*temp(?:erature)?|ambient\s*temp(?:erature)?|at\s+ambient|(?<!heated\s+to\s)reflux(?:ed|ing)?|(?:at|kept\s+at|under)\s+reflux|ice[\s-](?:bath|water\s+bath)|rt)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     // ── Dryness patterns ─────────────────────────────────────────────────
@@ -107,9 +127,18 @@ public class ReagentRoleExtractor : IClaimExtractor
             });
         }
 
-        // Atmosphere
+        // Atmosphere (with context-gating to reject structural descriptors)
         foreach (Match m in AtmosphereRegex.Matches(text))
         {
+            // Reject if the match is immediately followed by a structural suffix
+            // (e.g. "nitrogen-containing", "nitrogen-based")
+            int afterMatch = m.Index + m.Length;
+            if (afterMatch < text.Length
+                && StructuralSuffixRegex.IsMatch(text, afterMatch))
+            {
+                continue;
+            }
+
             string token = m.Value.Trim();
             claims.Add(new ExtractedClaim
             {
@@ -121,6 +150,25 @@ public class ReagentRoleExtractor : IClaimExtractor
                 SourceLocator = $"AnalyzedText:{m.Index}-{m.Index + m.Length}",
                 JsonPayload = $"{{\"role\":\"atmosphere\",\"token\":\"{EscapeJson(token)}\"}}",
                 EntityKey = NormalizeAtmosphere(token),
+                StepIndex = StepSegmenter.GetStepIndex(steps, m.Index)
+            });
+        }
+
+        // Symbolic temperatures (RT, ambient, reflux, ice bath)
+        foreach (Match m in SymbolicTemperatureRegex.Matches(text))
+        {
+            string token = m.Value.Trim();
+            string normalized = NormalizeSymbolicTemp(token);
+            claims.Add(new ExtractedClaim
+            {
+                Id = Guid.NewGuid(),
+                RunId = runId,
+                ClaimType = ClaimType.SymbolicTemperature,
+                RawText = token,
+                NormalizedValue = normalized,
+                SourceLocator = $"AnalyzedText:{m.Index}-{m.Index + m.Length}",
+                JsonPayload = $"{{\"contextKey\":\"temp\",\"symbolic\":\"{EscapeJson(normalized)}\"}}",
+                EntityKey = normalized,
                 StepIndex = StepSegmenter.GetStepIndex(steps, m.Index)
             });
         }
@@ -150,8 +198,17 @@ public class ReagentRoleExtractor : IClaimExtractor
     {
         string lower = token.ToLowerInvariant();
         if (lower.Contains("air")) return "air";
+        if (lower.Contains("hydrogen") || lower.Contains("h2") || lower.Contains("h₂")) return "hydrogen";
         if (lower.Contains("argon") || lower.Contains("ar")) return "argon";
         return "nitrogen";
+    }
+
+    private static string NormalizeSymbolicTemp(string token)
+    {
+        string lower = token.ToLowerInvariant();
+        if (lower.Contains("reflux")) return "reflux";
+        if (lower.Contains("ice")) return "ice_bath";
+        return "rt";
     }
 
     private static string EscapeJson(string s) =>

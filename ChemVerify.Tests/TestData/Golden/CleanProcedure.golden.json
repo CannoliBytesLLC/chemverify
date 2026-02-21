@@ -1,6 +1,6 @@
 {
   "runId": "00000000-0000-0000-0000-000000000001",
-  "riskScore": 0.04666666666666667,
+  "riskScore": 0.0411764705882353,
   "report": {
     "engineVersion": "NORMALIZED",
     "ruleSetVersion": "0.2.0",
@@ -10,7 +10,9 @@
     "verdict": "Scientific writing/format issues detected. Manual cleanup recommended.",
     "summary": "1 item(s) require attention. verification limited by incomplete cross-referencing of numeric parameters. Analysis performed on 23 extracted quantitative and citation claims.",
     "confirmed": [
-      "Valid DOI formats detected (1)"
+      "Valid DOI formats detected (1)",
+      "[CHEM.MW_CONSISTENT] 1.34 g: 1.34 g / 11 mmol \u2192 implied MW 121.8 g/mol (plausible).",
+      "[CHEM.MW_CONSISTENT] pph3: 0.23 g / 0.2 mmol \u2192 implied MW 1150.0 g/mol (plausible)."
     ],
     "notVerifiable": [
       "Single-instance numeric claims (12 h, 1.70 g, 92%) \u2014 no cross-reference available"
@@ -28,7 +30,7 @@
       },
       {
         "delta": -0.1,
-        "label": "1 claim(s) cross-referenced and confirmed"
+        "label": "3 claim(s) cross-referenced and confirmed"
       },
       {
         "delta": -0.05,
@@ -54,7 +56,7 @@
       "output": null,
       "previousHash": null,
       "currentHash": "NORMALIZED",
-      "riskScore": 0.04666666666666667
+      "riskScore": 0.0411764705882353
     },
     "claims": [
       {
@@ -357,6 +359,44 @@
       {
         "id": "00000000-0000-0000-0000-000000000026",
         "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000005",
+        "validatorName": "MwConsistencyValidator",
+        "status": "Pass",
+        "message": "[CHEM.MW_CONSISTENT] 1.34 g: 1.34 g / 11 mmol \u2192 implied MW 121.8 g/mol (plausible).",
+        "confidence": 0.75,
+        "evidenceRef": null,
+        "kind": "MwConsistent",
+        "jsonPayload": "{\u0022entity\u0022:\u00221.34 g\u0022,\u0022massG\u0022:1.3400,\u0022mmol\u0022:11,\u0022impliedMw\u0022:121.8}",
+        "ruleId": "MwConsistencyValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 74,
+        "evidenceEndOffset": 80,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": null,
+        "evidenceSnippet": "\u2026mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was \u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000027",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimId": "00000000-0000-0000-0000-000000000008",
+        "validatorName": "MwConsistencyValidator",
+        "status": "Pass",
+        "message": "[CHEM.MW_CONSISTENT] pph3: 0.23 g / 0.2 mmol \u2192 implied MW 1150.0 g/mol (plausible).",
+        "confidence": 0.75,
+        "evidenceRef": null,
+        "kind": "MwConsistent",
+        "jsonPayload": "{\u0022entity\u0022:\u0022pph3\u0022,\u0022massG\u0022:0.2300,\u0022mmol\u0022:0.2,\u0022impliedMw\u0022:1150.0}",
+        "ruleId": "MwConsistencyValidator",
+        "ruleVersion": "0.2.0",
+        "evidenceStartOffset": 127,
+        "evidenceEndOffset": 133,
+        "evidenceStepIndex": 0,
+        "evidenceEntityKey": "pph3",
+        "evidenceSnippet": "\u2026 (20 mL) was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixtu\u2026"
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000028",
+        "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000003",
         "validatorName": "NumericContradictionValidator",
         "status": "Unverified",
@@ -374,7 +414,7 @@
         "evidenceSnippet": "\u2026a solution of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic a\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000027",
+        "id": "00000000-0000-0000-0000-000000000029",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000004",
         "validatorName": "NumericContradictionValidator",
@@ -393,7 +433,7 @@
         "evidenceSnippet": "\u2026on of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic acid (1.34\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000028",
+        "id": "00000000-0000-0000-0000-000000000030",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000005",
         "validatorName": "NumericContradictionValidator",
@@ -412,7 +452,7 @@
         "evidenceSnippet": "\u2026mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was \u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000029",
+        "id": "00000000-0000-0000-0000-000000000031",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000006",
         "validatorName": "NumericContradictionValidator",
@@ -431,7 +471,7 @@
         "evidenceSnippet": "\u2026d phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000030",
+        "id": "00000000-0000-0000-0000-000000000032",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000007",
         "validatorName": "NumericContradictionValidator",
@@ -450,7 +490,7 @@
         "evidenceSnippet": "\u2026cid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(PPh3)4 (0.23 g,\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000031",
+        "id": "00000000-0000-0000-0000-000000000033",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000008",
         "validatorName": "NumericContradictionValidator",
@@ -469,7 +509,7 @@
         "evidenceSnippet": "\u2026 (20 mL) was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixtu\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000032",
+        "id": "00000000-0000-0000-0000-000000000034",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000009",
         "validatorName": "NumericContradictionValidator",
@@ -488,7 +528,7 @@
         "evidenceSnippet": "\u2026 was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixture was hea\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000033",
+        "id": "00000000-0000-0000-0000-000000000035",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000010",
         "validatorName": "NumericContradictionValidator",
@@ -507,7 +547,7 @@
         "evidenceSnippet": "\u2026 Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixture was heated to \u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000034",
+        "id": "00000000-0000-0000-0000-000000000036",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000014",
         "validatorName": "NumericContradictionValidator",
@@ -526,7 +566,7 @@
         "evidenceSnippet": "\u2026uenched with saturated NH4Cl (10 mL) and extracted with ethyl ace\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000035",
+        "id": "00000000-0000-0000-0000-000000000037",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000015",
         "validatorName": "NumericContradictionValidator",
@@ -545,7 +585,7 @@
         "evidenceSnippet": "\u2026acted with ethyl acetate (3 \u00D7 15 mL). The combined organic phases\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000036",
+        "id": "00000000-0000-0000-0000-000000000038",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": null,
         "validatorName": "NumericContradictionValidator",
@@ -564,7 +604,7 @@
         "evidenceSnippet": null
       },
       {
-        "id": "00000000-0000-0000-0000-000000000037",
+        "id": "00000000-0000-0000-0000-000000000039",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000012",
         "validatorName": "NumericContradictionValidator",
@@ -583,7 +623,7 @@
         "evidenceSnippet": "\u2026d to 80 \u00B0C under nitrogen for 12 h. The reaction was quenched wi\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000038",
+        "id": "00000000-0000-0000-0000-000000000040",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000016",
         "validatorName": "NumericContradictionValidator",
@@ -602,7 +642,7 @@
         "evidenceSnippet": "\u2026) afforded 4-methoxybiphenyl (1.70 g, 92% yield) as a white solid \u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000039",
+        "id": "00000000-0000-0000-0000-000000000041",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000017",
         "validatorName": "NumericContradictionValidator",

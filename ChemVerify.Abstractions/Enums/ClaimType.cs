@@ -8,5 +8,6 @@ public enum ClaimType
     ReagentMention,
     SolventMention,
     AtmosphereCondition,
-    DrynessCondition
+    DrynessCondition,
+    SymbolicTemperature
 }

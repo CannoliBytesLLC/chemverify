@@ -12,6 +12,8 @@ namespace ChemVerify.Core.Validators;
 /// and later steps introduce aqueous/protic media (water, brine, H2O) without
 /// explicit workup/quench/extraction language, emit a
 /// <see cref="FindingKind.AmbiguousWorkupTransition"/> warning.
+/// Only Procedure-classified steps are checked for workup transitions and
+/// aqueous media to avoid narrative contamination.
 /// </summary>
 public class DryInertMismatchValidator : IValidator
 {
@@ -22,7 +24,9 @@ public class DryInertMismatchValidator : IValidator
     private static readonly Regex WorkupTransitionRegex = new(
         @"\b(quench(?:ed|ing)?|work[- ]?up|workup|extract(?:ed|ion)|wash(?:ed|ing)?|"
         + @"partition(?:ed)?|separate(?:d|ing)?|organic\s+layer|aqueous\s+layer|"
-        + @"pour(?:ed)?\s+(?:into|onto))\b",
+        + @"pour(?:ed)?\s+(?:into|onto)|"
+        + @"added?\s+(?:to\s+)?(?:ice|water|sat\w*\s+NH4Cl|sat\w*\s+NaHCO3|brine)|"
+        + @"neutrali[sz](?:ed|ing)?)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public IReadOnlyList<ValidationFinding> Validate(
@@ -46,25 +50,47 @@ public class DryInertMismatchValidator : IValidator
 
         IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
 
-        // Look for aqueous media in later steps
+        // Classify step roles — only scan Procedure steps for aqueous media and
+        // workup transitions to avoid narrative contamination (e.g. "added to water"
+        // in a literature discussion).
+        ProceduralContext ctx = ProceduralContextDetector.Detect(text, steps);
+        IReadOnlyDictionary<int, StepRole> roles = StepRoleClassifier.Classify(text, steps, ctx.ReferencesStartOffset);
+
+        // Look for aqueous media in later Procedure steps
         foreach (TextStep step in steps)
         {
             if (step.Index <= minDryStep) continue;
+            if (!roles.TryGetValue(step.Index, out StepRole role) || role != StepRole.Procedure)
+                continue;
 
             string stepText = text[step.StartOffset..step.EndOffset];
 
             if (!AqueousMediaRegex.IsMatch(stepText)) continue;
 
-            // Aqueous found — check if workup transition language is also present
-            if (WorkupTransitionRegex.IsMatch(stepText)) continue;
+            // Aqueous found — check if workup transition language is present in
+            // this step OR any intermediate Procedure step between the dry/inert
+            // condition and this step.
+            bool workupFound = WorkupTransitionRegex.IsMatch(stepText);
 
-            // Also check the immediately preceding step for workup language
-            TextStep? prevStep = steps.FirstOrDefault(s => s.Index == step.Index - 1);
-            if (prevStep is { } ps)
+            if (!workupFound)
             {
-                string prevText = text[ps.StartOffset..ps.EndOffset];
-                if (WorkupTransitionRegex.IsMatch(prevText)) continue;
+                foreach (TextStep intermediateStep in steps)
+                {
+                    if (intermediateStep.Index <= minDryStep) continue;
+                    if (intermediateStep.Index >= step.Index) break;
+                    if (!roles.TryGetValue(intermediateStep.Index, out StepRole intRole) || intRole != StepRole.Procedure)
+                        continue;
+
+                    string intermediateText = text[intermediateStep.StartOffset..intermediateStep.EndOffset];
+                    if (WorkupTransitionRegex.IsMatch(intermediateText))
+                    {
+                        workupFound = true;
+                        break;
+                    }
+                }
             }
+
+            if (workupFound) continue;
 
             string dryTokens = string.Join(", ", dryInertClaims.Select(c => c.RawText).Distinct());
             findings.Add(new ValidationFinding

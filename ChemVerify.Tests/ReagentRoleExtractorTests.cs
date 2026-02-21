@@ -131,4 +131,74 @@ public class ReagentRoleExtractorTests
         Assert.NotNull(ethanol);
         Assert.NotEqual(nabh4.StepIndex, ethanol.StepIndex);
     }
+
+    [Theory]
+    [InlineData("nitrogen-containing scaffold")]
+    [InlineData("nitrogen functionality adjustment")]
+    [InlineData("a nitrogen-based heterocycle")]
+    [InlineData("nitrogen-rich compound")]
+    [InlineData("argon-based plasma treatment")]
+    public void Atmosphere_BareNitrogenInStructuralContext_NotExtracted(string text)
+    {
+        var claims = _extractor.Extract(Guid.NewGuid(), text);
+
+        Assert.DoesNotContain(claims, c => c.ClaimType == ClaimType.AtmosphereCondition);
+    }
+
+    [Theory]
+    [InlineData("The reaction was carried out under nitrogen.")]
+    [InlineData("The flask was purged with argon before use.")]
+    [InlineData("Degassed with nitrogen for 15 min.")]
+    [InlineData("Performed in an atmosphere of argon.")]
+    [InlineData("blanketed with N2 throughout.")]
+    [InlineData("maintained under an Ar atmosphere.")]
+    [InlineData("The reaction was run under N₂.")]
+    [InlineData("stirred under a hydrogen balloon at room temperature.")]
+    [InlineData("The solvent was sparged with nitrogen for 10 min.")]
+    public void Atmosphere_ContextualGasReference_Extracted(string text)
+    {
+        var claims = _extractor.Extract(Guid.NewGuid(), text);
+
+        Assert.Contains(claims, c => c.ClaimType == ClaimType.AtmosphereCondition);
+    }
+
+    [Fact]
+    public void Atmosphere_HydrogenBalloon_NormalizedToHydrogen()
+    {
+        var claims = _extractor.Extract(Guid.NewGuid(),
+            "The flask was evacuated and backfilled with hydrogen, then stirred under a hydrogen balloon.");
+
+        var atm = claims.FirstOrDefault(c => c.ClaimType == ClaimType.AtmosphereCondition);
+        Assert.NotNull(atm);
+        Assert.Equal("hydrogen", atm.NormalizedValue);
+    }
+
+    [Theory]
+    [InlineData("stirred at room temperature", "rt")]
+    [InlineData("maintained at rt for 12 h", "rt")]
+    [InlineData("performed at ambient temperature", "rt")]
+    [InlineData("the mixture was refluxed for 2 h", "reflux")]
+    [InlineData("kept at reflux overnight", "reflux")]
+    [InlineData("cooled in an ice bath", "ice_bath")]
+    [InlineData("ice-water bath was used", "ice_bath")]
+    public void SymbolicTemperature_Extracted(string text, string expectedNormalized)
+    {
+        var claims = _extractor.Extract(Guid.NewGuid(), text);
+
+        var tempClaim = claims.FirstOrDefault(c => c.ClaimType == ClaimType.SymbolicTemperature);
+        Assert.NotNull(tempClaim);
+        Assert.Equal(expectedNormalized, tempClaim.NormalizedValue);
+        Assert.Contains("\"contextKey\":\"temp\"", tempClaim.JsonPayload);
+    }
+
+    [Fact]
+    public void SymbolicTemperature_RoomTemp_HasStepIndex()
+    {
+        var claims = _extractor.Extract(Guid.NewGuid(),
+            "NaBH4 was added. The mixture was stirred at room temperature.");
+
+        var tempClaim = claims.FirstOrDefault(c => c.ClaimType == ClaimType.SymbolicTemperature);
+        Assert.NotNull(tempClaim);
+        Assert.NotNull(tempClaim.StepIndex);
+    }
 }

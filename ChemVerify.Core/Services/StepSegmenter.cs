@@ -9,12 +9,16 @@ namespace ChemVerify.Core.Services;
 /// </summary>
 public static class StepSegmenter
 {
-    // Transitional phrases that mark a new procedural step
+    // Transitional phrases that mark a new procedural step.
+    // Boundaries use a look-behind so the transition word itself stays in the
+    // following step rather than being consumed as a gap — this prevents splitting
+    // passive-voice constructions like "The reaction was then concentrated…" into
+    // two fragments ("The reaction was" | "concentrated…").
     private static readonly Regex BoundaryRegex = new(
         @"(?<=[.;])\s+"
         + @"|(?:\r?\n)+"
         + @"|(?:^|\s)(?:\d+[.)]\s|[-•]\s)"
-        + @"|(?<=\S)\s+(?:(?:[Tt]hen|[Aa]fter(?:ward)?s?|[Ss]ubsequently|[Nn]ext|[Ff]inally)\b[,]?\s)",
+        + @"|(?<=\S)\s+(?=[Tt]hen\b|[Aa]fter(?:ward)?s?\b|[Ss]ubsequently\b|[Nn]ext\b|[Ff]inally\b)",
         RegexOptions.Compiled);
 
     /// <summary>

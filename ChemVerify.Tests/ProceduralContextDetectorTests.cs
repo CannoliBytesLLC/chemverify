@@ -98,4 +98,45 @@ public class ProceduralContextDetectorTests
 
         Assert.Null(ctx.ReferencesStartOffset);
     }
+
+    [Fact]
+    public void NarrativeWithSingleLabVerb_NotProcedural()
+    {
+        string text =
+            "The Grignard reagent is prepared under strictly anhydrous conditions " +
+            "to prevent quenching by atmospheric moisture. " +
+            "This is a fundamental method for increasing carbon chain complexity.";
+
+        IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
+        ProceduralContext ctx = ProceduralContextDetector.Detect(text, steps);
+
+        Assert.False(ctx.IsProcedural);
+    }
+
+    [Fact]
+    public void ProceduralTextWithVerbsAndQuantities_IsProcedural()
+    {
+        string text =
+            "NaBH4 (0.38 g, 10 mmol) was added portionwise. " +
+            "The mixture was stirred at 0 \u00b0C for 30 min.";
+
+        IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
+        ProceduralContext ctx = ProceduralContextDetector.Detect(text, steps);
+
+        Assert.True(ctx.IsProcedural);
+    }
+
+    [Fact]
+    public void NarrativeWithVerbsAndQuantitiesAndHedges_NotProcedural()
+    {
+        string text =
+            "It has been described that the mixture was stirred for 2 h " +
+            "and heated to 80 \u00b0C in prior work. " +
+            "This approach was previously reported by Smith et al.";
+
+        IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
+        ProceduralContext ctx = ProceduralContextDetector.Detect(text, steps);
+
+        Assert.False(ctx.IsProcedural);
+    }
 }

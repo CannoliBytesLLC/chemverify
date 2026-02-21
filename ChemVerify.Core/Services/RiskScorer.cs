@@ -29,14 +29,17 @@ public class RiskScorer : IRiskScorer
         FindingKind.MissingSolvent,
         FindingKind.MissingTemperature,
         FindingKind.AmbiguousWorkupTransition,
-        FindingKind.EquivInconsistent
+        FindingKind.EquivInconsistent,
+        FindingKind.MwImplausible,
+        FindingKind.YieldMassInconsistent
     };
 
     private static readonly HashSet<string> TextIntegrityKinds = new(StringComparer.Ordinal)
     {
         FindingKind.MalformedChemicalToken,
         FindingKind.UnsupportedOrIncompleteClaim,
-        FindingKind.CitationTraceabilityWeak
+        FindingKind.CitationTraceabilityWeak,
+        FindingKind.PlaceholderOrMissingToken
     };
 
     public double ComputeScore(IReadOnlyList<ValidationFinding> findings, PolicySettings? policy = null)

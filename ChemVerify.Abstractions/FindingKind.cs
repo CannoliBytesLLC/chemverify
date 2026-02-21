@@ -51,4 +51,16 @@ public static class FindingKind
 
     /// <summary>Condition values (temp/time) differ across steps or clusters — expected in multistep synthesis, not a contradiction.</summary>
     public const string CrossStepConditionVariation = "CrossStepConditionVariation";
+
+    /// <summary>Placeholder or missing token in text — template artifact, not a chemistry error.</summary>
+    public const string PlaceholderOrMissingToken = "PlaceholderOrMissingToken";
+
+    /// <summary>Mass and mmol for a reagent are consistent with a plausible molecular weight.</summary>
+    public const string MwConsistent = "MwConsistent";
+
+    /// <summary>Mass and mmol for a reagent imply an implausible molecular weight.</summary>
+    public const string MwImplausible = "MwImplausible";
+
+    /// <summary>Reported product mass and yield percentage are inconsistent with starting material.</summary>
+    public const string YieldMassInconsistent = "YieldMassInconsistent";
 }

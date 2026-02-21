@@ -88,7 +88,8 @@ public static class ReportBuilder
             FindingKind.EquivInconsistent,
             FindingKind.MalformedChemicalToken,
             FindingKind.UnsupportedOrIncompleteClaim,
-            FindingKind.CitationTraceabilityWeak
+            FindingKind.CitationTraceabilityWeak,
+            FindingKind.PlaceholderOrMissingToken
         ];
 
         // ── Attention (Fail + MultiScenario) ────────────────────────────
@@ -132,7 +133,8 @@ public static class ReportBuilder
         foreach (ValidationFinding f in findings.Where(f =>
             f.Kind is FindingKind.MalformedChemicalToken or
             FindingKind.UnsupportedOrIncompleteClaim or
-            FindingKind.CitationTraceabilityWeak))
+            FindingKind.CitationTraceabilityWeak or
+            FindingKind.PlaceholderOrMissingToken))
         {
             string icon = f.Kind == FindingKind.CitationTraceabilityWeak ? "\U0001f4d1" : "\u26a0\ufe0f";
             report.Attention.Add($"{icon} {f.Message}");

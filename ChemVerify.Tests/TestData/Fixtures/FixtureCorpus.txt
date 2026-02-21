@@ -1,0 +1,1079 @@
+ChemVerify Fixture Corpus — Balanced Mix (150 fixtures)
+Format: Each fixture includes an ID, category, title, input text, and suggested expectations/invariants.
+Use: Store as testdata fixtures; drive invariant-based tests and select a small subset for full golden JSON comparisons.
+
+=== FIXTURE_001: Amide coupling (EDC/HOBt) at RT ===
+Category: CLEAN_PROCEDURE
+Text:
+To a solution of 4-aminobenzoic acid (1.00 mmol) and HOBt (1.10 mmol) in DMF (5 mL) was added EDC·HCl (1.20 mmol) at room temperature. The mixture was stirred for 2 h, diluted with water, and extracted with ethyl acetate (3 × 10 mL). The combined organic layers were washed with brine, dried over Na2SO4, filtered, and concentrated.
+SuggestedExpectations:
+- No PlaceholderToken findings
+- Has SymbolicTemperature(rt) OR numeric temp absent but RT mentioned
+
+=== FIXTURE_002: SN2 substitution in acetone (reflux) ===
+Category: CLEAN_PROCEDURE
+Text:
+A mixture of 1-bromobutane (5.0 mmol), sodium azide (6.0 mmol), and acetone (10 mL) was heated to reflux for 4 h. After cooling to room temperature, the solids were filtered off and the filtrate was concentrated to afford the crude product.
+SuggestedExpectations:
+- Has SymbolicTemperature(reflux)
+- No MissingTemperatureWhenImplied
+
+=== FIXTURE_003: Fischer esterification (reflux) ===
+Category: CLEAN_PROCEDURE
+Text:
+Benzoic acid (2.0 mmol) was dissolved in methanol (10 mL) and sulfuric acid (0.2 mL) was added. The mixture was refluxed for 6 h, cooled, and neutralized with saturated NaHCO3. The aqueous layer was extracted with ether (3 × 10 mL).
+SuggestedExpectations:
+- Has SymbolicTemperature(reflux)
+- Workup transition present
+
+=== FIXTURE_004: Grignard (under N2, ice bath) then quench ===
+Category: CLEAN_PROCEDURE
+Text:
+A flame-dried flask was purged with nitrogen and charged with magnesium turnings (12 mmol) and anhydrous ether (20 mL). Bromobenzene (10 mmol) was added dropwise under N₂. The mixture was cooled in an ice bath and benzaldehyde (10 mmol) was added slowly. The reaction was quenched with saturated NH4Cl and extracted with ether.
+SuggestedExpectations:
+- AtmosphereCondition extracted (under N₂ / purged with nitrogen)
+- Has SymbolicTemperature(ice_bath)
+- No DryInertMismatch
+
+=== FIXTURE_005: Hydrogenation (balloon) ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of styrene (2.0 mmol) in ethanol (10 mL) was treated with Pd/C (10 wt%). The flask was evacuated and backfilled with hydrogen three times, then stirred under a hydrogen balloon at room temperature for 3 h. The mixture was filtered through celite and concentrated.
+SuggestedExpectations:
+- AtmosphereCondition extracted (hydrogen balloon)
+
+=== FIXTURE_006: Oxidation with PCC in DCM ===
+Category: CLEAN_PROCEDURE
+Text:
+To a stirred solution of 2-phenylethanol (1.0 mmol) in dichloromethane (10 mL) was added PCC (1.5 mmol). The reaction was stirred at room temperature for 2 h and filtered through silica. The filtrate was concentrated to afford the aldehyde.
+SuggestedExpectations:
+- Has SymbolicTemperature(rt)
+
+=== FIXTURE_007: Reduction with NaBH4 at 0 °C ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of acetophenone (5.0 mmol) in methanol (15 mL) was cooled to 0 °C and NaBH4 (6.0 mmol) was added portionwise. The mixture was stirred for 30 min, quenched with water, and extracted with ethyl acetate.
+SuggestedExpectations:
+- Has numeric temp claim (0 °C)
+- No MissingTemperatureWhenImplied
+
+=== FIXTURE_008: Suzuki coupling (inert, heated) ===
+Category: CLEAN_PROCEDURE
+Text:
+A sealed tube was charged with 4-bromoanisole (1.0 mmol), phenylboronic acid (1.2 mmol), Pd(PPh3)4 (0.05 mmol), K2CO3 (2.0 mmol), and dioxane/water (4:1, 5 mL). The mixture was heated to 90 °C for 12 h under nitrogen. After cooling, the reaction was diluted with water and extracted with ethyl acetate.
+SuggestedExpectations:
+- Has numeric temp claim (90 °C)
+- Workup transition present
+
+=== FIXTURE_009: Boc deprotection (HCl/dioxane) at RT ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of Boc-protected amine (0.045 mmol) in dichloromethane (4 mL) was treated with HCl in dioxane (4 N, 0.5 mL) and stirred at room temperature for 12 h. The reaction was concentrated to dryness to afford the amine salt.
+SuggestedExpectations:
+- ConcentrationSanity pass for HCl in dioxane
+- Has SymbolicTemperature(rt)
+
+=== FIXTURE_010: Swern oxidation (low temp) ===
+Category: CLEAN_PROCEDURE
+Text:
+To a solution of oxalyl chloride (1.5 mmol) in dichloromethane (10 mL) at −78 °C was added DMSO (2.0 mmol). After 10 min, the alcohol (1.0 mmol) was added, followed by triethylamine (3.0 mmol). The mixture was warmed to 0 °C, quenched with water, and extracted with dichloromethane.
+SuggestedExpectations:
+- Has numeric temp claim (−78 °C)
+- Workup transition present
+
+=== FIXTURE_011: Aqueous workup with brine and drying agent ===
+Category: CLEAN_PROCEDURE
+Text:
+After completion, the mixture was diluted with water and extracted with ethyl acetate (3 × 20 mL). The combined organics were washed with brine, dried over MgSO4, filtered, and concentrated under reduced pressure.
+SuggestedExpectations:
+- No PlaceholderToken findings
+
+=== FIXTURE_012: Column purification solvent composition ===
+Category: CLEAN_PROCEDURE
+Text:
+The crude product was purified by flash chromatography on silica gel using 10% ethyl acetate in hexanes to afford the desired compound as a colorless oil.
+SuggestedExpectations:
+- Has composition claim (10%)
+
+=== FIXTURE_013: Acylation with pyridine at 0 °C ===
+Category: CLEAN_PROCEDURE
+Text:
+To a solution of aniline (1.0 mmol) in dichloromethane (5 mL) and pyridine (2.0 mmol) at 0 °C was added acetyl chloride (1.2 mmol) dropwise. The reaction was warmed to room temperature and stirred for 1 h, then quenched with water and extracted with dichloromethane.
+SuggestedExpectations:
+- Has numeric temp claim (0 °C)
+
+=== FIXTURE_014: Base wash (NaHCO3) workup ===
+Category: CLEAN_PROCEDURE
+Text:
+The reaction mixture was poured into water and extracted with ethyl acetate (3 × 15 mL). The combined organic layers were washed with 1 M HCl, saturated NaHCO3, and brine, then dried over Na2SO4.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_015: Organolithium addition (n-BuLi/hexanes) ===
+Category: CLEAN_PROCEDURE
+Text:
+To a solution of 4-bromoanisole (1.0 mmol) in THF (5 mL) at −78 °C was added n-BuLi in hexanes (2.5 M, 0.50 mL, 1.25 mmol) dropwise under argon. After 30 min, benzaldehyde (1.1 mmol) was added. The reaction was quenched with saturated NH4Cl and extracted with ether.
+SuggestedExpectations:
+- ConcentrationSanity pass for n-BuLi in hexanes
+- Has numeric temp claim (−78 °C)
+- AtmosphereCondition extracted (under argon)
+
+=== FIXTURE_016: DIBAL-H reduction (in toluene) ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of ester (1.0 mmol) in toluene (10 mL) was cooled to −78 °C and treated with DIBAL-H in toluene (1.0 M, 1.2 mL, 1.2 mmol). After 1 h, the reaction was quenched by addition to ice-cold aqueous Rochelle’s salt and stirred at room temperature until layers separated.
+SuggestedExpectations:
+- ConcentrationSanity pass for DIBAL-H in toluene
+- Workup transition present
+
+=== FIXTURE_017: Catalytic hydrogenation with pressure mention ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of nitrobenzene (5.0 mmol) in ethanol (25 mL) was hydrogenated over Pd/C (50 mg) at 1 atm H2 at room temperature for 2 h. The catalyst was removed by filtration and the solvent was evaporated.
+SuggestedExpectations:
+- Has SymbolicTemperature(rt)
+
+=== FIXTURE_018: Aqueous acidic quench explicitly stated ===
+Category: CLEAN_PROCEDURE
+Text:
+The reaction was cooled to 0 °C and quenched by slow addition of 1 M HCl (10 mL). The mixture was extracted with ethyl acetate (3 × 15 mL) and washed with brine.
+SuggestedExpectations:
+- Has numeric temp claim (0 °C)
+- Workup transition present
+
+=== FIXTURE_019: Ester saponification ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of methyl benzoate (2.0 mmol) in THF (5 mL) and water (5 mL) was treated with NaOH (4.0 mmol) and stirred at room temperature for 3 h. The reaction was acidified to pH 2 with 1 M HCl and extracted with ethyl acetate.
+SuggestedExpectations:
+- Has SymbolicTemperature(rt)
+- Workup transition present
+
+=== FIXTURE_020: Recrystallization ===
+Category: CLEAN_PROCEDURE
+Text:
+The crude solid was dissolved in hot ethanol (10 mL), then water was added dropwise until cloudiness persisted. The mixture was allowed to cool to room temperature and then in an ice bath to induce crystallization.
+SuggestedExpectations:
+- Has SymbolicTemperature(ice_bath)
+
+=== FIXTURE_021: Diazotization at 0–5 °C ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of aniline (5.0 mmol) in 2 M HCl (5 mL) was cooled in an ice bath, and a solution of NaNO2 (5.5 mmol) in water (2 mL) was added while maintaining 0–5 °C. The diazonium solution was used immediately.
+SuggestedExpectations:
+- Has SymbolicTemperature(ice_bath)
+- Has numeric temp claim (0–5 °C)
+
+=== FIXTURE_022: Oxidation with bleach (aq) ===
+Category: CLEAN_PROCEDURE
+Text:
+To a solution of alcohol (1.0 mmol) in dichloromethane (5 mL) and water (5 mL) was added TEMPO (0.05 mmol) and NaOCl (commercial bleach, 5 mL) at 0 °C. The mixture was stirred for 30 min and extracted with dichloromethane.
+SuggestedExpectations:
+- Has numeric temp claim (0 °C)
+
+=== FIXTURE_023: Clean procedural snippet 23 ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of substrate (1.0 mmol) in THF (5 mL) was stirred at room temperature and treated with base (1.2 mmol). After 1 h, the reaction was quenched with water and extracted with ethyl acetate (3 × 10 mL). The combined organics were dried over MgSO4 and concentrated.
+SuggestedExpectations:
+- Has SymbolicTemperature(rt)
+- Workup transition present
+
+=== FIXTURE_024: Clean procedural snippet 24 ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of substrate (1.0 mmol) in THF (5 mL) was stirred at room temperature and treated with base (1.2 mmol). After 1 h, the reaction was quenched with water and extracted with ethyl acetate (3 × 10 mL). The combined organics were dried over MgSO4 and concentrated.
+SuggestedExpectations:
+- Has SymbolicTemperature(rt)
+- Workup transition present
+
+=== FIXTURE_025: Clean procedural snippet 25 ===
+Category: CLEAN_PROCEDURE
+Text:
+A solution of substrate (1.0 mmol) in THF (5 mL) was stirred at room temperature and treated with base (1.2 mmol). After 1 h, the reaction was quenched with water and extracted with ethyl acetate (3 × 10 mL). The combined organics were dried over MgSO4 and concentrated.
+SuggestedExpectations:
+- Has SymbolicTemperature(rt)
+- Workup transition present
+
+=== FIXTURE_026: Review sentence with single lab verb ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+In prior work, the mixture precipitated after standing, suggesting aggregation rather than chemical conversion.
+SuggestedExpectations:
+- ProceduralContextDetector should be NOT procedural
+
+=== FIXTURE_027: Literature mention with quantities but hedged ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+As reported previously in the literature, samples were heated to 80 °C for 2 h to compare stability across batches.
+SuggestedExpectations:
+- Hedge dampener should suppress procedural classification
+
+=== FIXTURE_028: Mechanistic discussion with 'nitrogen-containing' ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+The catalyst forms a nitrogen-containing chelate that stabilizes the intermediate under strongly reducing conditions.
+SuggestedExpectations:
+- No AtmosphereCondition claim for nitrogen-containing
+
+=== FIXTURE_029: Materials science argon-based plasma ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Surface activation was performed using an argon-based plasma treatment prior to coating deposition.
+SuggestedExpectations:
+- No AtmosphereCondition claim
+
+=== FIXTURE_030: General statement with reflux (non-procedure) ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Reflux is commonly employed to accelerate esterification reactions, although conditions vary widely between substrates.
+SuggestedExpectations:
+- Should be NOT procedural unless step count triggers
+
+=== FIXTURE_031: Narrative mention of quench ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+It has been described that Grignard reagents are quenched with saturated ammonium chloride in many standard protocols.
+SuggestedExpectations:
+- Hedge dampener should suppress procedural classification
+
+=== FIXTURE_032: Kinetics narrative with numbers ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+The reaction rate increased from 0.2 to 1.5 min⁻¹ when temperature rose from 20 to 60 °C, consistent with Arrhenius behavior.
+SuggestedExpectations:
+- Not a procedure; numeric temps present but narrative
+
+=== FIXTURE_033: Spectroscopy narrative with solvents ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Samples were dissolved in CDCl3 (0.7 mL) for NMR analysis; no synthetic transformation was performed.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_034: Narrative with verbs + quantities + hedges ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Previously, the mixture was stirred for 30 min at room temperature and then concentrated, as was shown in earlier studies.
+SuggestedExpectations:
+- Hedge dampener should suppress procedural classification
+
+=== FIXTURE_035: Discussion of drying agent ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Sodium sulfate is often used as a drying agent, but magnesium sulfate can be faster in some cases.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_036: Historical reference with verbs ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Vogel described that one may add acid and extract the product, but details depend on the system under study.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_037: General warning about water ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Even trace water can destroy sensitive organometallic reagents; therefore, anhydrous technique is critical.
+SuggestedExpectations:
+- Not procedural; should not trigger DryInertMismatch
+
+=== FIXTURE_038: Narrative 'maintained under nitrogen-containing' ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+The polymerization was maintained under nitrogen-containing conditions to limit oxidative degradation (discussion only).
+SuggestedExpectations:
+- No implied temperature finding; no atmosphere extraction from nitrogen-containing
+
+=== FIXTURE_039: Abstract-like sentence with mmol ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+A series of amides were prepared (0.1–1.0 mmol scale) and evaluated for activity, as described previously.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_040: Biology protocol mention ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Cells were incubated at 37 °C for 24 h and then washed with PBS; this is unrelated to chemical synthesis.
+SuggestedExpectations:
+- Not procedural; ensure chemistry validators don't overfire
+
+=== FIXTURE_041: Mechanism with 'ice bath' phrase ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+An ice bath can moderate exotherms, but the optimal temperature depends on solvent and scale.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_042: Table caption-like text ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Yield (%) and melting point (°C) are summarized in Table 2 for compounds 1–10.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_043: Patent narrative with 'charged' but hedged ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+In one embodiment, the vessel may be charged with solvent and heated, although alternative sequences are possible.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_044: Review with multiple temperatures ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+The transformation proceeds between 0 and 25 °C depending on the base, and is typically complete within 1–3 h.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_045: Solvent discussion ===
+Category: NARRATIVE_LITERATURE_TRAP
+Text:
+Dichloromethane is frequently chosen due to its volatility, whereas dioxane is used for stronger acids like HCl solutions.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_046: Under nitrogen ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The reaction mixture was stirred under nitrogen at room temperature for 2 h.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+- Has SymbolicTemperature(rt)
+
+=== FIXTURE_047: Purged with argon ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+A flame-dried flask was purged with argon and charged with anhydrous THF (10 mL) before addition of the substrate.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_048: Flushed with N2 ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The vessel was flushed with N2 for 5 min, then the solution was cooled to 0 °C.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+- Has numeric temp claim (0 °C)
+
+=== FIXTURE_049: Blanketed with Ar atmosphere ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The mixture was maintained under an Ar atmosphere and warmed to room temperature.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+- Has SymbolicTemperature(rt)
+
+=== FIXTURE_050: Degassed with nitrogen ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The solution was degassed with nitrogen for 15 min before catalyst addition.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_051: Inert atmosphere phrase ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+All manipulations were carried out under an inert atmosphere using standard Schlenk techniques.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_052: Under N₂ unicode ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The reaction was run under N₂ and stirred for 1 h.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_053: Under nitrogen (N2) parenthetical ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The mixture was stirred under nitrogen (N2) at reflux for 3 h.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+- Has SymbolicTemperature(reflux)
+
+=== FIXTURE_054: Air exclusion mention ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The reaction was performed under a blanket of argon to exclude air and moisture.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_055: Negative: nitrogen-containing scaffold ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+A nitrogen-containing scaffold was synthesized and characterized by NMR.
+SuggestedExpectations:
+- No AtmosphereCondition claim
+
+=== FIXTURE_056: Negative: argon-based plasma treatment ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+Argon-based plasma treatment was used to functionalize the surface.
+SuggestedExpectations:
+- No AtmosphereCondition claim
+
+=== FIXTURE_057: Positive: atmosphere of nitrogen ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The suspension was stirred in an atmosphere of nitrogen for 12 h.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_058: Positive: purged with Ar, then aqueous quench ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The flask was purged with Ar, the reaction was heated to 60 °C for 2 h, then quenched with water.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+- Workup transition present
+- Has numeric temp claim (60 °C)
+
+=== FIXTURE_059: Positive: glovebox mention ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+Reagents were weighed in a glovebox and transferred under argon.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_060: Positive: sparged with nitrogen ===
+Category: AIR_SENSITIVE_ATMOSPHERE
+Text:
+The solvent was sparged with nitrogen for 10 min prior to use.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+
+=== FIXTURE_061: Dry to aqueous with explicit quench ===
+Category: WORKUP_TRANSITIONS
+Text:
+A dry solution was prepared in anhydrous ether and stirred under nitrogen. The reaction was quenched with saturated NH4Cl and extracted with ether.
+SuggestedExpectations:
+- No DryInertMismatch
+
+=== FIXTURE_062: Dry to aqueous via pour into ice water ===
+Category: WORKUP_TRANSITIONS
+Text:
+The mixture in anhydrous THF was stirred under argon for 1 h, then poured into ice water and extracted with ethyl acetate.
+SuggestedExpectations:
+- No DryInertMismatch
+- Workup transition present
+
+=== FIXTURE_063: Dry to aqueous via neutralized ===
+Category: WORKUP_TRANSITIONS
+Text:
+After stirring in dry dichloromethane, the mixture was neutralized with saturated NaHCO3 and extracted.
+SuggestedExpectations:
+- No DryInertMismatch
+
+=== FIXTURE_064: Dry mentions then aqueous without transition (should flag) ===
+Category: WORKUP_TRANSITIONS
+Text:
+A flame-dried flask under nitrogen contained anhydrous THF (10 mL). Water (5 mL) was added and the mixture was stirred.
+SuggestedExpectations:
+- Should trigger DryInertMismatch unless transition detected
+
+=== FIXTURE_065: Quench language in intermediate step ===
+Category: WORKUP_TRANSITIONS
+Text:
+The reaction was stirred under nitrogen in anhydrous ether. After 1 h, the mixture was cooled to 0 °C. It was then quenched with saturated NH4Cl and finally diluted with water before extraction.
+SuggestedExpectations:
+- No DryInertMismatch (scan between steps finds quench)
+
+=== FIXTURE_066: Extraction phrasing without 'workup' word ===
+Category: WORKUP_TRANSITIONS
+Text:
+The reaction was quenched with ice-cold water and the layers were separated. The aqueous phase was extracted with ether (3 × 10 mL).
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_067: Brine addition as transition ===
+Category: WORKUP_TRANSITIONS
+Text:
+The anhydrous reaction was stirred under argon, then brine was added and the mixture was extracted with ethyl acetate.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_068: Sat NH4Cl spelled out ===
+Category: WORKUP_TRANSITIONS
+Text:
+The reaction was quenched by addition of saturated aqueous ammonium chloride solution and extracted with ether.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_069: Added to water phrasing ===
+Category: WORKUP_TRANSITIONS
+Text:
+The reaction mixture was added to water and extracted with dichloromethane.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_070: Acidic quench then basify ===
+Category: WORKUP_TRANSITIONS
+Text:
+The mixture was poured into 1 M HCl, extracted, then the aqueous layer was basified to pH 10 and re-extracted.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_071: Wash sequence workup ===
+Category: WORKUP_TRANSITIONS
+Text:
+The organic layer was washed with water, saturated NaHCO3, and brine, then dried over Na2SO4.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_072: Workup transition with Rochelle’s salt ===
+Category: WORKUP_TRANSITIONS
+Text:
+The reaction was quenched by addition to ice-cold aqueous Rochelle’s salt, stirred at room temperature, then extracted with ether.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_073: Dryness words in narrative should not affect ===
+Category: WORKUP_TRANSITIONS
+Text:
+Anhydrous technique is important. The procedure: the mixture was quenched with water and extracted with ether.
+SuggestedExpectations:
+- No DryInertMismatch due to narrative gating
+
+=== FIXTURE_074: Two-phase reaction no mismatch ===
+Category: WORKUP_TRANSITIONS
+Text:
+A biphasic mixture of dichloromethane (5 mL) and water (5 mL) was stirred vigorously at room temperature for 2 h.
+SuggestedExpectations:
+- No DryInertMismatch
+
+=== FIXTURE_075: Emulsion mention ===
+Category: WORKUP_TRANSITIONS
+Text:
+After quenching with saturated NH4Cl, a persistent emulsion formed during extraction with ether.
+SuggestedExpectations:
+- Workup transition present
+
+=== FIXTURE_076: RT token ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was stirred at RT for 30 min.
+SuggestedExpectations:
+- SymbolicTemperature(rt) claim exists
+
+=== FIXTURE_077: Room temperature phrase ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The reaction was kept at room temperature for 12 h.
+SuggestedExpectations:
+- SymbolicTemperature(rt) claim exists
+
+=== FIXTURE_078: Ambient temperature ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The solution was stirred at ambient temperature for 1 h.
+SuggestedExpectations:
+- SymbolicTemperature(rt) claim exists
+
+=== FIXTURE_079: Reflux token ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The suspension was refluxed for 3 h.
+SuggestedExpectations:
+- SymbolicTemperature(reflux) claim exists
+
+=== FIXTURE_080: At reflux phrase ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was stirred at reflux for 2 h.
+SuggestedExpectations:
+- SymbolicTemperature(reflux) claim exists
+
+=== FIXTURE_081: Ice bath phrase ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The reaction was cooled in an ice bath before addition of the reagent.
+SuggestedExpectations:
+- SymbolicTemperature(ice_bath) claim exists
+
+=== FIXTURE_082: Cooled to numeric temp ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The solution was cooled to −20 °C and held for 30 min.
+SuggestedExpectations:
+- Numeric temp claim exists (−20 °C)
+
+=== FIXTURE_083: Heated to numeric temp ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was heated to 110 °C for 4 h.
+SuggestedExpectations:
+- Numeric temp claim exists (110 °C)
+
+=== FIXTURE_084: Kept at missing token ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was kept at  for 2 h before quenching.
+SuggestedExpectations:
+- PlaceholderToken should fire (missing token after 'at')
+
+=== FIXTURE_085: Maintained under nitrogen (not implied temp) ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was maintained under nitrogen and stirred for 1 h.
+SuggestedExpectations:
+- No MissingTemperatureWhenImplied triggered
+
+=== FIXTURE_086: Warmed to RT ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The reaction was warmed to room temperature and stirred for 1 h.
+SuggestedExpectations:
+- SymbolicTemperature(rt) claim exists
+
+=== FIXTURE_087: Temperature range numeric ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was maintained at 0–5 °C during addition.
+SuggestedExpectations:
+- Numeric temp claim exists (0–5 °C)
+
+=== FIXTURE_088: Ice bath + numeric 0 °C ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The flask was placed in an ice bath and the temperature was maintained at 0 °C.
+SuggestedExpectations:
+- SymbolicTemperature(ice_bath) and numeric temp claim exist
+
+=== FIXTURE_089: Reflux then cooled to RT ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The mixture was refluxed for 2 h and then allowed to cool to RT.
+SuggestedExpectations:
+- SymbolicTemperature(reflux) and SymbolicTemperature(rt) exist
+
+=== FIXTURE_090: Cryogenic -78 °C ===
+Category: TEMPERATURE_SYMBOLIC_AND_NUMERIC
+Text:
+The solution was cooled to −78 °C prior to addition.
+SuggestedExpectations:
+- Numeric temp claim exists (−78 °C)
+
+=== FIXTURE_091: NaBH4 consistent ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Sodium borohydride (0.38 g, 10 mmol) was added portionwise at 0 °C.
+SuggestedExpectations:
+- MwConsistency should PASS (MW ~38)
+
+=== FIXTURE_092: NaH plausible low MW ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Sodium hydride (24 mg, 1.0 mmol) was added to dry THF.
+SuggestedExpectations:
+- MwConsistency should PASS (~24)
+
+=== FIXTURE_093: LiH very low MW ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Lithium hydride (8 mg, 1.0 mmol) was added carefully.
+SuggestedExpectations:
+- MwConsistency should PASS (~8)
+
+=== FIXTURE_094: Implausible MW high ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Reagent X (0.50 g, 0.0005 mmol) was used.
+SuggestedExpectations:
+- MwConsistency should FAIL (MW ~1,000,000)
+
+=== FIXTURE_095: Implausible MW low ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Reagent Y (1.0 mg, 1.0 mmol) was used.
+SuggestedExpectations:
+- MwConsistency should FAIL (MW ~1)
+
+=== FIXTURE_096: Peptide plausible high MW ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Peptide Z (2.0 mg, 0.001 mmol) was dissolved in DMF.
+SuggestedExpectations:
+- MwConsistency should PASS (MW ~2000)
+
+=== FIXTURE_097: No pairing (mass only) ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Magnesium sulfate (1.0 g) was used as drying agent.
+SuggestedExpectations:
+- MwConsistency should SKIP
+
+=== FIXTURE_098: No pairing (mmol only) ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Triethylamine (2.0 mmol) was added dropwise.
+SuggestedExpectations:
+- MwConsistency should SKIP
+
+=== FIXTURE_099: Entity mismatch should not pair ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Substrate A (100 mg) was dissolved in solvent (5 mL) and base B (1.0 mmol) was added.
+SuggestedExpectations:
+- MwConsistency should SKIP due to entityKey mismatch
+
+=== FIXTURE_100: Two entities both consistent ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Benzyl bromide (0.171 g, 1.0 mmol) and sodium azide (0.065 g, 1.0 mmol) were combined in DMF.
+SuggestedExpectations:
+- MwConsistency should PASS if entity keys extracted
+
+=== FIXTURE_101: Salt hydrate plausible ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Copper(II) sulfate pentahydrate (0.25 g, 1.0 mmol) was used.
+SuggestedExpectations:
+- MwConsistency should PASS (~250)
+
+=== FIXTURE_102: Organometallic large MW ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Pd(PPh3)4 (0.115 g, 0.10 mmol) was added.
+SuggestedExpectations:
+- MwConsistency should PASS (~1150)
+
+=== FIXTURE_103: Ambiguous entity name ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Compound 7 (25 mg, 0.045 mmol) was dissolved in dichloromethane.
+SuggestedExpectations:
+- MwConsistency should PASS if entity key present, else SKIP
+
+=== FIXTURE_104: Multiple mmol nearby, ensure pairing by entityKey ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Reagent A (50 mg, 0.10 mmol) and reagent B (1.0 mmol) were combined.
+SuggestedExpectations:
+- MwConsistency should pair A with 0.10 mmol, not B
+
+=== FIXTURE_105: mg + mmol consistent ===
+Category: STOICHIOMETRY_MW_CHECKS
+Text:
+Reagent C (18 mg, 0.20 mmol) was added at room temperature.
+SuggestedExpectations:
+- MwConsistency should PASS (MW ~90)
+
+=== FIXTURE_106: Consistent yield mass ===
+Category: YIELD_SANITY
+Text:
+Starting material A (100 mg) gave product B (60 mg, 65% yield) after purification.
+SuggestedExpectations:
+- YieldMassConsistency should PASS or SKIP (no impossibility)
+
+=== FIXTURE_107: Grossly impossible yield mass ===
+Category: YIELD_SANITY
+Text:
+Starting material A (50 mg) gave product B (120 mg, 90% yield).
+SuggestedExpectations:
+- YieldMassConsistency should FAIL
+
+=== FIXTURE_108: No yield percent (skip) ===
+Category: YIELD_SANITY
+Text:
+Starting material A (50 mg) gave product B (20 mg) as a solid.
+SuggestedExpectations:
+- YieldMassConsistency should SKIP
+
+=== FIXTURE_109: Heavier product but plausible ===
+Category: YIELD_SANITY
+Text:
+Starting material A (50 mg) gave product B (70 mg, 85% yield).
+SuggestedExpectations:
+- Should NOT fail (tolerance allows)
+
+=== FIXTURE_110: Yield only percent ===
+Category: YIELD_SANITY
+Text:
+The reaction proceeded in 95% yield according to NMR.
+SuggestedExpectations:
+- YieldMassConsistency should SKIP
+
+=== FIXTURE_111: Yield percent + product mass, no start ===
+Category: YIELD_SANITY
+Text:
+Product B (18 mg, 95% yield) was obtained.
+SuggestedExpectations:
+- YieldMassConsistency should SKIP
+
+=== FIXTURE_112: Within tolerance ===
+Category: YIELD_SANITY
+Text:
+Starting material A (100 mg) gave product B (120 mg, 90% yield).
+SuggestedExpectations:
+- Should NOT fail (120 mg within tolerance)
+
+=== FIXTURE_113: Impossible extreme ===
+Category: YIELD_SANITY
+Text:
+Starting material A (10 mg) gave product B (50 mg, 95% yield).
+SuggestedExpectations:
+- YieldMassConsistency should FAIL
+
+=== FIXTURE_114: Start mass in grams ===
+Category: YIELD_SANITY
+Text:
+Starting material A (0.10 g) gave product B (0.04 g, 40% yield).
+SuggestedExpectations:
+- Should NOT fail
+
+=== FIXTURE_115: Multiple products (skip) ===
+Category: YIELD_SANITY
+Text:
+Starting material A (100 mg) afforded products B (20 mg) and C (30 mg) with overall yield 50%.
+SuggestedExpectations:
+- YieldMassConsistency should SKIP (ambiguous)
+
+=== FIXTURE_116: HCl in dioxane ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+The substrate was treated with HCl in dioxane (4 N, 2.0 mL) at room temperature.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_117: n-BuLi in hexanes ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+nBuLi in hexanes (2.5 M, 0.40 mL) was added dropwise at −78 °C.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_118: Butyllithium alias ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+Butyllithium in hexanes (1.6 M, 1.0 mL) was added under argon.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_119: DIBAL-H in toluene ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+DIBAL-H in toluene (1.0 M, 3.0 mL) was added at −78 °C.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_120: MeMgCl in THF ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+A solution of MeMgCl in THF (3.0 M, 0.50 mL) was added under nitrogen.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_121: EtMgCl full name ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+Ethylmagnesium chloride in THF (2.0 M, 1.0 mL) was added at 0 °C.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_122: PhMgCl variant ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+Phenylmagnesium chloride in THF (2.0 M, 0.60 mL) was added under N2.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_123: Unknown solution pattern (skip) ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+A solution of reagent Q in solvent R (0.7 M, 1 mL) was added.
+SuggestedExpectations:
+- ConcentrationSanity should SKIP (not in catalog)
+
+=== FIXTURE_124: n-Butyllithium spelling ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+n-butyllithium in hexanes (2.5 M, 0.20 mL) was used.
+SuggestedExpectations:
+- ConcentrationSanity PASS
+
+=== FIXTURE_125: HBr in acetic acid ===
+Category: COMMERCIAL_REAGENT_SOLUTIONS
+Text:
+The substrate was treated with HBr in acetic acid (33 wt%) at 0 °C.
+SuggestedExpectations:
+- ConcentrationSanity likely SKIP unless catalog contains
+
+=== FIXTURE_126: Under . placeholder ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+Magnesium turnings were added under . and the mixture was stirred for 1 h.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_127: With , placeholder ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The solution was treated with , then warmed to room temperature.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_128: Empty quantity parens mL ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The organic layer was extracted with ether ( mL) and washed with brine.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_129: Empty quantity parens mmol ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+Reagent A ( mmol) was added dropwise at 0 °C.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_130: Asterisk masking ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The combined organics were dried over **** and concentrated.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_131: Blank bond descriptor ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The reagent formed a new  bond during the addition step.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_132: Multiple placeholders ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The reaction was run under . at 0 °C, then extracted with ether ( mL) and dried over ****.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL (multiple)
+
+=== FIXTURE_133: No placeholders (control) ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The reaction was run under nitrogen at 0 °C and extracted with ether (3 × 10 mL), then dried over MgSO4.
+SuggestedExpectations:
+- PlaceholderTokenValidator should PASS (no findings)
+
+=== FIXTURE_134: Consecutive spaces around bond token ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The freshly prepared Grignard reagent forms a new  bond with the aldehyde.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_135: Misplaced bold markers ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The combined organics were dried over **** and concentrated to give ** ** as a solid.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_136: Punctuation preposition variant ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The flask was purged with . prior to addition.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_137: Placeholder in workup parentheses ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The reaction was quenched with saturated ammonium chloride () and extracted.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_138: Placeholder in solvent composition ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+Purified by chromatography ( % EtOAc/hexanes).
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_139: Placeholder in temperature ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The mixture was cooled to °C before addition.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_140: Placeholder in yield ===
+Category: TEXT_INTEGRITY_PLACEHOLDERS
+Text:
+The product was obtained in % yield.
+SuggestedExpectations:
+- PlaceholderTokenValidator should FAIL
+
+=== FIXTURE_141: Unicode N₂ ===
+Category: UNICODE_AND_FORMATTING
+Text:
+The reaction was stirred under N₂ at room temperature for 1 h.
+SuggestedExpectations:
+- AtmosphereCondition extracted
+- SymbolicTemperature(rt) claim exists
+
+=== FIXTURE_142: Unicode minus sign −78 °C ===
+Category: UNICODE_AND_FORMATTING
+Text:
+The solution was cooled to −78 °C prior to addition.
+SuggestedExpectations:
+- Numeric temp claim exists
+
+=== FIXTURE_143: Degree symbol variants ===
+Category: UNICODE_AND_FORMATTING
+Text:
+The reaction was heated to 100 °C and then cooled to 25 °C.
+SuggestedExpectations:
+- Numeric temp claims exist
+
+=== FIXTURE_144: En-dash range 0–5 °C ===
+Category: UNICODE_AND_FORMATTING
+Text:
+Maintain the internal temperature at 0–5 °C during addition.
+SuggestedExpectations:
+- Numeric temp claim exists
+
+=== FIXTURE_145: Micro symbol µL ===
+Category: UNICODE_AND_FORMATTING
+Text:
+Add triethylamine (50 µL) to the mixture at room temperature.
+SuggestedExpectations:
+- NumericWithUnit claim exists for µL if supported, else skip gracefully
+
+=== FIXTURE_146: Middle dot in hydrate ===
+Category: UNICODE_AND_FORMATTING
+Text:
+Copper(II) sulfate·5H2O (0.25 g, 1.0 mmol) was used.
+SuggestedExpectations:
+- MwConsistency should PASS
+
+=== FIXTURE_147: Superscript minus in rate ===
+Category: UNICODE_AND_FORMATTING
+Text:
+A rate constant of 1.5 min⁻¹ was measured at 25 °C.
+SuggestedExpectations:
+- Not procedural
+
+=== FIXTURE_148: Greek letters in text ===
+Category: UNICODE_AND_FORMATTING
+Text:
+The mixture was cooled to 0 °C and stirred for 30 min to form α-alkylated product.
+SuggestedExpectations:
+- Numeric temp claim exists
+
+=== FIXTURE_149: Nonbreaking space ===
+Category: UNICODE_AND_FORMATTING
+Text:
+The reaction was stirred at room temperature for 2 h.
+SuggestedExpectations:
+- SymbolicTemperature(rt) claim exists
+
+=== FIXTURE_150: Unicode arrows ===
+Category: UNICODE_AND_FORMATTING
+Text:
+A → B conversion was observed; the mixture was heated to 60 °C for 1 h.
+SuggestedExpectations:
+- Numeric temp claim exists
