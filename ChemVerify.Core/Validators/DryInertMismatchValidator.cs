@@ -22,11 +22,25 @@ public class DryInertMismatchValidator : IValidator
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex WorkupTransitionRegex = new(
-        @"\b(quench(?:ed|ing)?|work[- ]?up|workup|extract(?:ed|ion)|wash(?:ed|ing)?|"
-        + @"partition(?:ed)?|separate(?:d|ing)?|organic\s+layer|aqueous\s+layer|"
+        @"\b(quench(?:ed|ing)?|work[- ]?up|workup|extract(?:ed|ion|ing)?|wash(?:ed|ing)?|"
+        + @"partition(?:ed|ing)?|separate(?:d|ing)?|organic\s+(?:layer|phase)|aqueous\s+(?:layer|phase)|"
         + @"pour(?:ed)?\s+(?:into|onto)|"
         + @"added?\s+(?:to\s+)?(?:ice|water|sat\w*\s+NH4Cl|sat\w*\s+NaHCO3|brine)|"
-        + @"neutrali[sz](?:ed|ing)?)\b",
+        + @"dilut(?:ed|ing)\s+with|"
+        + @"neutrali[sz](?:ed|ing)?|"
+        + @"separatory\s+funnel|sep(?:arating)?\s+funnel|"
+        + @"remov(?:ed?|ing)\s+(?:the\s+)?condenser|"
+        + @"cool(?:ed|ing)\s+(?:to|down)|"
+        + @"dry\s+(?:over|with)\s+(?:Na2SO4|MgSO4|anhydrous)|dried\s+(?:over|with)|"
+        + @"evaporat(?:ed?|ing)|concentrat(?:ed?|ing))\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    /// <summary>
+    /// Matches "dry-ice" / "dry ice" equipment references that should NOT
+    /// establish dry/inert conditions.
+    /// </summary>
+    private static readonly Regex DryIceEquipmentRegex = new(
+        @"\bdry[\s-]+ice\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public IReadOnlyList<ValidationFinding> Validate(
@@ -38,10 +52,11 @@ public class DryInertMismatchValidator : IValidator
         string text = run.GetAnalyzedText();
         if (string.IsNullOrEmpty(text)) return findings;
 
-        // Find dry/inert conditions
+        // Find dry/inert conditions, excluding "dry-ice" / "dry ice" equipment references
         List<ExtractedClaim> dryInertClaims = claims
             .Where(c => c.ClaimType is ClaimType.DrynessCondition or ClaimType.AtmosphereCondition
-                     && c.NormalizedValue is not "air")
+                     && c.NormalizedValue is not "air"
+                     && !IsDryIceEquipment(c, text))
             .ToList();
 
         if (dryInertClaims.Count == 0) return findings;
@@ -57,6 +72,8 @@ public class DryInertMismatchValidator : IValidator
         IReadOnlyDictionary<int, StepRole> roles = StepRoleClassifier.Classify(text, steps, ctx.ReferencesStartOffset);
 
         // Look for aqueous media in later Procedure steps
+        bool workupTransitionDetected = false;
+
         foreach (TextStep step in steps)
         {
             if (step.Index <= minDryStep) continue;
@@ -90,7 +107,11 @@ public class DryInertMismatchValidator : IValidator
                 }
             }
 
-            if (workupFound) continue;
+            if (workupFound)
+            {
+                workupTransitionDetected = true;
+                continue;
+            }
 
             string dryTokens = string.Join(", ", dryInertClaims.Select(c => c.RawText).Distinct());
             findings.Add(new ValidationFinding
@@ -108,7 +129,55 @@ public class DryInertMismatchValidator : IValidator
             break; // One finding per document is sufficient
         }
 
+        if (workupTransitionDetected && findings.Count == 0)
+        {
+            string dryTokens = string.Join(", ", dryInertClaims.Select(c => c.RawText).Distinct());
+            findings.Add(new ValidationFinding
+            {
+                Id = Guid.NewGuid(),
+                RunId = runId,
+                ValidatorName = nameof(DryInertMismatchValidator),
+                Status = ValidationStatus.Pass,
+                Message = $"Dry/inert conditions ({dryTokens}) established, but aqueous media introduced with clear workup transition.",
+                Confidence = 0.85,
+                Kind = FindingKind.WorkupTransitionDetected,
+                EvidenceRef = $"DryStep:{minDryStep}"
+            });
+        }
+
         return findings;
+    }
+
+    /// <summary>
+    /// Returns true if the claim's raw text or surrounding source context refers
+    /// to dry-ice equipment rather than a true dryness condition.
+    /// </summary>
+    private static bool IsDryIceEquipment(ExtractedClaim claim, string text)
+    {
+        // Quick check on the raw claim text
+        if (DryIceEquipmentRegex.IsMatch(claim.RawText))
+            return true;
+
+        // Check surrounding context from the source locator
+        if (claim.SourceLocator is not null
+            && claim.SourceLocator.StartsWith("AnalyzedText:", StringComparison.Ordinal))
+        {
+            string span = claim.SourceLocator["AnalyzedText:".Length..];
+            string[] parts = span.Split('-');
+            if (parts.Length >= 2
+                && int.TryParse(parts[0], out int start)
+                && int.TryParse(parts[1], out int end))
+            {
+                // Expand window slightly to catch "dry-ice" when claim is just "dry"
+                int windowStart = Math.Max(0, start - 2);
+                int windowEnd = Math.Min(text.Length, end + 15);
+                string window = text[windowStart..windowEnd];
+                if (DryIceEquipmentRegex.IsMatch(window))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     private static string EscapeJson(string s) =>

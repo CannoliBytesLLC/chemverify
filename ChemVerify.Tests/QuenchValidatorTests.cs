@@ -45,7 +45,7 @@ public class QuenchValidatorTests
             "To a suspension of NaH (0.48 g, 12 mmol) in dry THF (30 mL) at 0 °C was added " +
             "the alcohol (1.0 g, 10 mmol) dropwise. " +
             "The mixture was stirred at room temperature for 2 h. " +
-            "The product was concentrated under reduced pressure.";
+            "The solvent was removed and the residue was collected.";
 
         AiRun run = MakeRun(text);
         IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
@@ -62,7 +62,7 @@ public class QuenchValidatorTests
             "To a solution of the ketone (0.5 g, 5 mmol) in MeOH (10 mL) was added " +
             "NaBH4 (0.19 g, 5 mmol) portionwise at 0 °C. " +
             "The mixture was stirred for 1 h. " +
-            "The product was concentrated in vacuo.";
+            "The solvent was removed and the product was collected.";
 
         AiRun run = MakeRun(text);
         IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);

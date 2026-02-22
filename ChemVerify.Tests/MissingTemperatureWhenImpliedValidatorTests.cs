@@ -104,9 +104,21 @@ public class MissingTemperatureWhenImpliedValidatorTests
     }
 
     [Fact]
-    public void HeatedTo_WithoutTemp_TreatedAsImpliedTemp()
+    public void HeatedTo_WithRefluxNearby_NoFinding()
     {
+        // "heated to reflux" — "reflux" is a recognized temperature indicator
+        // in the nearby text, so no missing-temperature finding should be emitted.
         var run = MakeRun("The mixture was heated to reflux for 30 minutes.");
+        var findings = _validator.Validate(run.Id, [], run);
+
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingTemperature);
+    }
+
+    [Fact]
+    public void HeatedTo_NoNearbyTemp_TreatedAsImpliedTemp()
+    {
+        // "heated to" with no temperature or symbolic term nearby → should fail
+        var run = MakeRun("The mixture was heated to dryness over 30 minutes.");
         var findings = _validator.Validate(run.Id, [], run);
 
         Assert.Contains(findings, f => f.Kind == FindingKind.MissingTemperature);
@@ -163,6 +175,29 @@ public class MissingTemperatureWhenImpliedValidatorTests
             JsonPayload = "{\"contextKey\":\"temp\"}"
         };
         var findings = _validator.Validate(run.Id, [tempClaim], run);
+
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingTemperature);
+    }
+
+    [Fact]
+    public void CoolTo10C_ThenDropwise_NoClaims_NoFinding()
+    {
+        // Temperature "10°C" is in the text near "dropwise" — the text-based
+        // fallback should detect it even without an extracted claim.
+        var run = MakeRun("Cool the solution to 10°C. Add, by dropwise addition, the reagent over 30 min.");
+        var findings = _validator.Validate(run.Id, [], run);
+
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingTemperature);
+    }
+
+    [Theory]
+    [InlineData("The mixture was heated to 65 °C and stirred for 2 h.")]
+    [InlineData("The flask was cooled to -78 deg C and then the acid was added dropwise.")]
+    [InlineData("The reaction was warmed to reflux overnight.")]
+    public void ImpliedTemp_WithNearbyTempInText_NoFinding(string text)
+    {
+        var run = MakeRun(text);
+        var findings = _validator.Validate(run.Id, [], run);
 
         Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingTemperature);
     }

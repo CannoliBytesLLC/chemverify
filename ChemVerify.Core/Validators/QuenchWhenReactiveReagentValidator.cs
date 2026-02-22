@@ -24,7 +24,23 @@ public class QuenchWhenReactiveReagentValidator : IValidator
     private static readonly Regex QuenchWorkupRegex = new(
         @"\b(quench(?:ed|ing)?|work[- ]?up|workup|extract(?:ed|ion)|wash(?:ed|ing)?|"
         + @"pour(?:ed)?\s+(?:into|onto)|added?\s+(?:to\s+)?(?:ice|water|sat\w*\s+NH4Cl|"
-        + @"sat\w*\s+NaHCO3|brine)|neutrali[sz](?:ed|ing)?)\b",
+        + @"sat\w*\s+NaHCO3|brine)|neutrali[sz](?:ed|ing)?|"
+        + @"partition(?:ed|ing)?|acidif(?:ied|y|ying)|basif(?:ied|y|ying)|"
+        + @"dr(?:ied|y|ying)\s+(?:over\s+)?(?:Na2SO4|MgSO4|anhydrous)|"
+        + @"filter(?:ed|ing)?|concentrate[ds]?\s*(?:in\s+vacuo|under\s+(?:reduced\s+)?pressure)?|"
+        + @"evaporat(?:ed|ing)|crystalliz(?:ed|ing)|recrystalliz(?:ed|ing)|"
+        + @"dilut(?:ed|ing)\s+with|"
+        + @"(?:organic|aqueous)\s+(?:phase|layer)|separat(?:ed|ing)\s+(?:the\s+)?layers?)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Indicates the procedure text is likely truncated (no isolation/conclusion language)
+    private static readonly Regex IsolationConclusionRegex = new(
+        @"\b(isolat(?:ed|ion)|obtain(?:ed|ing)|afford(?:ed|ing)|"
+        + @"yield(?:ed|ing)?|gave|provid(?:ed|ing)|"
+        + @"product\s+was|residue\s+was|crude\s+(?:product|material)|"
+        + @"purif(?:ied|y|ying)|column\s+chromatography|"
+        + @"m\.p\.\s*=?\s*\d|mp\s*[\d:]|melting\s+point|"
+        + @"NMR|IR\s*[:(]|HRMS|MS\s*[:(]|anal\.\s*calc)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public IReadOnlyList<ValidationFinding> Validate(
@@ -109,6 +125,10 @@ public class QuenchWhenReactiveReagentValidator : IValidator
         {
             string reagentTokens = string.Join(", ", reactives.Select(c => c.RawText).Distinct());
 
+            // Check if the text appears truncated (no isolation/conclusion language)
+            string procedureText = text[..textBoundary];
+            bool likelyTruncated = !IsolationConclusionRegex.IsMatch(procedureText);
+
             // Attach evidence from the last reactive reagent claim
             ExtractedClaim evidenceClaim = reactives[^1];
             int? evidenceStart = null;
@@ -127,10 +147,12 @@ public class QuenchWhenReactiveReagentValidator : IValidator
                 Id = Guid.NewGuid(),
                 RunId = runId,
                 ValidatorName = nameof(QuenchWhenReactiveReagentValidator),
-                Status = ValidationStatus.Fail,
-                Message = $"[CHEM.MISSING_QUENCH] Reactive reagent ({reagentTokens}) detected but no quench/workup step found.",
-                Confidence = 0.85,
-                Kind = FindingKind.MissingQuench,
+                Status = likelyTruncated ? ValidationStatus.Unverified : ValidationStatus.Fail,
+                Message = likelyTruncated
+                    ? $"[CHEM.MISSING_QUENCH] Reactive reagent ({reagentTokens}) detected but no quench/workup step found; procedure may be truncated."
+                    : $"[CHEM.MISSING_QUENCH] Reactive reagent ({reagentTokens}) detected but no quench/workup step found.",
+                Confidence = likelyTruncated ? 0.45 : 0.85,
+                Kind = likelyTruncated ? FindingKind.PossiblyTruncated : FindingKind.MissingQuench,
                 EvidenceRef = evidenceClaim.SourceLocator ?? $"Reagent:{reagentTokens}|LastStep:{maxReactiveStep}",
                 EvidenceStartOffset = evidenceStart,
                 EvidenceEndOffset = evidenceEnd,

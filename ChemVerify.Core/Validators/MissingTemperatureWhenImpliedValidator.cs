@@ -19,6 +19,16 @@ public class MissingTemperatureWhenImpliedValidator : IValidator
         + @"stirred\s+at\s+(?!rt\b|room|ambient))\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    // Explicit and implicit temperature patterns for text-based fallback search.
+    private static readonly Regex NearbyTemperatureRegex = new(
+        @"-?\d+(?:\.\d+)?\s*(?:°\s*C|deg(?:rees?)?\s*C)\b"
+        + @"|\broom\s*temp(?:erature)?\b|\bambient\s*temp(?:erature)?\b"
+        + @"|\bice[\s-](?:bath|water\s+bath)\b|\breflux\b"
+        + @"|\b[Rr]\.?[Tt]\.?\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private const int NearbyCharWindow = 250;
+
     public IReadOnlyList<ValidationFinding> Validate(
         Guid runId,
         IReadOnlyList<ExtractedClaim> claims,
@@ -45,6 +55,20 @@ public class MissingTemperatureWhenImpliedValidator : IValidator
                 && c.JsonPayload.Contains("\"temp\"", StringComparison.OrdinalIgnoreCase)));
 
         if (hasTempClaim)
+        {
+            return findings;
+        }
+
+        // Fallback: scan raw text near the implied-temp match for temperature patterns.
+        // This catches cases where the extractor missed a temperature that is clearly
+        // present in the text (e.g., "cooled to 10°C" where "cooled to" triggers but
+        // "10°C" was not extracted as a claim).
+        int searchStart = Math.Max(0, impliedMatch.Index - NearbyCharWindow);
+        int searchEnd = Math.Min(text.Length, impliedMatch.Index + impliedMatch.Length + NearbyCharWindow);
+        string window = text[searchStart..searchEnd];
+
+        Match nearbyTemp = NearbyTemperatureRegex.Match(window);
+        if (nearbyTemp.Success)
         {
             return findings;
         }

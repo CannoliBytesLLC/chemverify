@@ -803,7 +803,7 @@ public class VerifyTextEndpointTests : IClassFixture<WebApplicationFactory<Progr
     {
         var request = new VerifyTextRequest
         {
-            TextToVerify = "NaH (0.24 g, 10 mmol) was added to a solution of the alcohol (1.0 g, 5 mmol) in DMF. The mixture was stirred at 60 °C for 2 h. The product was concentrated under reduced pressure.",
+            TextToVerify = "NaH (0.24 g, 10 mmol) was added to a solution of the alcohol (1.0 g, 5 mmol) in DMF. The mixture was stirred at 60 °C for 2 h. The solvent was removed and the residue was collected.",
             PolicyProfile = "StrictChemistryV0"
         };
 
@@ -844,7 +844,7 @@ public class VerifyTextEndpointTests : IClassFixture<WebApplicationFactory<Progr
     {
         var request = new VerifyTextRequest
         {
-            TextToVerify = "Anhydrous THF was used under N2 atmosphere. The substrate (1.0 g, 5 mmol) was dissolved. The mixture was diluted with brine and the layers were collected.",
+            TextToVerify = "Anhydrous THF was used under N2 atmosphere. The substrate (1.0 g, 5 mmol) was dissolved. The mixture was treated with brine and the layers were collected.",
             PolicyProfile = "StrictChemistryV0"
         };
 
@@ -955,7 +955,7 @@ public class VerifyTextEndpointTests : IClassFixture<WebApplicationFactory<Progr
     {
         var request = new VerifyTextRequest
         {
-            TextToVerify = "NaH (0.24 g, 10 mmol) was added to a solution of the alcohol (1.0 g, 5 mmol) in DMF. The mixture was stirred at 60 °C for 2 h. The product was concentrated under reduced pressure.",
+            TextToVerify = "NaH (0.24 g, 10 mmol) was added to a solution of the alcohol (1.0 g, 5 mmol) in DMF. The mixture was stirred at 60 °C for 2 h. The solvent was removed and the residue was collected.",
             PolicyProfile = "StrictChemistryV0"
         };
 

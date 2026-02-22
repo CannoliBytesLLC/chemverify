@@ -13,6 +13,11 @@ public class NumericUnitExtractor : IClaimExtractor
         @"(?<num>-?\d+(?:\.\d+)?)\s*(?<unit>%|°?C|M|h|min|mg|mL|g|L|K|mol|mmol|kPa|atm|ppm)",
         RegexOptions.Compiled);
 
+    // Ratio pattern: "1:4 10%" — detect so we don't create a garbage "410%" claim
+    private static readonly Regex RatioPrefixRegex = new(
+        @"\d+\s*:\s*\d+\s*$",
+        RegexOptions.Compiled);
+
     // Case 1: preceding text ends with a digit when the primary regex consumed '-' as negative sign
     // e.g., "~80" preceding "-85%"
     private static readonly Regex HyphenRangePrecedingRegex = new(
@@ -41,6 +46,14 @@ public class NumericUnitExtractor : IClaimExtractor
 
     private static readonly Regex PercentCompositionRegex = new(
         @"\b(silica|column|chromatography|eluent|hexanes?|EtOAc|ethyl\s+acetate|gradient|flash|TLC|Rf)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex PercentPurityRegex = new(
+        @"\b(purit[yies]+|ee|dr|de|enantio\w*|diastereo\w*|GC\s*%?|HPLC\s*%?|assay)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex PercentImpurityRegex = new(
+        @"\b(impurit[yies]+|traces?|residual|contaminan\w+|by-?product|unreacted|remaining)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     // Time-action verb classifiers
@@ -85,7 +98,19 @@ public class NumericUnitExtractor : IClaimExtractor
             string numericPart = match.Groups["num"].Value;
             string unitPart = match.Groups["unit"].Value;
 
-            // Detect range patterns: "80-85%" (hyphen consumed by regex) or "60–65 °C" (en-dash in preceding text)
+            // ?? Ratio guard: reject "1:4 10%" parsed as "410%" ??????????
+            if (unitPart == "%" && match.Index > 0)
+            {
+                string before = text[..match.Index];
+                if (RatioPrefixRegex.IsMatch(before))
+                {
+                    // The digit(s) before our match are part of a ratio notation,
+                    // not a standalone percentage. Skip this match entirely.
+                    continue;
+                }
+            }
+
+            // Detect range patterns
             bool isRange = false;
             string? rangeLowValue = null;
             int rangePrefixLen = 0;
@@ -235,6 +260,18 @@ public class NumericUnitExtractor : IClaimExtractor
         if (PercentYieldRegex.IsMatch(window))
         {
             return "yield";
+        }
+
+        // Purity / ee / dr — distinct from yield
+        if (PercentPurityRegex.IsMatch(window))
+        {
+            return "purity";
+        }
+
+        // Impurity / trace content — very different from concentration
+        if (PercentImpurityRegex.IsMatch(window))
+        {
+            return "impurity";
         }
 
         // Chromatography / eluent composition — not comparable

@@ -10,6 +10,7 @@ namespace ChemVerify.Core.Validators;
 /// When an entity has both a mass claim (g or mg) and a mmol claim nearby,
 /// computes the implied molecular weight (MW = mass / mmol) and checks
 /// whether it falls within a chemically plausible range (roughly 10–3000 g/mol).
+/// For common reagents with known MW, cross-checks against the expected value.
 /// Emits a Pass confirmation when consistent and a warning when implausible.
 /// Only pairs mass and mmol claims that share the same entity key to avoid
 /// cross-entity mismatches in dense paragraphs.
@@ -20,6 +21,56 @@ public class MwConsistencyValidator : IValidator
     private const double MaxPlausibleMw = 3000.0;   // large peptides / organometallics
     private const int ProximityCharLimit = 100;     // max char distance to pair mass ↔ mmol (entity-key path)
     private const int FallbackProximityLimit = 30;   // tight window for fallback — only pairs within same parenthetical group
+    private const double KnownMwTolerancePercent = 35.0; // max deviation from known MW before flagging
+
+    // Known molecular weights for common reagents (g/mol).
+    // Keys are lowercase entity-key forms the extractor produces.
+    private static readonly Dictionary<string, double> KnownMolecularWeights = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["hcl"] = 36.46,
+        ["hydrochloric acid"] = 36.46,
+        ["naoh"] = 40.00,
+        ["sodium hydroxide"] = 40.00,
+        ["koh"] = 56.11,
+        ["nahco3"] = 84.01,
+        ["na2co3"] = 105.99,
+        ["k2co3"] = 138.21,
+        ["cs2co3"] = 325.82,
+        ["nah"] = 24.00,
+        ["sodium hydride"] = 24.00,
+        ["nabh4"] = 37.83,
+        ["sodium borohydride"] = 37.83,
+        ["lialh4"] = 37.95,
+        ["lah"] = 37.95,
+        ["tea"] = 101.19,
+        ["triethylamine"] = 101.19,
+        ["et3n"] = 101.19,
+        ["dipea"] = 129.24,
+        ["dcc"] = 206.33,
+        ["dmap"] = 122.17,
+        ["pyridine"] = 79.10,
+        ["acoh"] = 60.05,
+        ["acetic acid"] = 60.05,
+        ["tfa"] = 114.02,
+        ["h2so4"] = 98.08,
+        ["sulfuric acid"] = 98.08,
+        ["hno3"] = 63.01,
+        ["buli"] = 64.06,
+        ["n-buli"] = 64.06,
+        ["t-buli"] = 64.06,
+        ["s-buli"] = 64.06,
+        ["mcpba"] = 172.57,
+        ["pdc"] = 332.92,
+        ["pcc"] = 215.56,
+        ["nh4cl"] = 53.49,
+    };
+
+    // Entity keys that commonly refer to hydrochloride salts rather than free HCl
+    // when the implied MW is much higher than 36.46
+    private static readonly HashSet<string> HydrochlorideSaltCandidates = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "hcl", "hci", "hydrochloric acid"
+    };
 
     public IReadOnlyList<ValidationFinding> Validate(
         Guid runId,
@@ -63,6 +114,61 @@ public class MwConsistencyValidator : IValidator
 
             string entity = massClaim.EntityKey ?? massClaim.RawText;
 
+            // ── Check against known MW for common reagents ──────────
+            if (entity is not null && KnownMolecularWeights.TryGetValue(entity, out double knownMw))
+            {
+                double deviationPercent = Math.Abs(impliedMw - knownMw) / knownMw * 100.0;
+
+                if (deviationPercent <= KnownMwTolerancePercent)
+                {
+                    findings.Add(new ValidationFinding
+                    {
+                        Id = Guid.NewGuid(),
+                        RunId = runId,
+                        ClaimId = massClaim.Id,
+                        ValidatorName = nameof(MwConsistencyValidator),
+                        Status = ValidationStatus.Pass,
+                        Message = $"[CHEM.MW_CONSISTENT] {entity}: {massClaim.RawText} / {paired.RawText} → implied MW {impliedMw:F1} g/mol (known MW {knownMw:F1}, within tolerance).",
+                        Confidence = 0.9,
+                        Kind = FindingKind.MwConsistent,
+                        JsonPayload = $"{{\"entity\":\"{EscapeJson(entity)}\",\"massG\":{massInGrams:F4},\"mmol\":{mmolVal},\"impliedMw\":{impliedMw:F1},\"knownMw\":{knownMw:F1}}}"
+                    });
+                }
+                else if (HydrochlorideSaltCandidates.Contains(entity) && impliedMw > knownMw * 2)
+                {
+                    // Likely a hydrochloride salt (e.g. "HCl" used loosely for amine·HCl)
+                    findings.Add(new ValidationFinding
+                    {
+                        Id = Guid.NewGuid(),
+                        RunId = runId,
+                        ClaimId = massClaim.Id,
+                        ValidatorName = nameof(MwConsistencyValidator),
+                        Status = ValidationStatus.Unverified,
+                        Message = $"[CHEM.MW_ENTITY_AMBIGUOUS] {entity}: implied MW {impliedMw:F1} g/mol ≠ free acid ({knownMw:F1}); likely a hydrochloride salt — verify entity identity.",
+                        Confidence = 0.6,
+                        Kind = FindingKind.EntityAmbiguous,
+                        JsonPayload = $"{{\"entity\":\"{EscapeJson(entity)}\",\"massG\":{massInGrams:F4},\"mmol\":{mmolVal},\"impliedMw\":{impliedMw:F1},\"knownMw\":{knownMw:F1}}}"
+                    });
+                }
+                else
+                {
+                    findings.Add(new ValidationFinding
+                    {
+                        Id = Guid.NewGuid(),
+                        RunId = runId,
+                        ClaimId = massClaim.Id,
+                        ValidatorName = nameof(MwConsistencyValidator),
+                        Status = ValidationStatus.Fail,
+                        Message = $"[CHEM.MW_KNOWN_MISMATCH] {entity}: implied MW {impliedMw:F1} g/mol vs known MW {knownMw:F1} g/mol ({deviationPercent:F0}% deviation).",
+                        Confidence = 0.8,
+                        Kind = FindingKind.MwKnownMismatch,
+                        JsonPayload = $"{{\"entity\":\"{EscapeJson(entity)}\",\"massG\":{massInGrams:F4},\"mmol\":{mmolVal},\"impliedMw\":{impliedMw:F1},\"knownMw\":{knownMw:F1}}}"
+                    });
+                }
+                continue;
+            }
+
+            // ── Plausible-range fallback for unknown entities ────────
             if (impliedMw >= MinPlausibleMw && impliedMw <= MaxPlausibleMw)
             {
                 findings.Add(new ValidationFinding

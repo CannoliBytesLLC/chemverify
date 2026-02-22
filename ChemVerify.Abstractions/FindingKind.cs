@@ -63,4 +63,34 @@ public static class FindingKind
 
     /// <summary>Reported product mass and yield percentage are inconsistent with starting material.</summary>
     public const string YieldMassInconsistent = "YieldMassInconsistent";
+
+    /// <summary>Percent values describe different property types (e.g. yield vs impurity) and are not comparable.</summary>
+    public const string DifferentPercentKind = "DifferentPercentKind";
+
+    /// <summary>Implied MW contradicts the known molecular weight for a common reagent.</summary>
+    public const string MwKnownMismatch = "MwKnownMismatch";
+
+    /// <summary>Entity name is ambiguous (e.g. HCl could be free acid or hydrochloride salt).</summary>
+    public const string EntityAmbiguous = "EntityAmbiguous";
+
+    /// <summary>Quench/workup may be missing but the procedure appears truncated.</summary>
+    public const string PossiblyTruncated = "PossiblyTruncated";
+
+    /// <summary>Time claims represent sequential durations (e.g., "30 min then an additional 15 min"), not a contradiction.</summary>
+    public const string SequentialDuration = "SequentialDuration";
+
+    /// <summary>One time is a checkpoint marker and the other is a cumulative total — not contradictory.</summary>
+    public const string CheckpointVsTotal = "CheckpointVsTotal";
+
+    /// <summary>Time claims belong to different operations (e.g., stir vs addition) — not contradictory.</summary>
+    public const string DifferentOperation = "DifferentOperation";
+
+    /// <summary>Time claims are at different temperature regimes (e.g., 0 °C vs room temperature) — not contradictory.</summary>
+    public const string DifferentConditionContext = "DifferentConditionContext";
+
+    /// <summary>Percent values are part of a chromatography gradient (e.g., 2 % → 4 %) — not contradictory.</summary>
+    public const string GradientElution = "GradientElution";
+
+    /// <summary>Dry/inert conditions established but aqueous media introduced with clear workup transition language.</summary>
+    public const string WorkupTransitionDetected = "WorkupTransitionDetected";
 }

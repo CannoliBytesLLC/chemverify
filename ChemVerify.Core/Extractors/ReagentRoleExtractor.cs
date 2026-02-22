@@ -3,6 +3,7 @@ using ChemVerify.Abstractions.Enums;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Abstractions.Models;
 using ChemVerify.Core.Services;
+using ChemVerify.Core.Validators;
 
 namespace ChemVerify.Core.Extractors;
 
@@ -85,13 +86,16 @@ public class ReagentRoleExtractor : IClaimExtractor
 
     public IReadOnlyList<ExtractedClaim> Extract(Guid runId, string text)
     {
+        // Normalize common OCR confusions (I↔l in chemical formulae) before matching
+        string normalized = MissingSolventValidator.NormalizeOcrTokens(text);
+
         List<ExtractedClaim> claims = new();
         IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
 
         // Reagent roles
         foreach ((Regex pattern, string role) in ReagentPatterns)
         {
-            foreach (Match m in pattern.Matches(text))
+            foreach (Match m in pattern.Matches(normalized))
             {
                 string token = m.Value.Trim();
                 claims.Add(new ExtractedClaim
@@ -110,7 +114,7 @@ public class ReagentRoleExtractor : IClaimExtractor
         }
 
         // Solvents
-        foreach (Match m in SolventRegex.Matches(text))
+        foreach (Match m in SolventRegex.Matches(normalized))
         {
             string token = m.Value.Trim();
             claims.Add(new ExtractedClaim
@@ -158,17 +162,17 @@ public class ReagentRoleExtractor : IClaimExtractor
         foreach (Match m in SymbolicTemperatureRegex.Matches(text))
         {
             string token = m.Value.Trim();
-            string normalized = NormalizeSymbolicTemp(token);
+            string normalizedTemp = NormalizeSymbolicTemp(token);
             claims.Add(new ExtractedClaim
             {
                 Id = Guid.NewGuid(),
                 RunId = runId,
                 ClaimType = ClaimType.SymbolicTemperature,
                 RawText = token,
-                NormalizedValue = normalized,
+                NormalizedValue = normalizedTemp,
                 SourceLocator = $"AnalyzedText:{m.Index}-{m.Index + m.Length}",
-                JsonPayload = $"{{\"contextKey\":\"temp\",\"symbolic\":\"{EscapeJson(normalized)}\"}}",
-                EntityKey = normalized,
+                JsonPayload = $"{{\"contextKey\":\"temp\",\"symbolic\":\"{EscapeJson(normalizedTemp)}\"}}",
+                EntityKey = normalizedTemp,
                 StepIndex = StepSegmenter.GetStepIndex(steps, m.Index)
             });
         }
