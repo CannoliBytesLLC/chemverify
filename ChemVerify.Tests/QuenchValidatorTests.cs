@@ -111,4 +111,37 @@ public class QuenchValidatorTests
 
         Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingQuench);
     }
+
+    [Fact]
+    public void BenignBase_Triethylamine_NoMissingQuench()
+    {
+        string text =
+            "To a solution of the acid chloride (1.0 g, 5 mmol) in DCM (20 mL) was added " +
+            "triethylamine (0.76 mL, 5.5 mmol) followed by the amine (0.5 g, 5 mmol). " +
+            "The mixture was stirred at room temperature for 12 h. " +
+            "The solvent was removed and the product was collected.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingQuench);
+    }
+
+    [Fact]
+    public void BenignBase_K2CO3_NoMissingQuench()
+    {
+        string text =
+            "A mixture of the aryl halide (1.0 g, 5 mmol), K2CO3 (1.38 g, 10 mmol), " +
+            "and Pd(PPh3)4 (0.06 g, 0.05 mmol) in DMF (15 mL) was heated at 80 °C for 6 h. " +
+            "The solvent was removed and the residue was purified.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.MissingQuench);
+    }
 }

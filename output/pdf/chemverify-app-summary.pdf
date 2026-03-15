@@ -1,0 +1,116 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [3 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 7168 >>
+stream
+0.1 0.19 0.31 rg 36 690 540 68 re f
+BT /F2 23 Tf 1 1 1 rg 1 0 0 1 48 729 Tm (ChemVerify) Tj ET
+BT /F1 10.2 Tf 0.86 0.91 0.97 rg 1 0 0 1 48 708 Tm (One-page repo summary) Tj ET
+BT /F2 10 Tf 0.83 0.91 1 rg 1 0 0 1 420 729 Tm (Status) Tj ET
+BT /F1 10 Tf 1 1 1 rg 1 0 0 1 420 711 Tm (Prototype / reference implementation) Tj ET
+0.89 0.91 0.94 RG 0.8 w 306 670 m 306 50 l S
+BT /F2 11 Tf 0.1 0.19 0.31 rg 1 0 0 1 42 668 Tm (WHAT IT IS) Tj ET
+0.82 0.86 0.91 RG 0.9 w 42 662 m 289 662 l S
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 648 Tm (ChemVerify is a deterministic verification) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 636.6 Tm (engine for chemistry procedure text, especially) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 625.2 Tm (AI-generated output. It checks whether a) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 613.8 Tm (procedure is internally consistent, sufficiently) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 602.4 Tm (specified, and computationally interpretable) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 591 Tm (before experimental use.) Tj ET
+BT /F2 11 Tf 0.1 0.19 0.31 rg 1 0 0 1 42 573.6 Tm (WHO IT'S FOR) Tj ET
+0.82 0.86 0.91 RG 0.9 w 42 567.6 m 289 567.6 l S
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 553.6 Tm (Primary persona: a chemist or lab reviewer who) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 542.2 Tm (needs to vet AI- or human-written procedures) Tj ET
+BT /F1 9.3 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 530.8 Tm (before acting on them.) Tj ET
+BT /F2 11 Tf 0.1 0.19 0.31 rg 1 0 0 1 42 513.4 Tm (WHAT IT DOES) Tj ET
+0.82 0.86 0.91 RG 0.9 w 42 507.4 m 289 507.4 l S
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 493.4 Tm (- Verifies supplied text through the API) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 482.8 Tm (  /verify endpoint and the CLI analyze) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 472.2 Tm (  command.) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 459.6 Tm (- Supports a generate-and-verify API flow) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 449 Tm (  through /runs using a MockModelConnector.) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 436.4 Tm (- Extracts DOI, numeric-unit, and) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 425.8 Tm (  reagent-role claims from procedure text.) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 413.2 Tm (- Runs auto-discovered validators for) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 402.6 Tm (  contradictions, missing conditions,) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 392 Tm (  malformed scientific claims, and) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 381.4 Tm (  reagent-solvent issues.) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 368.8 Tm (- Applies policy profiles from) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 358.2 Tm (  PolicyProfiles.json to change contract) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 347.6 Tm (  rules and validator coverage.) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 335 Tm (- Produces deterministic reports with) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 324.4 Tm (  severity, verdict, risk drivers, next) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 313.8 Tm (  questions, and evidence spans.) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 301.2 Tm (- Persists runs, claims, and findings in) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 290.6 Tm (  SQLite via EF Core, and serves Swagger plus) Tj ET
+BT /F1 8.7 Tf 0.14 0.17 0.22 rg 1 0 0 1 42 280 Tm (  browser report pages.) Tj ET
+BT /F2 11 Tf 0.1 0.19 0.31 rg 1 0 0 1 323 668 Tm (HOW IT WORKS) Tj ET
+0.82 0.86 0.91 RG 0.9 w 323 662 m 570 662 l S
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 648 Tm (- Entrypoints: static web pages in) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 637.6 Tm (  ChemVerify.API/wwwroot, REST endpoints in) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 627.2 Tm (  ChemVerify.API, and ChemVerify.Cli.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 614.8 Tm (- API calls AuditService; CLI uses) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 604.4 Tm (  AnalyzeCommandHandler, which mirrors the) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 594 Tm (  verify-only pipeline without) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 583.6 Tm (  infrastructure.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 571.2 Tm (- GenerateAndVerify uses MockModelConnector;) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 560.8 Tm (  VerifyOnly analyzes the supplied text) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 550.4 Tm (  directly.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 538 Tm (- CompositeClaimExtractor combines) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 527.6 Tm (  DoiClaimExtractor, NumericUnitExtractor,) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 517.2 Tm (  and ReagentRoleExtractor.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 504.8 Tm (- Assembly-scanned IValidator) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 494.4 Tm (  implementations create findings;) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 484 Tm (  EvidenceLocator, RiskScorer,) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 473.6 Tm (  ReportBuilder, and ProcedureSummaryBuilder) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 463.2 Tm (  shape the output.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 450.8 Tm (- API persistence flows through) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 440.4 Tm (  ChemVerifyRunRepository and) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 430 Tm (  ChemVerifyDbContext to SQLite) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 419.6 Tm (  \(chemverify.db\).) Tj ET
+BT /F2 11 Tf 0.1 0.19 0.31 rg 1 0 0 1 323 403.2 Tm (HOW TO RUN) Tj ET
+0.82 0.86 0.91 RG 0.9 w 323 397.2 m 570 397.2 l S
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 383.2 Tm (- Install a .NET SDK that can build the) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 372.8 Tm (  repo's net10.0 projects. README still says) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 362.4 Tm (  .NET 8 recommended.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 350 Tm (- From the repo root: dotnet restore) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 337.6 Tm (- Start the API: dotnet run --project) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 327.2 Tm (  ChemVerify.API) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 314.8 Tm (- Open http://localhost:5028,) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 304.4 Tm (  https://localhost:7033, or /swagger.) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 292 Tm (- CLI example: dotnet run --project) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 281.6 Tm (  ChemVerify.Cli -- analyze) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 271.2 Tm (  .\\\\ChemVerify.Tests\\\\TestData\\\\Input\\\\CleanProcedure.txt) Tj ET
+BT /F1 8.6 Tf 0.14 0.17 0.22 rg 1 0 0 1 323 260.8 Tm (  --format json) Tj ET
+0.96 0.97 0.98 rg 36 26 540 16 re f
+BT /F1 7.8 Tf 0.36 0.4 0.46 rg 1 0 0 1 42 31 Tm (Summary derived from README, current .NET projects, API wiring, core pipeline services, and persistence code.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000007470 00000 n 
+0000007540 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+7615
+%%EOF

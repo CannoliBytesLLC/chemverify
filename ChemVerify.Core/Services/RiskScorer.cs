@@ -9,7 +9,6 @@ public class RiskScorer : IRiskScorer
 {
     private const double FailWeight = 1.0;
     private const double UnverifiedWeight = 0.3;
-    private const double NotCheckableWeight = 0.05;
     private const double PassWeight = 0.0;
 
     private const double ChemHighWeight = 0.35;
@@ -49,6 +48,16 @@ public class RiskScorer : IRiskScorer
             return 0.0;
         }
 
+        // Exclude diagnostic observations — they are informational and should not affect risk
+        IReadOnlyList<ValidationFinding> actionable = findings
+            .Where(f => !f.IsDiagnostic)
+            .ToList();
+
+        if (actionable.Count == 0)
+        {
+            return 0.0;
+        }
+
         bool dampenDoi = policy?.DampenDoiFailSeverity == true;
 
         // Separate chemistry / text-integrity findings from general findings
@@ -56,7 +65,7 @@ public class RiskScorer : IRiskScorer
         double chemAdditiveScore = 0.0;
         double textIntegrityAdditiveScore = 0.0;
 
-        foreach (ValidationFinding f in findings)
+        foreach (ValidationFinding f in actionable)
         {
             if (f.Kind is not null && ChemHighKinds.Contains(f.Kind))
             {
@@ -84,7 +93,7 @@ public class RiskScorer : IRiskScorer
                 ValidationStatus.Fail when dampenDoi && f.ValidatorName == "DoiFormatValidator"
                     => DampenedDoiFailWeight,
                 ValidationStatus.Fail => FailWeight,
-                ValidationStatus.Unverified => f.Kind is FindingKind.NotCheckable or FindingKind.NotComparable or FindingKind.CrossStepConditionVariation ? NotCheckableWeight : UnverifiedWeight,
+                ValidationStatus.Unverified => UnverifiedWeight,
                 _ => PassWeight
             });
 

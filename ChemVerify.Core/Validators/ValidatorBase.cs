@@ -77,7 +77,8 @@ public abstract class ValidatorBase : IValidator
         int? evidenceEndOffset = null,
         int? evidenceStepIndex = null,
         string? evidenceEntityKey = null,
-        string? evidenceSnippet = null) => new()
+        string? evidenceSnippet = null,
+        FindingCategory? category = null) => new()
     {
         Id = Guid.NewGuid(),
         RunId = runId,
@@ -95,7 +96,8 @@ public abstract class ValidatorBase : IValidator
         EvidenceEndOffset = evidenceEndOffset,
         EvidenceStepIndex = evidenceStepIndex,
         EvidenceEntityKey = evidenceEntityKey,
-        EvidenceSnippet = evidenceSnippet
+        EvidenceSnippet = evidenceSnippet,
+        Category = category ?? (FindingKind.IsDiagnosticKind(kind) ? FindingCategory.Diagnostic : FindingCategory.Finding)
     };
 
     // ── Evidence reference formatting ────────────────────────────────

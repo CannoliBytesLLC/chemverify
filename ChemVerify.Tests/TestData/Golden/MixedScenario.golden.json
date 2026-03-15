@@ -1,22 +1,18 @@
 {
   "runId": "00000000-0000-0000-0000-000000000001",
-  "riskScore": 0.225,
+  "riskScore": 0.43333333333333335,
   "report": {
     "engineVersion": "NORMALIZED",
     "ruleSetVersion": "0.2.0",
     "policyProfileName": null,
     "policyProfileVersion": "0.2.0",
-    "severity": "Medium",
+    "severity": "High",
     "verdict": "Internal inconsistencies detected. Manual review recommended before relying on this output.",
-    "summary": "2 item(s) require attention. verification limited by incomplete cross-referencing of numeric parameters. Analysis performed on 13 extracted quantitative and citation claims.",
+    "summary": "2 item(s) require attention. Analysis performed on 13 extracted quantitative and citation claims.",
     "confirmed": [
-      "Valid DOI formats detected (1)",
-      "No contradiction detected between 30 min and 45 min.",
-      "No contradiction detected between 85% and 71%."
+      "Valid DOI formats detected (1)"
     ],
-    "notVerifiable": [
-      "Single-instance numeric claims (60%) \u2014 no cross-reference available"
-    ],
+    "notVerifiable": [],
     "attention": [
       "\u274C DOI format is invalid or exceeds maximum length.",
       "   \uD83D\uDD0E Evidence: \u0022\u2026riant was also reported (DOI: 10.1038/INVALID#DOI).\u0022, pos 500-519",
@@ -25,8 +21,7 @@
     "nextQuestions": [
       "Are 78 \u00B0C and -78 \u00B0C alternative routes or sequential steps?",
       "What reagents/solvent correspond to each condition scenario?",
-      "1 DOI(s) failed format validation \u2014 are the identifiers correct?",
-      "Single-mention numeric claims could not be cross-checked \u2014 is additional data available?"
+      "1 DOI(s) failed format validation \u2014 are the identifiers correct?"
     ],
     "riskDrivers": [
       {
@@ -35,11 +30,7 @@
       },
       {
         "delta": -0.1,
-        "label": "3 claim(s) cross-referenced and confirmed"
-      },
-      {
-        "delta": -0.05,
-        "label": "Clear step segmentation detected"
+        "label": "1 claim(s) cross-referenced and confirmed"
       }
     ]
   },
@@ -61,7 +52,7 @@
       "output": null,
       "previousHash": null,
       "currentHash": "NORMALIZED",
-      "riskScore": 0.225
+      "riskScore": 0.43333333333333335
     },
     "claims": [
       {
@@ -233,6 +224,8 @@
         "evidenceRef": "Claim:00000000-0000-0000-0000-000000000002",
         "kind": null,
         "jsonPayload": null,
+        "category": "Finding",
+        "isDiagnostic": false,
         "ruleId": "DOI_FORMAT",
         "ruleVersion": "0.2.0",
         "evidenceStartOffset": 434,
@@ -252,6 +245,8 @@
         "evidenceRef": "Claim:00000000-0000-0000-0000-000000000003",
         "kind": null,
         "jsonPayload": null,
+        "category": "Finding",
+        "isDiagnostic": false,
         "ruleId": "DOI_FORMAT",
         "ruleVersion": "0.2.0",
         "evidenceStartOffset": 500,
@@ -271,6 +266,8 @@
         "evidenceRef": "Claim:00000000-0000-0000-0000-000000000004\u002BClaim:00000000-0000-0000-0000-000000000008",
         "kind": "MultiScenario",
         "jsonPayload": null,
+        "category": "Finding",
+        "isDiagnostic": false,
         "ruleId": "NumericContradictionValidator",
         "ruleVersion": "0.2.0",
         "evidenceStartOffset": null,
@@ -282,25 +279,6 @@
       {
         "id": "00000000-0000-0000-0000-000000000018",
         "runId": "00000000-0000-0000-0000-000000000001",
-        "claimId": "00000000-0000-0000-0000-000000000005",
-        "validatorName": "NumericContradictionValidator",
-        "status": "Unverified",
-        "message": "Single numeric claim for this context\u002Bunit; cannot check for contradictions.",
-        "confidence": 0.5,
-        "evidenceRef": "Claim:00000000-0000-0000-0000-000000000005",
-        "kind": "NotCheckable",
-        "jsonPayload": null,
-        "ruleId": "NumericContradictionValidator",
-        "ruleVersion": "0.2.0",
-        "evidenceStartOffset": 73,
-        "evidenceEndOffset": 76,
-        "evidenceStepIndex": 0,
-        "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026ed at 78 \u00B0C in DMF using NaH (60% dispersion, 1.2 equiv) as the\u2026"
-      },
-      {
-        "id": "00000000-0000-0000-0000-000000000019",
-        "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000006",
         "validatorName": "NumericContradictionValidator",
         "status": "Pass",
@@ -309,6 +287,8 @@
         "evidenceRef": "Claim:00000000-0000-0000-0000-000000000006\u002BClaim:00000000-0000-0000-0000-000000000009",
         "kind": null,
         "jsonPayload": null,
+        "category": "Diagnostic",
+        "isDiagnostic": true,
         "ruleId": "NumericContradictionValidator",
         "ruleVersion": "0.2.0",
         "evidenceStartOffset": 168,
@@ -318,7 +298,7 @@
         "evidenceSnippet": "\u2026ethyl iodide (1.5 equiv) over 30 min, affording C-alkylated produc\u2026"
       },
       {
-        "id": "00000000-0000-0000-0000-000000000020",
+        "id": "00000000-0000-0000-0000-000000000019",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimId": "00000000-0000-0000-0000-000000000007",
         "validatorName": "NumericContradictionValidator",
@@ -328,6 +308,8 @@
         "evidenceRef": "Claim:00000000-0000-0000-0000-000000000007\u002BClaim:00000000-0000-0000-0000-000000000010",
         "kind": null,
         "jsonPayload": null,
+        "category": "Diagnostic",
+        "isDiagnostic": true,
         "ruleId": "NumericContradictionValidator",
         "ruleVersion": "0.2.0",
         "evidenceStartOffset": 209,

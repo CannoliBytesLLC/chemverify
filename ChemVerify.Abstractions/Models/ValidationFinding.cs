@@ -15,6 +15,17 @@ public class ValidationFinding
     public string? Kind { get; set; }
     public string? JsonPayload { get; set; }
 
+    // ── Classification ────────────────────────────────────────────────
+    /// <summary>
+    /// Whether this finding is user-facing (<see cref="FindingCategory.Finding"/>)
+    /// or an internal diagnostic (<see cref="FindingCategory.Diagnostic"/>).
+    /// Defaults to <see cref="FindingCategory.Finding"/> for backward compatibility.
+    /// </summary>
+    public FindingCategory Category { get; set; } = FindingCategory.Finding;
+
+    /// <summary>Convenience accessor: <c>true</c> when <see cref="Category"/> is <see cref="FindingCategory.Diagnostic"/>.</summary>
+    public bool IsDiagnostic => Category == FindingCategory.Diagnostic;
+
     // ── Provenance (populated by ValidatorBase / ReportBuilder) ───
     public string? RuleId { get; set; }
     public string? RuleVersion { get; set; }

@@ -332,10 +332,10 @@ public class VerifyTextEndpointTests : IClassFixture<WebApplicationFactory<Progr
             contradictionFindings.Any(f => f.Status == ValidationStatus.Fail && f.Kind == "Contradiction"),
             "Different reagent masses (1.06 g vs 0.38 g) or volumes (10 mL vs 20 mL) should NOT be flagged as contradictions.");
 
-        // Claims without a comparable contextKey should be marked NotComparable
-        Assert.True(
+        // Claims without a comparable contextKey are now suppressed (no NotComparable noise)
+        Assert.False(
             contradictionFindings.Any(f => f.Kind == "NotComparable"),
-            "Bare mass/volume claims should be marked as NotComparable.");
+            "Non-comparable claims should be suppressed entirely, not emitted as NotComparable.");
     }
 
     [Fact]

@@ -64,12 +64,14 @@ public class QuenchWhenReactiveReagentValidator : IValidator
         // Determine the effective text boundary (ignore references section)
         int textBoundary = ctx.ReferencesStartOffset ?? text.Length;
 
-        // Find all reactive reagent claims that appear before the references section
-        // and belong to steps classified as Procedure
+        // Find all reactive reagent claims that appear before the references section,
+        // belong to steps classified as Procedure, and whose reagent name is at least
+        // Moderate reactivity (excludes benign bases like Et₃N, K₂CO₃, pyridine).
         List<ExtractedClaim> reactives = claims
             .Where(c => c.ClaimType == ClaimType.ReagentMention
                      && c.JsonPayload is not null
                      && ReactiveRoles.Any(r => c.JsonPayload.Contains($"\"role\":\"{r}\"", StringComparison.OrdinalIgnoreCase))
+                     && ReactivityClassifier.MayRequireQuench(c.EntityKey ?? c.RawText)
                      && IsBeforeBoundary(c, textBoundary)
                      && IsInProceduralStep(c, roles))
             .ToList();

@@ -93,4 +93,36 @@ public static class FindingKind
 
     /// <summary>Dry/inert conditions established but aqueous media introduced with clear workup transition language.</summary>
     public const string WorkupTransitionDetected = "WorkupTransitionDetected";
+
+    // ── Diagnostic-kind registry ────────────────────────────────────────
+    // Kinds in this set are internal observations that explain why a check
+    // was not performed. They should NOT affect user-facing reports or risk
+    // scoring. Validators emit these as FindingCategory.Diagnostic.
+
+    /// <summary>
+    /// Returns <c>true</c> if the given kind is classified as a diagnostic
+    /// (internal observation) rather than a user-facing finding.
+    /// </summary>
+    public static bool IsDiagnosticKind(string? kind) =>
+        kind is not null && DiagnosticKinds.Contains(kind);
+
+    /// <summary>
+    /// Well-known kinds that represent diagnostic observations, not actionable findings.
+    /// Kinds rendered in user-facing report sections (Attention, NextQuestions) such as
+    /// <see cref="MultiScenario"/> and <see cref="PossiblyTruncated"/> must NOT
+    /// appear here (they are rendered in user-facing report sections).
+    /// </summary>
+    public static readonly HashSet<string> DiagnosticKinds = new(StringComparer.Ordinal)
+    {
+        NotComparable,
+        NotCheckable,
+        DifferentPercentKind,
+        DifferentOperation,
+        DifferentConditionContext,
+        SequentialDuration,
+        CheckpointVsTotal,
+        GradientElution,
+        EntityAmbiguous,
+        CrossStepConditionVariation
+    };
 }

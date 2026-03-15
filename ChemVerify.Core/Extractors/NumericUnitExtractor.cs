@@ -18,6 +18,14 @@ public class NumericUnitExtractor : IClaimExtractor
         @"\d+\s*:\s*\d+\s*$",
         RegexOptions.Compiled);
 
+    // Reference/example label guard: suppresses extraction of document-structural
+    // tokens that look numeric but are not chemistry claims.
+    // Examples: "Example 1g", "Example 1g/h", "Step 7", "Reference Example 19",
+    //           "Scheme 3", "Table 2", "Entry 4a", "Run 12"
+    private static readonly Regex ReferenceLabelRegex = new(
+        @"\b(?:Example|Step|Scheme|Table|Figure|Fig\.|Entry|Run|Experiment|Compound|Reference(?:\s+Example)?|Preparation|Procedure|Ref\.|No\.|Eq\.|Rxn|Batch|Item|Part|Section|Appendix)\s+\d+[a-z]?(?:[\-/][a-z0-9])?\s*$",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     // Case 1: preceding text ends with a digit when the primary regex consumed '-' as negative sign
     // e.g., "~80" preceding "-85%"
     private static readonly Regex HyphenRangePrecedingRegex = new(
@@ -106,6 +114,18 @@ public class NumericUnitExtractor : IClaimExtractor
                 {
                     // The digit(s) before our match are part of a ratio notation,
                     // not a standalone percentage. Skip this match entirely.
+                    continue;
+                }
+            }
+
+            // Reference/example label guard: reject "Example 1g", "Step 7", etc.
+            // These are document-structural tokens, not chemistry numeric claims.
+            if (match.Index > 0)
+            {
+                int lookback = Math.Min(match.Index, 30);
+                string preceding = text[(match.Index - lookback)..match.Index];
+                if (ReferenceLabelRegex.IsMatch(preceding))
+                {
                     continue;
                 }
             }

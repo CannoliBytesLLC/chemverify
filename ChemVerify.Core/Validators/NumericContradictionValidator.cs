@@ -59,7 +59,7 @@ public class NumericContradictionValidator : IValidator
 
     // ?? Condition-signature regex (temperature tokens near time claims) ???
     private static readonly Regex ConditionTempRegex = new(
-        @"-?\d+(?:\.\d+)?\s*(?:°\s*C|deg(?:rees?)?\s*C)\b"
+        @"-?\d+(?:\.\d+)?\s*(?:ï¿½\s*C|deg(?:rees?)?\s*C)\b"
         + @"|\broom\s*temp(?:erature)?\b|\bambient\s*temp(?:erature)?\b"
         + @"|\bice[\s-](?:bath|water\s+bath)\b|\breflux\b"
         + @"|\b[Rr]\.?[Tt]\.?\b",
@@ -94,33 +94,12 @@ public class NumericContradictionValidator : IValidator
             .Where(c => c.ClaimType == ClaimType.NumericWithUnit && c.Unit is not null)
             .ToList();
 
-        // Partition: only claims with a comparable contextKey enter contradiction logic
-        List<ExtractedClaim> comparableClaims = new();
-
-        foreach (ExtractedClaim claim in numericClaims)
-        {
-            string contextKey = ExtractContextKey(claim);
-
-            if (ComparableContextKeys.Contains(contextKey))
-            {
-                comparableClaims.Add(claim);
-            }
-            else
-            {
-                findings.Add(new ValidationFinding
-                {
-                    Id = Guid.NewGuid(),
-                    RunId = runId,
-                    ClaimId = claim.Id,
-                    ValidatorName = nameof(NumericContradictionValidator),
-                    Status = ValidationStatus.Unverified,
-                    Message = $"Numeric claim ({claim.RawText}) has no comparable context; skipped for contradiction checking.",
-                    Confidence = 0.3,
-                    EvidenceRef = $"Claim:{claim.Id}",
-                    Kind = FindingKind.NotComparable
-                });
-            }
-        }
+        // Partition: only claims with a comparable contextKey enter contradiction logic.
+        // Non-comparable claims are silently skipped ï¿½ no diagnostic emission needed
+        // (these were historically 80%+ of all validator output with zero actionable value).
+        List<ExtractedClaim> comparableClaims = numericClaims
+            .Where(c => ComparableContextKeys.Contains(ExtractContextKey(c)))
+            .ToList();
 
         // Group comparable claims by (ContextKey + Unit + EntityKey) for step-scoped comparison
         IEnumerable<IGrouping<string, ExtractedClaim>> groupedByUnit = comparableClaims
@@ -130,23 +109,10 @@ public class NumericContradictionValidator : IValidator
         {
             List<ExtractedClaim> groupList = group.ToList();
 
+            // Singleton groups have nothing to compare ï¿½ skip silently.
+            // (These were historically ~10% of all validator output with zero actionable value.)
             if (groupList.Count < 2)
             {
-                foreach (ExtractedClaim claim in groupList)
-                {
-                    findings.Add(new ValidationFinding
-                    {
-                        Id = Guid.NewGuid(),
-                        RunId = runId,
-                        ClaimId = claim.Id,
-                        ValidatorName = nameof(NumericContradictionValidator),
-                        Status = ValidationStatus.Unverified,
-                        Message = "Single numeric claim for this context+unit; cannot check for contradictions.",
-                        Confidence = 0.5,
-                        EvidenceRef = $"Claim:{claim.Id}",
-                        Kind = FindingKind.NotCheckable
-                    });
-                }
                 continue;
             }
 
@@ -231,7 +197,7 @@ public class NumericContradictionValidator : IValidator
                             break;
                         }
 
-                        // Check for sequential durations ("reflux 30 min … an additional 15 min")
+                        // Check for sequential durations ("reflux 30 min ï¿½ an additional 15 min")
                         if (groupContextKey == "time")
                         {
                             string? seqCue = DetectSequentialDuration(run.GetAnalyzedText(), groupList[i], groupList[j]);
@@ -248,7 +214,8 @@ public class NumericContradictionValidator : IValidator
                                     Confidence = 0.85,
                                     EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
                                     EvidenceSnippet = seqCue,
-                                    Kind = FindingKind.SequentialDuration
+                                    Kind = FindingKind.SequentialDuration,
+                                    Category = FindingCategory.Diagnostic
                                 });
                                 continue;
                             }
@@ -266,7 +233,8 @@ public class NumericContradictionValidator : IValidator
                                     Message = $"Checkpoint vs cumulative total ({groupList[i].RawText} / {groupList[j].RawText}); not contradictory.",
                                     Confidence = 0.85,
                                     EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
-                                    Kind = FindingKind.CheckpointVsTotal
+                                    Kind = FindingKind.CheckpointVsTotal,
+                                    Category = FindingCategory.Diagnostic
                                 });
                                 continue;
                             }
@@ -288,7 +256,8 @@ public class NumericContradictionValidator : IValidator
                                     Message = $"Different operations ({tagI} vs {tagJ}): {groupList[i].RawText} / {groupList[j].RawText}; not contradictory.",
                                     Confidence = 0.85,
                                     EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
-                                    Kind = FindingKind.DifferentOperation
+                                    Kind = FindingKind.DifferentOperation,
+                                    Category = FindingCategory.Diagnostic
                                 });
                                 continue;
                             }
@@ -310,13 +279,14 @@ public class NumericContradictionValidator : IValidator
                                     Message = $"Different temperature regimes ({tempSigI} vs {tempSigJ}): {groupList[i].RawText} / {groupList[j].RawText}; not contradictory.",
                                     Confidence = 0.8,
                                     EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
-                                    Kind = FindingKind.DifferentConditionContext
+                                    Kind = FindingKind.DifferentConditionContext,
+                                    Category = FindingCategory.Diagnostic
                                 });
                                 continue;
                             }
                         }
 
-                        // Check chromatography gradient for percent claims (skip yield/purity/impurity — those are never gradients)
+                        // Check chromatography gradient for percent claims (skip yield/purity/impurity ï¿½ those are never gradients)
                         if (groupList[i].Unit == "%"
                             && groupContextKey is not "yield" and not "purity" and not "impurity"
                             && IsChromatographyGradient(run.GetAnalyzedText(), groupList[i], groupList[j]))
@@ -331,7 +301,8 @@ public class NumericContradictionValidator : IValidator
                                 Message = $"Chromatography gradient detected ({groupList[i].RawText} ? {groupList[j].RawText}); not contradictory.",
                                 Confidence = 0.9,
                                 EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
-                                Kind = FindingKind.GradientElution
+                                Kind = FindingKind.GradientElution,
+                                Category = FindingCategory.Diagnostic
                             });
                             continue;
                         }
@@ -381,7 +352,8 @@ public class NumericContradictionValidator : IValidator
                                 Status = ValidationStatus.Pass,
                                 Message = $"No contradiction detected between {groupList[i].RawText} and {groupList[j].RawText}.",
                                 Confidence = 0.8,
-                                EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}"
+                                EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
+                                Category = FindingCategory.Diagnostic
                             });
                         }
                     }
@@ -426,7 +398,8 @@ public class NumericContradictionValidator : IValidator
                         Message = $"Multiple distinct {groupContextKey} values observed across steps ({rawValues}); expected for multistep synthesis.",
                         Confidence = 0.4,
                         EvidenceRef = claimRefs,
-                        Kind = FindingKind.CrossStepConditionVariation
+                        Kind = FindingKind.CrossStepConditionVariation,
+                        Category = FindingCategory.Diagnostic
                     });
                 }
             }
@@ -520,7 +493,7 @@ public class NumericContradictionValidator : IValidator
     /// </summary>
     private static bool AreDifferentEntitiesInSameStep(ExtractedClaim a, ExtractedClaim b)
     {
-        // If either claim lacks an entity key, we cannot scope — allow comparison
+        // If either claim lacks an entity key, we cannot scope ï¿½ allow comparison
         if (a.EntityKey is null || b.EntityKey is null)
         {
             return false;
@@ -585,7 +558,7 @@ public class NumericContradictionValidator : IValidator
 
     /// <summary>
     /// Detects whether two time claims represent sequential durations rather than
-    /// contradictory values (e.g., "reflux for 30 min … an additional 15 min").
+    /// contradictory values (e.g., "reflux for 30 min ï¿½ an additional 15 min").
     /// Returns the matched additive cue phrase, or null if not sequential.
     /// </summary>
     public static string? DetectSequentialDuration(string text, ExtractedClaim claimA, ExtractedClaim claimB)
@@ -682,8 +655,8 @@ public class NumericContradictionValidator : IValidator
     }
 
     /// <summary>
-    /// Returns true when one time claim is introduced by a checkpoint cue ("after", "upon", …)
-    /// and the other by a cumulative cue ("total", "for a total of", …).
+    /// Returns true when one time claim is introduced by a checkpoint cue ("after", "upon", ï¿½)
+    /// and the other by a cumulative cue ("total", "for a total of", ï¿½).
     /// </summary>
     internal static bool IsCheckpointVsTotal(string text, ExtractedClaim a, ExtractedClaim b)
     {
@@ -710,7 +683,7 @@ public class NumericContradictionValidator : IValidator
 
     /// <summary>
     /// Extracts a normalised temperature signature from the text near a time claim
-    /// (±80 chars). Returns the closest match normalised to a category string
+    /// (ï¿½80 chars). Returns the closest match normalised to a category string
     /// (e.g. "0C", "ambient", "reflux"). Empty string means no temperature found.
     /// </summary>
     internal static string ExtractNearbyTempSignature(string text, ExtractedClaim claim)
@@ -765,7 +738,7 @@ public class NumericContradictionValidator : IValidator
 
     /// <summary>
     /// Returns true if both percent claims are within a chromatography gradient context
-    /// (keywords within ±120 chars of each claim).
+    /// (keywords within ï¿½120 chars of each claim).
     /// </summary>
     internal static bool IsChromatographyGradient(string text, ExtractedClaim a, ExtractedClaim b)
     {

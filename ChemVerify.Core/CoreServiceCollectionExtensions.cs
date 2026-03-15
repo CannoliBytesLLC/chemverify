@@ -1,7 +1,9 @@
 using System.Reflection;
+using ChemVerify.Abstractions.Evaluation;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Core.Configuration;
 using ChemVerify.Core.Connectors;
+using ChemVerify.Core.Evaluation;
 using ChemVerify.Core.Extractors;
 using ChemVerify.Core.Services;
 using Microsoft.Extensions.Configuration;
@@ -81,6 +83,14 @@ public static class CoreServiceCollectionExtensions
         {
             services.AddSingleton(typeof(IValidator), type);
         }
+
+        // Evaluation / audit framework — optional services for measuring
+        // validator quality against a manually-reviewed gold set.
+        services.AddSingleton<ConfidenceCalibrationAnalyzer>();
+        services.AddSingleton<ReviewQueueBuilder>();
+        services.AddSingleton<StratificationAnalyzer>();
+        services.AddSingleton<EvaluationReportExporter>();
+        services.AddSingleton<IValidatorAuditRunner, ValidatorAuditRunner>();
 
         return services;
     }

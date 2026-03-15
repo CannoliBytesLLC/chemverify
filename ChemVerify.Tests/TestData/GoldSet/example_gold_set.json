@@ -1,0 +1,87 @@
+[
+  {
+    "id": "GS-0001",
+    "paragraphText": "To a solution of 4-bromobenzaldehyde (1.85 g, 10.0 mmol) in THF (20 mL) was added phenylboronic acid (1.34 g, 11.0 mmol, 1.1 equiv) and Pd(PPh3)4 (0.58 g, 0.50 mmol, 5 mol%). The mixture was heated to 80 °C for 12 h under nitrogen. After cooling to room temperature, the reaction was quenched with saturated NH4Cl (20 mL) and extracted with EtOAc (3 × 30 mL). The combined organic layers were dried over Na2SO4, filtered, and concentrated under reduced pressure to give 4-phenylbenzaldehyde (1.64 g, 90%) as a white solid.",
+    "expectedFindings": [
+      {
+        "validatorName": "MwConsistencyValidator",
+        "expectedStatus": "Pass",
+        "expectedKind": "MwConsistent",
+        "notes": "4-bromobenzaldehyde: 1.85g / 10.0mmol = 185 g/mol — correct MW."
+      },
+      {
+        "validatorName": "DryInertMismatchValidator",
+        "expectedStatus": "Pass",
+        "expectedKind": "WorkupTransitionDetected",
+        "notes": "N2 atmosphere during reaction, aqueous workup after quench — valid transition."
+      },
+      {
+        "validatorName": "QuenchWhenReactiveReagentValidator",
+        "expectedStatus": "Pass",
+        "notes": "Pd catalyst present and quench step detected."
+      }
+    ],
+    "reviewerLabel": "WTS",
+    "reviewedAtUtc": "2026-03-15T10:00:00Z",
+    "reviewerNotes": "Clean Suzuki coupling with correct stoichiometry and complete workup.",
+    "domainTags": ["cross-coupling", "palladium-catalysis", "inert-atmosphere"],
+    "sourceDataset": "manual-authored"
+  },
+  {
+    "id": "GS-0002",
+    "paragraphText": "NaBH4 (0.50 g, 13.2 mmol) was added portionwise to a solution of the ketone (2.00 g, 10.0 mmol) in MeOH (30 mL) at 0 °C. The reaction was stirred for 2 h, then poured into water (50 mL).",
+    "expectedFindings": [
+      {
+        "validatorName": "MwConsistencyValidator",
+        "expectedStatus": "Pass",
+        "expectedKind": "MwConsistent",
+        "notes": "NaBH4: 0.50g / 13.2mmol = 37.9 g/mol — matches known MW of 37.83."
+      },
+      {
+        "validatorName": "MissingTemperatureWhenImpliedValidator",
+        "expectedStatus": "Pass",
+        "notes": "Temperature explicitly stated as 0 °C."
+      },
+      {
+        "validatorName": "IncompatibleReagentSolventValidator",
+        "expectedStatus": "Fail",
+        "expectedKind": "IncompatibleReagentSolvent",
+        "notes": "NaBH4 in MeOH is reactive — generates H2. Commonly used but technically incompatible.",
+        "severityOverride": "Low"
+      }
+    ],
+    "reviewerLabel": "WTS",
+    "reviewedAtUtc": "2026-03-15T10:30:00Z",
+    "reviewerNotes": "NaBH4/MeOH is a textbook reduction. The incompatibility flag is technically correct but may be considered a false alarm in practice.",
+    "domainTags": ["reduction", "borohydride"],
+    "sourceDataset": "manual-authored"
+  },
+  {
+    "id": "GS-0003",
+    "paragraphText": "The aldehyde (500 mg, 3.0 mmol) was dissolved in DCM. TEA was added. The product was obtained in 82% yield. Separately, the same aldehyde gave 15% yield under different conditions.",
+    "expectedFindings": [
+      {
+        "validatorName": "NumericContradictionValidator",
+        "expectedStatus": "Fail",
+        "expectedKind": "Contradiction",
+        "notes": "82% vs 15% yield — genuine contradiction (same entity, same unit)."
+      },
+      {
+        "validatorName": "MissingSolventValidator",
+        "expectedStatus": "Pass",
+        "notes": "DCM is explicitly stated as solvent."
+      },
+      {
+        "validatorName": "MissingTemperatureWhenImpliedValidator",
+        "expectedStatus": "Fail",
+        "expectedKind": "MissingTemperature",
+        "notes": "No temperature specified for either reaction."
+      }
+    ],
+    "reviewerLabel": "WTS",
+    "reviewedAtUtc": "2026-03-15T11:00:00Z",
+    "reviewerNotes": "Contradictory yields plus missing temperature — should flag both.",
+    "domainTags": ["general-organic"],
+    "sourceDataset": "manual-authored"
+  }
+]

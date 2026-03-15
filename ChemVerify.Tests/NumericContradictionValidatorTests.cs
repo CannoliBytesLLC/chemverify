@@ -225,4 +225,40 @@ public class NumericContradictionValidatorTests
             f => f.Kind == FindingKind.Contradiction
               && f.Status == ValidationStatus.Fail);
     }
+    [Fact]
+    public void NonComparableClaims_SuppressedEntirely()
+    {
+        // A paragraph with unrelated reagent masses — no comparable context key
+        string text =
+            "To a flask was added benzaldehyde (1.06 g, 10 mmol) and NaBH4 (0.38 g, 10 mmol) in MeOH (25 mL).";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        // NotComparable and NotCheckable should no longer be emitted at all
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.NotComparable);
+        Assert.DoesNotContain(findings, f => f.Kind == FindingKind.NotCheckable);
+    }
+
+    [Fact]
+    public void ConsistentValues_AreUserFacingFindings()
+    {
+        // Same temperature restated — consistent pass is a meaningful confirmation
+        string text =
+            "The mixture was heated to 80 °C. After adding the catalyst, stir at 80 °C for 2 h.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        var consistentPass = findings.Where(f =>
+            f.Status == ValidationStatus.Pass && !f.IsDiagnostic).ToList();
+
+        // Consistent confirmation should exist and be user-facing (not diagnostic)
+        Assert.NotEmpty(consistentPass);
+        Assert.All(consistentPass, f => Assert.False(f.IsDiagnostic));
+    }
 }

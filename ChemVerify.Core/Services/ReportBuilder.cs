@@ -17,7 +17,8 @@ public static class ReportBuilder
         IReadOnlyList<ExtractedClaim> claims,
         IReadOnlyList<ValidationFinding> findings,
         string? policyProfileName = null,
-        string? policyProfileVersion = null)
+        string? policyProfileVersion = null,
+        bool includeDiagnostics = false)
     {
         string ruleSetVersion = EngineVersionProvider.RuleSetVersion;
 
@@ -28,17 +29,22 @@ public static class ReportBuilder
             f.RuleVersion ??= ruleSetVersion;
         }
 
+        // Exclude diagnostic findings from user-facing report unless explicitly requested
+        IReadOnlyList<ValidationFinding> reportFindings = includeDiagnostics
+            ? findings
+            : findings.Where(f => !f.IsDiagnostic).ToList();
+
         ReportDto report = new()
         {
             EngineVersion = EngineVersionProvider.GetAssemblyVersion(),
             RuleSetVersion = ruleSetVersion,
             PolicyProfileName = policyProfileName,
             PolicyProfileVersion = policyProfileVersion ?? ruleSetVersion,
-            Severity = ClassifySeverity(riskScore, findings)
+            Severity = ClassifySeverity(riskScore, reportFindings)
         };
 
         // ── Confirmed (Pass findings) ───────────────────────────────────
-        int validDois = findings.Count(f =>
+        int validDois = reportFindings.Count(f =>
             f.ValidatorName == "DoiFormatValidator" && f.Status == ValidationStatus.Pass);
 
         if (validDois > 0)
@@ -46,13 +52,13 @@ public static class ReportBuilder
             report.Confirmed.Add($"Valid DOI formats detected ({validDois})");
         }
 
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Status == ValidationStatus.Pass && f.Message.Contains('\u2248')))
         {
             report.Confirmed.Add(f.Message);
         }
 
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Status == ValidationStatus.Pass &&
             !f.Message.Contains('\u2248') &&
             f.ValidatorName != "DoiFormatValidator"))
@@ -61,7 +67,7 @@ public static class ReportBuilder
         }
 
         // ── Not Verifiable (NotCheckable) ───────────────────────────────
-        List<string> notCheckableValues = findings
+        List<string> notCheckableValues = reportFindings
             .Where(f => f.Kind == FindingKind.NotCheckable)
             .Select(f =>
             {
@@ -93,7 +99,7 @@ public static class ReportBuilder
         ];
 
         // ── Attention (Fail + MultiScenario) ────────────────────────────
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Status == ValidationStatus.Fail &&
             (f.Kind is null || !categoryHandledKinds.Contains(f.Kind))))
         {
@@ -101,21 +107,21 @@ public static class ReportBuilder
             AppendEvidenceLine(report, f);
         }
 
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Kind == FindingKind.MultiScenario))
         {
             report.Attention.Add($"\u26a0\ufe0f {HumanizeMessage(f)}");
             AppendEvidenceLine(report, f);
         }
 
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Kind == FindingKind.CrossStepConditionVariation))
         {
             report.Attention.Add($"\u2139\ufe0f {f.Message}");
         }
 
         // ── Chemistry-specific attention ─────────────────────────────────
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Kind is FindingKind.IncompatibleReagentSolvent or
             FindingKind.MissingSolvent or
             FindingKind.MissingTemperature or
@@ -130,7 +136,7 @@ public static class ReportBuilder
         }
 
         // ── Text-integrity attention ─────────────────────────────────────
-        foreach (ValidationFinding f in findings.Where(f =>
+        foreach (ValidationFinding f in reportFindings.Where(f =>
             f.Kind is FindingKind.MalformedChemicalToken or
             FindingKind.UnsupportedOrIncompleteClaim or
             FindingKind.CitationTraceabilityWeak or
@@ -151,43 +157,43 @@ public static class ReportBuilder
         }
 
         // ── Next Questions ──────────────────────────────────────────────
-        if (findings.Any(f => f.Kind == FindingKind.IncompatibleReagentSolvent))
+        if (reportFindings.Any(f => f.Kind == FindingKind.IncompatibleReagentSolvent))
         {
             report.NextQuestions.Add(
                 "Confirm whether the moisture-sensitive reagent and protic solvent are in the same reaction step.");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.MissingSolvent))
+        if (reportFindings.Any(f => f.Kind == FindingKind.MissingSolvent))
         {
             report.NextQuestions.Add(
                 "What solvent or medium was used for the described procedure?");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.MissingTemperature))
+        if (reportFindings.Any(f => f.Kind == FindingKind.MissingTemperature))
         {
             report.NextQuestions.Add(
                 "What temperature was used for the step that implies thermal control?");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.MissingQuench))
+        if (reportFindings.Any(f => f.Kind == FindingKind.MissingQuench))
         {
             report.NextQuestions.Add(
                 "Reactive reagent detected without a quench/workup step — how was the reaction terminated safely?");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.AmbiguousWorkupTransition))
+        if (reportFindings.Any(f => f.Kind == FindingKind.AmbiguousWorkupTransition))
         {
             report.NextQuestions.Add(
                 "Dry/inert conditions were followed by aqueous media — is there an explicit workup or extraction step?");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.EquivInconsistent))
+        if (reportFindings.Any(f => f.Kind == FindingKind.EquivInconsistent))
         {
             report.NextQuestions.Add(
                 "Stated equivalents do not match the mmol quantities — verify the stoichiometry.");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.MultiScenario))
+        if (reportFindings.Any(f => f.Kind == FindingKind.MultiScenario))
         {
             IEnumerable<ExtractedClaim> tempClaims = claims.Where(c =>
                 c.JsonPayload is not null && c.JsonPayload.Contains("\"temp\""));
@@ -203,7 +209,7 @@ public static class ReportBuilder
                 "What reagents/solvent correspond to each condition scenario?");
         }
 
-        int failedDois = findings.Count(f =>
+        int failedDois = reportFindings.Count(f =>
             f.ValidatorName == "DoiFormatValidator" && f.Status == ValidationStatus.Fail);
         if (failedDois > 0)
         {
@@ -211,19 +217,19 @@ public static class ReportBuilder
                 $"{failedDois} DOI(s) failed format validation — are the identifiers correct?");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.MalformedChemicalToken))
+        if (reportFindings.Any(f => f.Kind == FindingKind.MalformedChemicalToken))
         {
             report.NextQuestions.Add(
                 "Malformed chemical tokens detected — verify chemical names and formatting are complete.");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.UnsupportedOrIncompleteClaim))
+        if (reportFindings.Any(f => f.Kind == FindingKind.UnsupportedOrIncompleteClaim))
         {
             report.NextQuestions.Add(
                 "Incomplete scientific claims found — can missing numeric values or citations be supplied?");
         }
 
-        if (findings.Any(f => f.Kind == FindingKind.CitationTraceabilityWeak))
+        if (reportFindings.Any(f => f.Kind == FindingKind.CitationTraceabilityWeak))
         {
             report.NextQuestions.Add(
                 "Mixed citation styles reduce traceability — consider standardising to DOI-only or author-year-only.");
@@ -236,12 +242,12 @@ public static class ReportBuilder
         }
 
         // ── Risk drivers ─────────────────────────────────────────────────
-        report.RiskDrivers = BuildRiskDrivers(findings);
+        report.RiskDrivers = BuildRiskDrivers(reportFindings);
 
         // ── Summary + Verdict ───────────────────────────────────────────
         int attentionFindingCount = report.Attention.Count(a => !a.StartsWith("   "));
         report.Summary = BuildSummary(report, claims.Count, attentionFindingCount);
-        report.Verdict = BuildVerdict(report, findings);
+        report.Verdict = BuildVerdict(report, reportFindings);
 
         return report;
     }
