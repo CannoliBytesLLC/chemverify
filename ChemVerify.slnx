@@ -4,7 +4,7 @@
   </Folder>
   <Folder Name="/Docs/">
     <File Path="ARCHITECTURE_ROADMAP.md" />
-    <File Path="TestPrompts.txt" />
+    <File Path="TestPrompts.md" />
   </Folder>
   <Project Path="ChemVerify.Abstractions/ChemVerify.Abstractions.csproj" />
   <Project Path="ChemVerify.API/ChemVerify.API.csproj" />
