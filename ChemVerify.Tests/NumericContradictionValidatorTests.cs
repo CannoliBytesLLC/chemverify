@@ -261,4 +261,234 @@ public class NumericContradictionValidatorTests
         Assert.NotEmpty(consistentPass);
         Assert.All(consistentPass, f => Assert.False(f.IsDiagnostic));
     }
+
+    // ── Universal sequential-operation gate ─────────────────────────────────
+
+    [Fact]
+    public void SequentialAdditionThenStir_NoContradiction()
+    {
+        string text = "added over 10 min, then stirred for 25 min at room temperature.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    [Fact]
+    public void SequentialMinutesVsHours_NoContradiction()
+    {
+        string text = "Stirred for 20 min, then heated for 1.5 h.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    [Fact]
+    public void SequentialYieldAcrossSteps_NoContradiction()
+    {
+        string text =
+            "Coupling afforded the intermediate in 43% yield, followed by deblocking " +
+            "with hydroxylamine hydrochloride in refluxing ethanol in 78% yield.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    [Fact]
+    public void FirstCropVsSecondCrop_NoContradiction()
+    {
+        string text =
+            "Recrystallization gave a first crop of 0.84 g, followed by a second crop of 2.2 g.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    [Fact]
+    public void DifferentReagentSolutionMolarities_NoContradiction()
+    {
+        string text =
+            "A 1 M acid solution was added, then a 0.3 M reductant solution was added.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    // ── Universal analytical-notation gate ──────────────────────────────────
+
+    [Fact]
+    public void NmrCarbonVsProtonCounts_NoContradiction()
+    {
+        string text =
+            "1H NMR (DMSO-d6) δ 7.72-7.77 (1H, dd, J=1.5, 8.6), 7.88 (1H, d, J=8.4), 8.35 (1H, s); " +
+            "13C NMR (DMSO-d6) δ 106.47, 112.36, 117.31.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    [Fact]
+    public void ElementalAnalysisPercentages_NoContradiction()
+    {
+        string text =
+            "Anal. calculated for C9H4N3F3: C; 51.20, H; 1.91, N; 19.90, " +
+            "found C; 51.45, H; 2.03, N; 19.68. Yield was 64%.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    [Fact]
+    public void HplcPurityVsYieldPercent_NoContradiction()
+    {
+        string text =
+            "Reverse-phase HPLC indicated 99.5% purity. The product was obtained in 64% yield, then dried.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.DoesNotContain(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
+
+    // ── Helper-method unit tests ────────────────────────────────────────────
+
+    [Fact]
+    public void HasSequentialOperationCueBetween_DetectsThen()
+    {
+        string text = "Stirred for 20 min, then heated for 90 min.";
+
+        var claimA = new ExtractedClaim
+        {
+            Id = Guid.NewGuid(),
+            ClaimType = ClaimType.NumericWithUnit,
+            RawText = "20 min",
+            NormalizedValue = "20",
+            Unit = "min",
+            SourceLocator = "AnalyzedText:13-19",
+            JsonPayload = "{\"contextKey\":\"time\"}"
+        };
+        var claimB = new ExtractedClaim
+        {
+            Id = Guid.NewGuid(),
+            ClaimType = ClaimType.NumericWithUnit,
+            RawText = "90 min",
+            NormalizedValue = "90",
+            Unit = "min",
+            SourceLocator = "AnalyzedText:36-42",
+            JsonPayload = "{\"contextKey\":\"time\"}"
+        };
+
+        Assert.True(NumericContradictionValidator.HasSequentialOperationCueBetween(text, claimA, claimB));
+    }
+
+    [Fact]
+    public void HasSequentialOperationCueBetween_NoCue_ReturnsFalse()
+    {
+        string text = "Stir for 5 min and stir for 60 min.";
+
+        var claimA = new ExtractedClaim
+        {
+            Id = Guid.NewGuid(),
+            ClaimType = ClaimType.NumericWithUnit,
+            RawText = "5 min",
+            NormalizedValue = "5",
+            Unit = "min",
+            SourceLocator = "AnalyzedText:9-14",
+            JsonPayload = "{\"contextKey\":\"time\"}"
+        };
+        var claimB = new ExtractedClaim
+        {
+            Id = Guid.NewGuid(),
+            ClaimType = ClaimType.NumericWithUnit,
+            RawText = "60 min",
+            NormalizedValue = "60",
+            Unit = "min",
+            SourceLocator = "AnalyzedText:28-34",
+            JsonPayload = "{\"contextKey\":\"time\"}"
+        };
+
+        Assert.False(NumericContradictionValidator.HasSequentialOperationCueBetween(text, claimA, claimB));
+    }
+
+    [Fact]
+    public void IsAnalyticalNotation_NmrContext_ReturnsTrue()
+    {
+        string text = "1H NMR (DMSO-d6) δ 7.72 (1H, dd, J=8.6), 8.35 (1H, s)";
+
+        var claimA = new ExtractedClaim
+        {
+            Id = Guid.NewGuid(),
+            ClaimType = ClaimType.NumericWithUnit,
+            RawText = "1H",
+            NormalizedValue = "1",
+            Unit = "H",
+            SourceLocator = "AnalyzedText:24-26",
+            JsonPayload = "{\"contextKey\":\"yield\"}"
+        };
+        var claimB = new ExtractedClaim
+        {
+            Id = Guid.NewGuid(),
+            ClaimType = ClaimType.NumericWithUnit,
+            RawText = "1H",
+            NormalizedValue = "1",
+            Unit = "H",
+            SourceLocator = "AnalyzedText:42-44",
+            JsonPayload = "{\"contextKey\":\"yield\"}"
+        };
+
+        Assert.True(NumericContradictionValidator.IsAnalyticalNotation(text, claimA, claimB));
+    }
+
+    [Fact]
+    public void SameOperationContradiction_StillFails_ControlForGenericGate()
+    {
+        // No sequential cue between, no analytical context, same operation, same scope:
+        // contradiction must still fail.
+        string text = "Stir the mixture for 5 min and stir for 60 min.";
+
+        AiRun run = MakeRun(text);
+        IReadOnlyList<ExtractedClaim> claims = _extractor.Extract(run.Id, text);
+
+        IReadOnlyList<ValidationFinding> findings = _validator.Validate(run.Id, claims, run);
+
+        Assert.Contains(findings,
+            f => f.Kind == FindingKind.Contradiction && f.Status == ValidationStatus.Fail);
+    }
 }

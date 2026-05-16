@@ -94,6 +94,38 @@ public static class FindingKind
     /// <summary>Dry/inert conditions established but aqueous media introduced with clear workup transition language.</summary>
     public const string WorkupTransitionDetected = "WorkupTransitionDetected";
 
+    /// <summary>Numeric values separated by sequential-operation cues (then/after/over/followed by/etc.) describe distinct operations — not contradictory.</summary>
+    public const string SequentialOperationVariation = "SequentialOperationVariation";
+
+    /// <summary>Numeric values reference distinct entities (different reagent solutions, different crops/intermediates, catalyst vs product) — not contradictory.</summary>
+    public const string DifferentEntityVariation = "DifferentEntityVariation";
+
+    /// <summary>Numeric values appear in analytical notation (NMR multiplicities, MS m/z, elemental analysis, Rf, HPLC purity) — not reaction-condition contradictions.</summary>
+    public const string AnalyticalNotationIgnored = "AnalyticalNotationIgnored";
+
+    /// <summary>Numeric values describe different metrics under the same unit (e.g., HPLC purity vs yield, catalyst mol% vs yield) — not contradictory.</summary>
+    public const string DifferentMetricVariation = "DifferentMetricVariation";
+
+    // ── Procedure State Engine — contextual findings ────────────────────
+
+    /// <summary>Inert atmosphere established earlier is broken by an open vessel or air exposure later.</summary>
+    public const string AtmosphereContainmentIssue = "AtmosphereContainmentIssue";
+
+    /// <summary>Reflux or temperature exceeds the solvent's boiling point without sealed/pressurized indication.</summary>
+    public const string SolventTemperatureImplausible = "SolventTemperatureImplausible";
+
+    /// <summary>Reflux specified at a temperature inconsistent with the active solvent (e.g., reflux at 25 °C in ethanol).</summary>
+    public const string ImpossibleRefluxCondition = "ImpossibleRefluxCondition";
+
+    /// <summary>Procedural ordering is anomalous (e.g., concentrated to dryness before adding the next solvent).</summary>
+    public const string ProceduralOrderingAnomaly = "ProceduralOrderingAnomaly";
+
+    /// <summary>Drying step references a protic/aqueous medium (e.g., "dried with water") — semantic contradiction.</summary>
+    public const string DrynessSemanticContradiction = "DrynessSemanticContradiction";
+
+    /// <summary>A claimed value is physically implausible (negative mass, MW outside reasonable bounds, etc.).</summary>
+    public const string PhysicallyImplausibleValue = "PhysicallyImplausibleValue";
+
     // ── Diagnostic-kind registry ────────────────────────────────────────
     // Kinds in this set are internal observations that explain why a check
     // was not performed. They should NOT affect user-facing reports or risk
@@ -123,6 +155,10 @@ public static class FindingKind
         CheckpointVsTotal,
         GradientElution,
         EntityAmbiguous,
-        CrossStepConditionVariation
+        CrossStepConditionVariation,
+        SequentialOperationVariation,
+        DifferentEntityVariation,
+        AnalyticalNotationIgnored,
+        DifferentMetricVariation
     };
 }

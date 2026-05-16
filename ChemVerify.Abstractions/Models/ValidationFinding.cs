@@ -1,4 +1,5 @@
 using ChemVerify.Abstractions.Enums;
+using ChemVerify.Abstractions.Governance;
 
 namespace ChemVerify.Abstractions.Models;
 
@@ -36,4 +37,43 @@ public class ValidationFinding
     public int? EvidenceStepIndex { get; set; }
     public string? EvidenceEntityKey { get; set; }
     public string? EvidenceSnippet { get; set; }
+
+    // ── Governance precision layer (optional, populated by GovernanceProcessor) ──
+    /// <summary>
+    /// Effective severity assigned by the governance precision layer.
+    /// Null when the governance pipeline has not run for this finding.
+    /// </summary>
+    public Severity? Severity { get; set; }
+
+    /// <summary>
+    /// Validator-supplied confidence after deterministic adjustment by
+    /// <see cref="Governance.IConfidenceAdjuster"/> components.
+    /// Null when no adjustment was applied.
+    /// </summary>
+    public double? AdjustedConfidence { get; set; }
+
+    /// <summary>
+    /// True when a <see cref="Governance.IFindingSuppressor"/> requested that
+    /// this finding be hidden from user-facing output and excluded from risk scoring.
+    /// </summary>
+    public bool IsSuppressed { get; set; }
+
+    /// <summary>
+    /// Canonical reason code for suppression or downgrade. Null when no
+    /// adjustment was applied; otherwise one of <see cref="SuppressionReason"/>
+    /// rendered via <c>ToString()</c>.
+    /// </summary>
+    public string? SuppressionReasonCode { get; set; }
+
+    /// <summary>
+    /// Human-readable explanation for the governance adjustment, suitable
+    /// for inclusion in audit/compliance reports.
+    /// </summary>
+    public string? AdjustmentExplanation { get; set; }
+
+    /// <summary>
+    /// Identifier of the <see cref="Governance.FindingCluster"/> this finding
+    /// belongs to, when clustering has been applied.
+    /// </summary>
+    public string? ClusterId { get; set; }
 }

@@ -1,10 +1,15 @@
 using System.Reflection;
 using ChemVerify.Abstractions.Evaluation;
+using ChemVerify.Abstractions.Governance;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Core.Configuration;
 using ChemVerify.Core.Connectors;
 using ChemVerify.Core.Evaluation;
 using ChemVerify.Core.Extractors;
+using ChemVerify.Core.Governance;
+using ChemVerify.Core.Governance.Benchmarking;
+using ChemVerify.Core.Governance.Clustering;
+using ChemVerify.Core.Governance.Review;
 using ChemVerify.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -91,6 +96,33 @@ public static class CoreServiceCollectionExtensions
         services.AddSingleton<StratificationAnalyzer>();
         services.AddSingleton<EvaluationReportExporter>();
         services.AddSingleton<IValidatorAuditRunner, ValidatorAuditRunner>();
+
+        // Governance precision layer — suppressors, adjusters, severity, processor.
+        // Auto-discover IFindingSuppressor and IConfidenceAdjuster implementations
+        // in the Core assembly so new rules become active by simply adding a class.
+        var suppressorTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => typeof(IFindingSuppressor).IsAssignableFrom(t)
+                        && t.IsClass && !t.IsAbstract);
+        foreach (var type in suppressorTypes)
+        {
+            services.AddSingleton(typeof(IFindingSuppressor), type);
+        }
+
+        var adjusterTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => typeof(IConfidenceAdjuster).IsAssignableFrom(t)
+                        && t.IsClass && !t.IsAbstract);
+        foreach (var type in adjusterTypes)
+        {
+            services.AddSingleton(typeof(IConfidenceAdjuster), type);
+        }
+
+        services.AddSingleton<ISeverityCalculator, SeverityCalculator>();
+        services.AddSingleton<GovernanceProcessor>();
+        services.AddSingleton<FindingClusterBuilder>();
+        services.AddSingleton<BenchmarkSummaryGenerator>();
+        services.AddSingleton<ReviewedFindingFactory>();
 
         return services;
     }

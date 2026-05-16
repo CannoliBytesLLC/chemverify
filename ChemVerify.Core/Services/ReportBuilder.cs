@@ -3,6 +3,9 @@ using ChemVerify.Abstractions.Contracts;
 using ChemVerify.Abstractions.Enums;
 using ChemVerify.Abstractions.Models;
 using ChemVerify.Abstractions.Validation;
+using ChemVerify.Core.Governance.Benchmarking;
+using ChemVerify.Core.Governance.Clustering;
+using ChemVerify.Core.Procedure;
 
 namespace ChemVerify.Core.Services;
 
@@ -250,6 +253,127 @@ public static class ReportBuilder
         report.Verdict = BuildVerdict(report, reportFindings);
 
         return report;
+    }
+
+    /// <summary>
+    /// Governance-aware overload. Computes the standard report and then attaches
+    /// a <see cref="GovernanceReportSection"/> built from the *full* finding set
+    /// (including suppressed/diagnostic items) so reports surface severity,
+    /// clustering, suppression, validator precision, and procedure timeline.
+    /// </summary>
+    public static ReportDto BuildWithGovernance(
+        double riskScore,
+        IReadOnlyList<ExtractedClaim> claims,
+        IReadOnlyList<ValidationFinding> findings,
+        IReadOnlyList<StateSnapshot>? snapshots = null,
+        string? policyProfileName = null,
+        string? policyProfileVersion = null,
+        bool includeDiagnostics = false)
+    {
+        ReportDto report = Build(riskScore, claims, findings, policyProfileName, policyProfileVersion, includeDiagnostics);
+        report.Governance = BuildGovernanceSection(findings, snapshots);
+        return report;
+    }
+
+    private static GovernanceReportSection? BuildGovernanceSection(
+        IReadOnlyList<ValidationFinding> findings,
+        IReadOnlyList<StateSnapshot>? snapshots)
+    {
+        // Skip overlay entirely when governance has clearly not run for this corpus.
+        bool anyGovernance = findings.Any(f =>
+            f.Severity is not null || f.IsSuppressed || f.AdjustedConfidence is not null);
+        if (!anyGovernance && (snapshots is null || snapshots.Count == 0))
+        {
+            return null;
+        }
+
+        FindingClusterBuilder clusterBuilder = new();
+        BenchmarkSummaryGenerator benchmark = new();
+
+        IReadOnlyList<FindingCluster> clusters = clusterBuilder.Build(findings);
+        BenchmarkSummary summary = benchmark.Generate(findings);
+
+        Dictionary<string, int> sevHistogram = new(StringComparer.Ordinal);
+        foreach (KeyValuePair<Severity, int> kv in summary.SeverityHistogram)
+        {
+            if (kv.Value > 0) sevHistogram[kv.Key.ToString()] = kv.Value;
+        }
+
+        List<ClusteredFindingDto> clusterDtos = clusters
+            .Select(c => new ClusteredFindingDto
+            {
+                ClusterId = c.Id,
+                Theme = c.Theme,
+                Reasoning = c.Reasoning,
+                AggregatedSeverity = c.AggregatedSeverity.ToString(),
+                FindingCount = c.FindingCount,
+                CriticalCount = c.CriticalCount,
+                HighCount = c.HighCount,
+                RiskContribution = c.RiskContribution,
+                SharedSteps = c.SharedStepIndexes.ToList()
+            })
+            .ToList();
+
+        // Top risk drivers: highest-risk clusters first, then most severe single findings.
+        List<string> topDrivers = clusters
+            .Take(3)
+            .Select(c => $"{c.Theme}: {c.Reasoning} (risk +{c.RiskContribution:F2})")
+            .ToList();
+
+        // Suppression explanations — collapse identical (validator + reason) pairs but
+        // keep step locality so reports remain auditable.
+        List<SuppressionExplanationDto> suppressions = findings
+            .Where(f => f.IsSuppressed && !string.IsNullOrEmpty(f.SuppressionReasonCode))
+            .GroupBy(f => (f.ValidatorName, f.Kind, f.SuppressionReasonCode))
+            .Select(g =>
+            {
+                ValidationFinding first = g.First();
+                return new SuppressionExplanationDto
+                {
+                    ValidatorName = g.Key.ValidatorName,
+                    Kind = g.Key.Kind,
+                    Reason = g.Key.SuppressionReasonCode!,
+                    Explanation = first.AdjustmentExplanation
+                                  ?? $"{g.Count()} finding(s) suppressed by governance.",
+                    StepIndex = first.EvidenceStepIndex
+                };
+            })
+            .OrderBy(s => s.ValidatorName, StringComparer.Ordinal)
+            .ThenBy(s => s.Reason, StringComparer.Ordinal)
+            .ToList();
+
+        List<ValidatorConfidenceDto> validators = summary.ValidatorLeaderboard
+            .Select(m => new ValidatorConfidenceDto
+            {
+                ValidatorName = m.ValidatorName,
+                TriggerFrequency = m.TriggerFrequency,
+                PrecisionEstimate = m.PrecisionEstimate,
+                SuppressionRate = m.SuppressionRate,
+                DowngradeRate = m.DowngradeRate,
+                HighSeverityHitRate = m.HighSeverityHitRate
+            })
+            .ToList();
+
+        List<ProcedureTimelineEntryDto> timeline = (snapshots ?? Array.Empty<StateSnapshot>())
+            .Select(s => new ProcedureTimelineEntryDto
+            {
+                StepIndex = s.StepIndex,
+                Phase = s.AfterState.CurrentPhase.ToString(),
+                Transitions = s.Transitions
+                    .Select(t => $"{t.Kind}: {t.Description}")
+                    .ToList()
+            })
+            .ToList();
+
+        return new GovernanceReportSection
+        {
+            SeverityHistogram = sevHistogram,
+            TopRiskDrivers = topDrivers,
+            Clusters = clusterDtos,
+            Suppressions = suppressions,
+            ValidatorConfidence = validators,
+            ProcedureTimeline = timeline
+        };
     }
 
     private static List<RiskDriverDto> BuildRiskDrivers(IReadOnlyList<ValidationFinding> findings)

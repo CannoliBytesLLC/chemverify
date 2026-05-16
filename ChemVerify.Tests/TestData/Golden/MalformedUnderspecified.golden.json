@@ -1,12 +1,12 @@
 {
   "runId": "00000000-0000-0000-0000-000000000001",
-  "riskScore": 0.5,
+  "riskScore": 0.7,
   "report": {
     "engineVersion": "NORMALIZED",
     "ruleSetVersion": "0.2.0",
     "policyProfileName": null,
     "policyProfileVersion": "0.2.0",
-    "severity": "High",
+    "severity": "Critical",
     "verdict": "Internal inconsistencies detected. Manual review recommended before relying on this output.",
     "summary": "1 item(s) require attention. Analysis performed on 3 extracted quantitative and citation claims.",
     "confirmed": [
@@ -31,7 +31,69 @@
         "delta": -0.05,
         "label": "Clear step segmentation detected"
       }
-    ]
+    ],
+    "governance": {
+      "severityHistogram": {
+        "Info": 1,
+        "High": 1
+      },
+      "topRiskDrivers": [
+        "ReactionConditions: 1 finding(s) in \u0027ReactionConditions\u0027 including 1 high-severity issue(s). (risk \u002B0.20)"
+      ],
+      "clusters": [
+        {
+          "clusterId": "cluster-1",
+          "theme": "ReactionConditions",
+          "reasoning": "1 finding(s) in \u0027ReactionConditions\u0027 including 1 high-severity issue(s).",
+          "aggregatedSeverity": "High",
+          "findingCount": 1,
+          "criticalCount": 0,
+          "highCount": 1,
+          "riskContribution": 0.2,
+          "sharedSteps": [
+            0
+          ]
+        }
+      ],
+      "suppressions": [],
+      "validatorConfidence": [
+        {
+          "validatorName": "NumericContradictionValidator",
+          "triggerFrequency": 1,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 1
+        },
+        {
+          "validatorName": "DoiFormatValidator",
+          "triggerFrequency": 1,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 0
+        }
+      ],
+      "procedureTimeline": [
+        {
+          "stepIndex": 0,
+          "phase": "Setup",
+          "transitions": []
+        },
+        {
+          "stepIndex": 1,
+          "phase": "Purification",
+          "transitions": [
+            "PhaseChanged: Phase: Setup -\u003E Purification"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "phase": "Purification",
+          "transitions": []
+        }
+      ]
+    }
   },
   "artifact": {
     "runId": "00000000-0000-0000-0000-000000000001",
@@ -51,7 +113,7 @@
       "output": null,
       "previousHash": null,
       "currentHash": "NORMALIZED",
-      "riskScore": 0.5
+      "riskScore": 0.7
     },
     "claims": [
       {
@@ -111,7 +173,13 @@
         "evidenceEndOffset": 91,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026r column chromatography (DOI: 10.1021/ja00269a018). The overall yield of the pr\u2026"
+        "evidenceSnippet": "\u2026r column chromatography (DOI: 10.1021/ja00269a018). The overall yield of the pr\u2026",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       },
       {
         "id": "00000000-0000-0000-0000-000000000006",
@@ -132,7 +200,13 @@
         "evidenceEndOffset": 31,
         "evidenceStepIndex": 0,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "The product was isolated in 82% yield after column chromatogr\u2026"
+        "evidenceSnippet": "The product was isolated in 82% yield after column chromatogr\u2026",
+        "severity": "High",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": "cluster-1"
       }
     ],
     "artifactHash": "NORMALIZED",

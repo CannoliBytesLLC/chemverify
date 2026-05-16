@@ -49,8 +49,9 @@ public class RiskScorer : IRiskScorer
         }
 
         // Exclude diagnostic observations — they are informational and should not affect risk
+        // Also exclude governance-suppressed findings — the precision layer ruled them out.
         IReadOnlyList<ValidationFinding> actionable = findings
-            .Where(f => !f.IsDiagnostic)
+            .Where(f => !f.IsDiagnostic && !f.IsSuppressed)
             .ToList();
 
         if (actionable.Count == 0)
@@ -100,7 +101,71 @@ public class RiskScorer : IRiskScorer
             baseScore = total / general.Count;
         }
 
-        return Math.Clamp(baseScore + chemAdditiveScore + textIntegrityAdditiveScore, 0.0, 1.0);
+        return Math.Clamp(baseScore + chemAdditiveScore + textIntegrityAdditiveScore + ComputeSeverityAmplification(actionable), 0.0, 1.0);
+    }
+
+    // Severity amplification: when the governance layer has assigned an effective
+    // severity, escalate risk for High/Critical findings. This is additive and
+    // backward-compatible — when Severity is null (legacy path) the contribution is zero.
+    private const double CriticalSeverityWeight = 0.40;
+    private const double HighSeverityWeight = 0.20;
+    private const double CorroborationBoost = 0.05;       // per extra same-kind High/Critical finding
+    private const double RepeatedPatternBoost = 0.03;     // per extra same-validator non-Info finding
+    private const double CriticalFloor = 0.55;            // any Critical => risk ≥ this floor
+
+    private static double ComputeSeverityAmplification(IReadOnlyList<ValidationFinding> actionable)
+    {
+        double amp = 0.0;
+        bool hasCritical = false;
+
+        // Per-finding severity contribution (capped at 4 critical / 6 high so a
+        // pathological run with dozens of equivalents doesn't saturate prematurely).
+        int critCounted = 0, highCounted = 0;
+        foreach (ValidationFinding f in actionable)
+        {
+            if (f.Severity is null) continue;
+            switch (f.Severity)
+            {
+                case Severity.Critical:
+                    hasCritical = true;
+                    if (critCounted++ < 4) amp += CriticalSeverityWeight;
+                    break;
+                case Severity.High:
+                    if (highCounted++ < 6) amp += HighSeverityWeight;
+                    break;
+            }
+        }
+
+        // Corroboration: multiple High/Critical findings of the *same* kind
+        // reinforce the underlying issue (e.g. several BP exceedances).
+        var sameKindGroups = actionable
+            .Where(f => f.Severity is Severity.High or Severity.Critical && f.Kind is not null)
+            .GroupBy(f => f.Kind!, StringComparer.Ordinal);
+        foreach (var g in sameKindGroups)
+        {
+            int extra = g.Count() - 1;
+            if (extra > 0) amp += Math.Min(0.20, extra * CorroborationBoost);
+        }
+
+        // Repeated-pattern: a single validator firing many non-Info findings is
+        // itself a quality signal even when each individual finding is Medium.
+        var sameValidatorGroups = actionable
+            .Where(f => f.Severity is not null and not Severity.Info)
+            .GroupBy(f => f.ValidatorName, StringComparer.Ordinal);
+        foreach (var g in sameValidatorGroups)
+        {
+            int extra = g.Count() - 1;
+            if (extra > 0) amp += Math.Min(0.15, extra * RepeatedPatternBoost);
+        }
+
+        // Critical floor: a confirmed physical impossibility should always
+        // outweigh tens of low-severity formatting issues.
+        if (hasCritical)
+        {
+            amp = Math.Max(amp, CriticalFloor);
+        }
+
+        return amp;
     }
 }
 

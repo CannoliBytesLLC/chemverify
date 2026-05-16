@@ -13,6 +13,12 @@ public class NumericUnitExtractor : IClaimExtractor
         @"(?<num>-?\d+(?:\.\d+)?)\s*(?<unit>%|°?C|M|h|min|mg|mL|g|L|K|mol|mmol|kPa|atm|ppm)",
         RegexOptions.Compiled);
 
+    // Compound (dimensional) units. Must be matched and consumed BEFORE the
+    // simple regex so that "1200 g/mol" is not parsed as "1200 g".
+    private static readonly Regex CompoundUnitRegex = new(
+        @"(?<num>-?\d+(?:\.\d+)?)\s*(?<unit>g/mol|kg/mol|mg/mL|µg/mL|ug/mL|g/L|mg/L|µg/L|ug/L|mol/L|mmol/L|mol/kg|J/mol|kJ/mol|cal/mol|kcal/mol|mol%)",
+        RegexOptions.Compiled);
+
     // Ratio pattern: "1:4 10%" — detect so we don't create a garbage "410%" claim
     private static readonly Regex RatioPrefixRegex = new(
         @"\d+\s*:\s*\d+\s*$",
@@ -101,8 +107,60 @@ public class NumericUnitExtractor : IClaimExtractor
         // Pre-compute step boundaries once for the whole text
         IReadOnlyList<TextStep> steps = StepSegmenter.Segment(text);
 
+        // ?? Compound-unit pass ?????????????????????????????????????????
+        // Emit compound-unit claims first and record their spans so the
+        // simple-unit pass below can skip overlapping matches (e.g. avoid
+        // misparsing "1200 g/mol" as "1200 g").
+        List<(int Start, int End)> compoundSpans = new();
+        foreach (Match cMatch in CompoundUnitRegex.Matches(text))
+        {
+            string cNum = cMatch.Groups["num"].Value;
+            string cUnit = cMatch.Groups["unit"].Value;
+            compoundSpans.Add((cMatch.Index, cMatch.Index + cMatch.Length));
+
+            string contextKey = cUnit switch
+            {
+                "g/mol" or "kg/mol" => "mw",
+                "mol/L" or "mmol/L" or "mg/mL" or "µg/mL" or "ug/mL" or "g/L" or "mg/L" or "µg/L" or "ug/L" or "mol/kg" => "conc",
+                "J/mol" or "kJ/mol" or "cal/mol" or "kcal/mol" => "energy",
+                "mol%" => "composition",
+                _ => string.Empty
+            };
+
+            string? entityKey = ResolveEntityKey(text, cMatch.Index, cUnit);
+            int? cStepIndex = StepSegmenter.GetStepIndex(steps, cMatch.Index);
+
+            claims.Add(new ExtractedClaim
+            {
+                Id = Guid.NewGuid(),
+                RunId = runId,
+                ClaimType = ClaimType.NumericWithUnit,
+                RawText = cMatch.Value,
+                NormalizedValue = cNum,
+                Unit = cUnit,
+                SourceLocator = $"AnalyzedText:{cMatch.Index}-{cMatch.Index + cMatch.Length}",
+                JsonPayload = BuildJsonPayload(contextKey, null),
+                EntityKey = entityKey,
+                StepIndex = cStepIndex
+            });
+        }
+
         foreach (Match match in matches)
         {
+            // Skip simple matches that fall inside (or overlap) a compound
+            // unit span — prevents "1200 g" being emitted from "1200 g/mol".
+            int simpleEnd = match.Index + match.Length;
+            bool overlapsCompound = false;
+            foreach ((int cs, int ce) in compoundSpans)
+            {
+                if (match.Index < ce && simpleEnd > cs)
+                {
+                    overlapsCompound = true;
+                    break;
+                }
+            }
+            if (overlapsCompound) continue;
+
             string numericPart = match.Groups["num"].Value;
             string unitPart = match.Groups["unit"].Value;
 

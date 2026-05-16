@@ -3,6 +3,7 @@ using ChemVerify.Abstractions.Contracts;
 using ChemVerify.Abstractions.Enums;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Abstractions.Models;
+using ChemVerify.Core.Procedure;
 using ChemVerify.Core.Services;
 using ChemVerify.Infrastructure.Persistence;
 
@@ -126,17 +127,30 @@ public static class RunEndpoints
 
     private static CreateRunResponse BuildResponse(AuditArtifact artifact)
     {
-        ReportDto report = ReportBuilder.Build(
-            artifact.Run.RiskScore,
-            artifact.Claims,
-            artifact.Findings);
-
         string analyzedText = artifact.Run.GetAnalyzedText();
         IReadOnlyList<TextStep> rawSteps = StepSegmenter.Segment(analyzedText);
         ProceduralContext ctx = ProceduralContextDetector.Detect(analyzedText, rawSteps);
         IReadOnlyList<TextStep> steps = StepMerger.MergeReferenceBlocks(analyzedText, rawSteps, ctx.ReferencesStartOffset);
         IReadOnlyDictionary<int, StepRole> stepRoles = StepRoleClassifier.Classify(
             analyzedText, steps, ctx.ReferencesStartOffset);
+
+        // Replay the procedure state once for the governance overlay's timeline.
+        // Failures here are non-fatal: the report still renders without a timeline.
+        IReadOnlyList<StateSnapshot> snapshots;
+        try
+        {
+            snapshots = ProcedureStateEngine.Build(analyzedText, artifact.Claims);
+        }
+        catch
+        {
+            snapshots = Array.Empty<StateSnapshot>();
+        }
+
+        ReportDto report = ReportBuilder.BuildWithGovernance(
+            artifact.Run.RiskScore,
+            artifact.Claims,
+            artifact.Findings,
+            snapshots);
 
         return new CreateRunResponse
         {

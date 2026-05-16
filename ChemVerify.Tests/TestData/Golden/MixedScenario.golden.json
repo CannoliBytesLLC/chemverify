@@ -32,7 +32,76 @@
         "delta": -0.1,
         "label": "1 claim(s) cross-referenced and confirmed"
       }
-    ]
+    ],
+    "governance": {
+      "severityHistogram": {
+        "Info": 1,
+        "Low": 1,
+        "Medium": 1
+      },
+      "topRiskDrivers": [
+        "Other: 1 finding(s) sharing theme \u0027Other\u0027. (risk \u002B0.02)"
+      ],
+      "clusters": [
+        {
+          "clusterId": "cluster-1",
+          "theme": "Other",
+          "reasoning": "1 finding(s) sharing theme \u0027Other\u0027.",
+          "aggregatedSeverity": "Low",
+          "findingCount": 1,
+          "criticalCount": 0,
+          "highCount": 0,
+          "riskContribution": 0.02,
+          "sharedSteps": []
+        }
+      ],
+      "suppressions": [],
+      "validatorConfidence": [
+        {
+          "validatorName": "DoiFormatValidator",
+          "triggerFrequency": 2,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 0
+        },
+        {
+          "validatorName": "NumericContradictionValidator",
+          "triggerFrequency": 1,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 0
+        }
+      ],
+      "procedureTimeline": [
+        {
+          "stepIndex": 0,
+          "phase": "Reaction",
+          "transitions": [
+            "TemperatureChanged: Temperature set to 78 \u00B0C",
+            "ReagentAdded: Reagent added: nah",
+            "SolventAdded: Solvent introduced: dmf",
+            "PhaseChanged: Phase: Setup -\u003E Reaction"
+          ]
+        },
+        {
+          "stepIndex": 1,
+          "phase": "Quench",
+          "transitions": [
+            "TemperatureChanged: Temperature set to -78 \u00B0C",
+            "ReagentAdded: Reagent added: lda",
+            "SolventAdded: Solvent introduced: thf",
+            "PhaseChanged: Phase: Reaction -\u003E Quench"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "phase": "Quench",
+          "transitions": []
+        }
+      ]
+    }
   },
   "artifact": {
     "runId": "00000000-0000-0000-0000-000000000001",
@@ -232,7 +301,13 @@
         "evidenceEndOffset": 453,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026ed product in 71% yield (DOI: 10.1021/jo00983a045). The thermal variant was als\u2026"
+        "evidenceSnippet": "\u2026ed product in 71% yield (DOI: 10.1021/jo00983a045). The thermal variant was als\u2026",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       },
       {
         "id": "00000000-0000-0000-0000-000000000016",
@@ -253,7 +328,13 @@
         "evidenceEndOffset": 519,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026riant was also reported (DOI: 10.1038/INVALID#DOI)."
+        "evidenceSnippet": "\u2026riant was also reported (DOI: 10.1038/INVALID#DOI).",
+        "severity": "Medium",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       },
       {
         "id": "00000000-0000-0000-0000-000000000017",
@@ -274,7 +355,13 @@
         "evidenceEndOffset": null,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": null
+        "evidenceSnippet": null,
+        "severity": "Low",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": "cluster-1"
       },
       {
         "id": "00000000-0000-0000-0000-000000000018",
@@ -295,7 +382,13 @@
         "evidenceEndOffset": 174,
         "evidenceStepIndex": 0,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026ethyl iodide (1.5 equiv) over 30 min, affording C-alkylated produc\u2026"
+        "evidenceSnippet": "\u2026ethyl iodide (1.5 equiv) over 30 min, affording C-alkylated produc\u2026",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       },
       {
         "id": "00000000-0000-0000-0000-000000000019",
@@ -316,7 +409,13 @@
         "evidenceEndOffset": 212,
         "evidenceStepIndex": 0,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026ording C-alkylated product in 85% yield.\r\n\r\nIn an alternative r\u2026"
+        "evidenceSnippet": "\u2026ording C-alkylated product in 85% yield.\r\n\r\nIn an alternative r\u2026",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       }
     ],
     "artifactHash": "NORMALIZED",

@@ -27,7 +27,102 @@
         "delta": -0.05,
         "label": "Clear step segmentation detected"
       }
-    ]
+    ],
+    "governance": {
+      "severityHistogram": {
+        "Info": 4
+      },
+      "topRiskDrivers": [
+        "Other: 3 finding(s) sharing theme \u0027Other\u0027. (risk \u002B0.00)"
+      ],
+      "clusters": [
+        {
+          "clusterId": "cluster-1",
+          "theme": "Other",
+          "reasoning": "3 finding(s) sharing theme \u0027Other\u0027.",
+          "aggregatedSeverity": "Info",
+          "findingCount": 3,
+          "criticalCount": 0,
+          "highCount": 0,
+          "riskContribution": 0,
+          "sharedSteps": [
+            0
+          ]
+        }
+      ],
+      "suppressions": [],
+      "validatorConfidence": [
+        {
+          "validatorName": "DoiFormatValidator",
+          "triggerFrequency": 1,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 0
+        },
+        {
+          "validatorName": "DryInertMismatchValidator",
+          "triggerFrequency": 1,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 0
+        },
+        {
+          "validatorName": "MwConsistencyValidator",
+          "triggerFrequency": 2,
+          "precisionEstimate": 1,
+          "suppressionRate": 0,
+          "downgradeRate": 0,
+          "highSeverityHitRate": 0
+        }
+      ],
+      "procedureTimeline": [
+        {
+          "stepIndex": 0,
+          "phase": "Reaction",
+          "transitions": [
+            "ReagentAdded: Reagent added: pd(pph3)4",
+            "SolventAdded: Solvent introduced: thf",
+            "PhaseChanged: Phase: Setup -\u003E Reaction"
+          ]
+        },
+        {
+          "stepIndex": 1,
+          "phase": "Heating",
+          "transitions": [
+            "TemperatureChanged: Temperature set to 80 \u00B0C",
+            "AtmosphereChanged: Atmosphere changed to nitrogen",
+            "PhaseChanged: Phase: Reaction -\u003E Heating"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "phase": "Extraction",
+          "transitions": [
+            "TemperatureChanged: Temperature set to 4 \u00B0C",
+            "SolventAdded: Solvent introduced: ethyl acetate",
+            "PhaseChanged: Phase: Heating -\u003E Extraction"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "phase": "Extraction",
+          "transitions": [
+            "DrynessChanged: Dry/anhydrous conditions established"
+          ]
+        },
+        {
+          "stepIndex": 4,
+          "phase": "Purification",
+          "transitions": [
+            "SolventAdded: Solvent introduced: hexanes",
+            "SolventAdded: Solvent introduced: etoac",
+            "PhaseChanged: Phase: Extraction -\u003E Purification"
+          ]
+        }
+      ]
+    }
   },
   "artifact": {
     "runId": "00000000-0000-0000-0000-000000000001",
@@ -66,6 +161,18 @@
         "id": "00000000-0000-0000-0000-000000000003",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
+        "rawText": "2 mol%",
+        "normalizedValue": "2",
+        "unit": "mol%",
+        "sourceLocator": "AnalyzedText:145-151",
+        "jsonPayload": "{\u0022contextKey\u0022:\u0022composition\u0022}",
+        "entityKey": "pph3",
+        "stepIndex": 0
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000004",
+        "runId": "00000000-0000-0000-0000-000000000001",
+        "claimType": "NumericWithUnit",
         "rawText": "1.87 g",
         "normalizedValue": "1.87",
         "unit": "g",
@@ -75,7 +182,7 @@
         "stepIndex": 0
       },
       {
-        "id": "00000000-0000-0000-0000-000000000004",
+        "id": "00000000-0000-0000-0000-000000000005",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
         "rawText": "10 mmol",
@@ -87,7 +194,7 @@
         "stepIndex": 0
       },
       {
-        "id": "00000000-0000-0000-0000-000000000005",
+        "id": "00000000-0000-0000-0000-000000000006",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
         "rawText": "1.34 g",
@@ -99,7 +206,7 @@
         "stepIndex": 0
       },
       {
-        "id": "00000000-0000-0000-0000-000000000006",
+        "id": "00000000-0000-0000-0000-000000000007",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
         "rawText": "11 mmol",
@@ -111,7 +218,7 @@
         "stepIndex": 0
       },
       {
-        "id": "00000000-0000-0000-0000-000000000007",
+        "id": "00000000-0000-0000-0000-000000000008",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
         "rawText": "20 mL",
@@ -123,7 +230,7 @@
         "stepIndex": 0
       },
       {
-        "id": "00000000-0000-0000-0000-000000000008",
+        "id": "00000000-0000-0000-0000-000000000009",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
         "rawText": "0.23 g",
@@ -135,25 +242,13 @@
         "stepIndex": 0
       },
       {
-        "id": "00000000-0000-0000-0000-000000000009",
+        "id": "00000000-0000-0000-0000-000000000010",
         "runId": "00000000-0000-0000-0000-000000000001",
         "claimType": "NumericWithUnit",
         "rawText": "0.2 mmol",
         "normalizedValue": "0.2",
         "unit": "mmol",
         "sourceLocator": "AnalyzedText:135-143",
-        "jsonPayload": null,
-        "entityKey": "pph3",
-        "stepIndex": 0
-      },
-      {
-        "id": "00000000-0000-0000-0000-000000000010",
-        "runId": "00000000-0000-0000-0000-000000000001",
-        "claimType": "NumericWithUnit",
-        "rawText": "2 mol",
-        "normalizedValue": "2",
-        "unit": "mol",
-        "sourceLocator": "AnalyzedText:145-150",
         "jsonPayload": null,
         "entityKey": "pph3",
         "stepIndex": 0
@@ -347,7 +442,13 @@
         "evidenceEndOffset": 551,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026yield) as a white solid (DOI: 10.1021/ja00269a018)."
+        "evidenceSnippet": "\u2026yield) as a white solid (DOI: 10.1021/ja00269a018).",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       },
       {
         "id": "00000000-0000-0000-0000-000000000026",
@@ -368,12 +469,18 @@
         "evidenceEndOffset": null,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": null
+        "evidenceSnippet": null,
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": "cluster-1"
       },
       {
         "id": "00000000-0000-0000-0000-000000000027",
         "runId": "00000000-0000-0000-0000-000000000001",
-        "claimId": "00000000-0000-0000-0000-000000000005",
+        "claimId": "00000000-0000-0000-0000-000000000006",
         "validatorName": "MwConsistencyValidator",
         "status": "Pass",
         "message": "[CHEM.MW_CONSISTENT] 1.34 g: 1.34 g / 11 mmol \u2192 implied MW 121.8 g/mol (plausible).",
@@ -389,12 +496,18 @@
         "evidenceEndOffset": 80,
         "evidenceStepIndex": 0,
         "evidenceEntityKey": null,
-        "evidenceSnippet": "\u2026mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was \u2026"
+        "evidenceSnippet": "\u2026mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was \u2026",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": "cluster-1"
       },
       {
         "id": "00000000-0000-0000-0000-000000000028",
         "runId": "00000000-0000-0000-0000-000000000001",
-        "claimId": "00000000-0000-0000-0000-000000000008",
+        "claimId": "00000000-0000-0000-0000-000000000009",
         "validatorName": "MwConsistencyValidator",
         "status": "Pass",
         "message": "[CHEM.MW_CONSISTENT] pph3: 0.23 g / 0.2 mmol \u2192 implied MW 1150.0 g/mol (plausible).",
@@ -410,7 +523,13 @@
         "evidenceEndOffset": 133,
         "evidenceStepIndex": 0,
         "evidenceEntityKey": "pph3",
-        "evidenceSnippet": "\u2026 (20 mL) was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixtu\u2026"
+        "evidenceSnippet": "\u2026 (20 mL) was added Pd(PPh3)4 (0.23 g, 0.2 mmol, 2 mol%). The mixtu\u2026",
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": "cluster-1"
       },
       {
         "id": "00000000-0000-0000-0000-000000000029",
@@ -431,7 +550,13 @@
         "evidenceEndOffset": null,
         "evidenceStepIndex": null,
         "evidenceEntityKey": null,
-        "evidenceSnippet": null
+        "evidenceSnippet": null,
+        "severity": "Info",
+        "adjustedConfidence": null,
+        "isSuppressed": false,
+        "suppressionReasonCode": null,
+        "adjustmentExplanation": null,
+        "clusterId": null
       }
     ],
     "artifactHash": "NORMALIZED",
@@ -447,6 +572,13 @@
         "stepSnippet": "To a solution of 4-bromoanisole (1.87 g, 10 mmol) and phenylboronic acid (1.34 g, 11 mmol) in THF (20 mL) was added Pd(P\u2026",
         "role": "Procedure",
         "claims": [
+          {
+            "claimType": "NumericWithUnit",
+            "rawText": "2 mol%",
+            "normalizedValue": "2",
+            "unit": "mol%",
+            "contextKey": "composition"
+          },
           {
             "claimType": "NumericWithUnit",
             "rawText": "1.87 g",
@@ -494,13 +626,6 @@
             "rawText": "0.2 mmol",
             "normalizedValue": "0.2",
             "unit": "mmol",
-            "contextKey": ""
-          },
-          {
-            "claimType": "NumericWithUnit",
-            "rawText": "2 mol",
-            "normalizedValue": "2",
-            "unit": "mol",
             "contextKey": ""
           },
           {

@@ -184,7 +184,7 @@ public class VerifyTextEndpointTests : IClassFixture<WebApplicationFactory<Progr
     {
         var request = new VerifyTextRequest
         {
-            TextToVerify = "The reagent was added dropwise over 30 min and the mixture was left to react overnight.",
+            TextToVerify = "NaH was added dropwise over 30 min and the mixture was left to react overnight.",
             PolicyProfile = "StrictChemistryV0"
         };
 

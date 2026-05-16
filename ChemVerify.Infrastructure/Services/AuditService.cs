@@ -3,6 +3,7 @@ using ChemVerify.Abstractions.Enums;
 using ChemVerify.Abstractions.Interfaces;
 using ChemVerify.Abstractions.Models;
 using ChemVerify.Core.Extractors;
+using ChemVerify.Core.Governance;
 using ChemVerify.Core.Services;
 using ChemVerify.Core.Validation;
 using ChemVerify.Infrastructure.Persistence;
@@ -20,6 +21,7 @@ public class AuditService : IAuditService
     private readonly IRiskScorer _riskScorer;
     private readonly ChemVerifyRunRepository _repository;
     private readonly PolicyProfileResolver _resolver;
+    private readonly GovernanceProcessor _governance;
 
     public AuditService(
         IModelConnector modelConnector,
@@ -29,7 +31,8 @@ public class AuditService : IAuditService
         ICanonicalizer canonicalizer,
         IRiskScorer riskScorer,
         ChemVerifyRunRepository repository,
-        PolicyProfileResolver resolver)
+        PolicyProfileResolver resolver,
+        GovernanceProcessor governance)
     {
         _modelConnector = modelConnector;
         _claimExtractor = claimExtractor;
@@ -39,6 +42,7 @@ public class AuditService : IAuditService
         _riskScorer = riskScorer;
         _repository = repository;
         _resolver = resolver;
+        _governance = governance;
     }
 
     public async Task<AuditArtifact> CreateRunAndAuditAsync(RunCommand command, CancellationToken ct)
@@ -134,6 +138,9 @@ public class AuditService : IAuditService
 
             // 6b. Enrich findings with evidence spans
             EnrichEvidenceSpans(allFindings, claims, run);
+
+            // 6c. Governance precision pass — suppression, confidence adjustment, severity
+            _governance.Process(run, claims, allFindings, policySettings);
 
             // 7. Compute risk score via centralised scorer
             run.RiskScore = _riskScorer.ComputeScore(allFindings, policySettings);
@@ -245,6 +252,9 @@ public class AuditService : IAuditService
 
         // Enrich findings with evidence spans
         EnrichEvidenceSpans(allFindings, claims, run);
+
+        // Governance precision pass — suppression, confidence adjustment, severity
+        _governance.Process(run, claims, allFindings, policySettings);
 
         // Compute risk score
         run.RiskScore = _riskScorer.ComputeScore(allFindings, policySettings);

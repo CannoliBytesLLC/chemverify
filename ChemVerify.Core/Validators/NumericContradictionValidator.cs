@@ -20,7 +20,67 @@ public class NumericContradictionValidator : IValidator
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex AdditiveCueRegex = new(
-        @"\b(an?\s+additional|additional|another|for\s+another|then|followed\s+by|and\s+then|after\s+which)\b",
+        @"\b(an?\s+additional|additional|another|for\s+another|then|followed\s+by|and\s+then|after\s+which|after|subsequently|over|next|thereafter)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Generalized sequential-operation cues. Used as an early gate for ANY contextKey
+    // (mass, yield, conc, time, ...) to suppress cross-operation contradictions.
+    private static readonly Regex SequentialOperationCueRegex = new(
+        @"\b(then|after(?:\s+which)?|followed\s+by|subsequently|thereafter|next|"
+        + @"an?\s+additional|additional|another|for\s+another|more|"
+        + @"before|over|allowed\s+to|warmed\s+to|cooled\s+to|"
+        + @"stirred\s+for|heated\s+for|refluxed\s+for|aged\s+for|"
+        + @"filtered\s+then|washed\s+then|dried\s+then|"
+        + @"first\s+crop|second\s+crop|crude\s+product|purified\s+product|"
+        + @"and\s+then)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Analytical-context cues. When present near BOTH numeric claims, the values
+    // are part of analytical reporting (NMR multiplicity counts, MS m/z, elemental
+    // analysis percentages, HPLC purity, Rf, optical rotation) and must not be
+    // compared as reaction-condition contradictions.
+    private static readonly Regex AnalyticalContextRegex = new(
+        @"(?<![A-Za-z])(?:"
+        + @"\d{1,3}\s*[CHNPF]\s*NMR"                       // 1H NMR, 13C NMR, 31P NMR
+        + @"|NMR|HRMS|LRMS|LCMS|GCMS|HPLC|UPLC|TLC|"
+        + @"m/z|M\+1|\[M\+|\[M\-|"
+        + @"Anal(?:ysis)?\.?\s*(?:calc(?:ulated|d)?|found)|"
+        + @"Found\s*[:;]\s*[CHNOPS]|"
+        + @"Calc(?:ulated|d)?\.?\s*(?:for|[:;])|"
+        + @"\bRf\b|"
+        + @"\[\u03B1\]|optical\s+rotation|"
+        + @"\b\d+\s*MHz\b|\bppm\b|"
+        + @"multiplet|singlet|doublet|triplet|quartet|"
+        + @"\bdd\b|\bdt\b|\btd\b|\bdq\b|"
+        + @"\bJ\s*=|"
+        + @"integration"
+        + @")",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Bracketed integration patterns common to NMR reports: "(1H, dd, J = ...)",
+    // "(2H, m)", "1H," etc. Catches cases where the bare numeric pulled by the
+    // extractor was actually an NMR proton count.
+    private static readonly Regex NmrIntegrationFragmentRegex = new(
+        @"\(\s*\d+\s*H\s*[,)]"
+        + @"|\d+\s*H\s*,\s*(?:s|d|t|q|m|br|dd|dt|td|dq|qd|ddd|tt)\b"
+        + @"|\d+\s*H\s*\)",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Sets used by the cross-step entity gate. These context keys describe a
+    // "thing" (yield of compound X, concentration of solution Y, mass of crop Z)
+    // rather than a global reaction condition (temp/time).
+    private static readonly HashSet<string> EntityScopedContextKeys = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "yield", "purity", "impurity", "conc"
+    };
+
+    // Carveout: phrases like "overall yield of the process" / "total yield of
+    // the synthesis" are aggregate yield claims that legitimately contradict a
+    // per-step yield. The universal sequential/entity gates must NOT suppress
+    // these pairs.
+    private static readonly Regex OverallYieldRegex = new(
+        @"\b(?:overall|total|cumulative|combined|aggregate)\s+yield"
+        + @"|\byield\s+of\s+the\s+(?:process|synthesis|sequence|overall|reaction)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex TimeOperationRegex = new(
@@ -195,6 +255,83 @@ public class NumericContradictionValidator : IValidator
 
                             emittedGroupLevel = true;
                             break;
+                        }
+
+                        // ── Universal gate 1: Analytical-notation suppression ────────
+                        // Pairs sitting in NMR/MS/HPLC/Anal/Rf context are not
+                        // reaction-condition contradictions.
+                        if (IsAnalyticalNotation(run.GetAnalyzedText(), groupList[i], groupList[j]))
+                        {
+                            findings.Add(new ValidationFinding
+                            {
+                                Id = Guid.NewGuid(),
+                                RunId = runId,
+                                ClaimId = groupList[i].Id,
+                                ValidatorName = nameof(NumericContradictionValidator),
+                                Status = ValidationStatus.Pass,
+                                Message = $"Analytical notation context ({groupList[i].RawText} / {groupList[j].RawText}); not a reaction-condition contradiction.",
+                                Confidence = 0.9,
+                                EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
+                                Kind = FindingKind.AnalyticalNotationIgnored,
+                                Category = FindingCategory.Diagnostic
+                            });
+                            continue;
+                        }
+
+                        // ── Universal gate 2: Sequential-operation cue ───────────────
+                        // Generalizes the time-only sequential-duration rule to all
+                        // context keys (mass, yield, conc, ...). If a sequential
+                        // operator sits between the two claims, treat them as
+                        // describing distinct operations.
+                        // Carveout: "overall/total yield" claims are aggregate
+                        // assertions that legitimately contradict per-step yields.
+                        bool aggregateYieldPair =
+                            string.Equals(groupContextKey, "yield", StringComparison.OrdinalIgnoreCase)
+                            && OverallYieldRegex.IsMatch(run.GetAnalyzedText());
+
+                        if (!aggregateYieldPair
+                            && HasSequentialOperationCueBetween(run.GetAnalyzedText(), groupList[i], groupList[j]))
+                        {
+                            findings.Add(new ValidationFinding
+                            {
+                                Id = Guid.NewGuid(),
+                                RunId = runId,
+                                ClaimId = groupList[i].Id,
+                                ValidatorName = nameof(NumericContradictionValidator),
+                                Status = ValidationStatus.Pass,
+                                Message = $"Sequential-operation variation ({groupList[i].RawText} → {groupList[j].RawText}); values describe distinct operations.",
+                                Confidence = 0.85,
+                                EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
+                                Kind = FindingKind.SequentialOperationVariation,
+                                Category = FindingCategory.Diagnostic
+                            });
+                            continue;
+                        }
+
+                        // ── Universal gate 3: Cross-step distinct-entity ─────────────
+                        // For entity-scoped groups (yield/purity/impurity/conc), if
+                        // the two claims are in different steps and either has an
+                        // entity key (and the keys differ, or one is unknown), they
+                        // describe different things — not contradictory.
+                        // Same overall/total-yield carveout applies.
+                        if (!aggregateYieldPair
+                            && EntityScopedContextKeys.Contains(groupContextKey)
+                            && AreDifferentEntitiesAcrossSteps(groupList[i], groupList[j]))
+                        {
+                            findings.Add(new ValidationFinding
+                            {
+                                Id = Guid.NewGuid(),
+                                RunId = runId,
+                                ClaimId = groupList[i].Id,
+                                ValidatorName = nameof(NumericContradictionValidator),
+                                Status = ValidationStatus.Pass,
+                                Message = $"Different entity context ({groupList[i].RawText} vs {groupList[j].RawText}); values describe distinct items.",
+                                Confidence = 0.8,
+                                EvidenceRef = $"Claim:{groupList[i].Id}+Claim:{groupList[j].Id}",
+                                Kind = FindingKind.DifferentEntityVariation,
+                                Category = FindingCategory.Diagnostic
+                            });
+                            continue;
                         }
 
                         // Check for sequential durations ("reflux 30 min � an additional 15 min")
@@ -509,6 +646,34 @@ public class NumericContradictionValidator : IValidator
     }
 
     /// <summary>
+    /// Returns true when two claims are in different steps and at least one
+    /// piece of evidence indicates they describe different entities:
+    ///   - both have entity keys and they differ, OR
+    ///   - the step indices differ and entity keys are not both populated as the same value.
+    /// Used for entity-scoped groups (yield/purity/impurity/conc) where a cross-step
+    /// pair almost always describes different intermediates/products/solutions.
+    /// </summary>
+    private static bool AreDifferentEntitiesAcrossSteps(ExtractedClaim a, ExtractedClaim b)
+    {
+        int stepA = a.StepIndex ?? -1;
+        int stepB = b.StepIndex ?? -1;
+
+        // Same step ? not a cross-step pair (handled by other gates)
+        if (stepA >= 0 && stepB >= 0 && stepA == stepB) return false;
+
+        // Both have entity keys: different keys ? different entities.
+        if (a.EntityKey is not null && b.EntityKey is not null)
+        {
+            return !string.Equals(a.EntityKey, b.EntityKey, StringComparison.OrdinalIgnoreCase);
+        }
+
+        // At least one has a step index and they differ ? treat as different entity context.
+        if (stepA >= 0 && stepB >= 0 && stepA != stepB) return true;
+
+        return false;
+    }
+
+    /// <summary>
     /// Returns true if two time claims refer to demonstrably different step actions
     /// (e.g., "addition" vs "stir"), meaning they should not be compared.
     /// Returns false if either has no timeAction (ambiguous = still comparable).
@@ -758,6 +923,94 @@ public class NumericContradictionValidator : IValidator
         string window = text[windowStart..windowEnd];
 
         return ChromatographyContextRegex.IsMatch(window);
+    }
+
+    /// <summary>
+    /// Returns true when both numeric claims sit in analytical-reporting context
+    /// (NMR multiplicity, MS m/z, elemental analysis, HPLC purity, Rf, optical rotation).
+    /// Such values must not be compared as reaction-condition contradictions.
+    /// A single-claim NMR-integration fragment is also accepted because the partner
+    /// claim is then almost always an unrelated reaction value miscompared against it.
+    /// </summary>
+    public static bool IsAnalyticalNotation(string text, ExtractedClaim a, ExtractedClaim b)
+    {
+        if (string.IsNullOrEmpty(text)) return false;
+
+        bool aAnalytical = HasAnalyticalContext(text, a);
+        bool bAnalytical = HasAnalyticalContext(text, b);
+
+        if (aAnalytical && bAnalytical) return true;
+
+        // If one side is clearly an NMR integration fragment, treat the pair as analytical.
+        if (aAnalytical || bAnalytical)
+        {
+            return IsNmrIntegrationFragment(text, a) || IsNmrIntegrationFragment(text, b);
+        }
+
+        return false;
+    }
+
+    private static bool HasAnalyticalContext(string text, ExtractedClaim claim)
+    {
+        if (!EvidenceLocator.TryParse(claim.SourceLocator, out int start, out int end))
+        {
+            return false;
+        }
+
+        const int windowChars = 100;
+        int windowStart = Math.Max(0, start - windowChars);
+        int windowEnd = Math.Min(text.Length, end + windowChars);
+        string window = text[windowStart..windowEnd];
+
+        return AnalyticalContextRegex.IsMatch(window);
+    }
+
+    private static bool IsNmrIntegrationFragment(string text, ExtractedClaim claim)
+    {
+        if (!EvidenceLocator.TryParse(claim.SourceLocator, out int start, out int end))
+        {
+            return false;
+        }
+
+        const int windowChars = 30;
+        int windowStart = Math.Max(0, start - windowChars);
+        int windowEnd = Math.Min(text.Length, end + windowChars);
+        string window = text[windowStart..windowEnd];
+
+        return NmrIntegrationFragmentRegex.IsMatch(window);
+    }
+
+    /// <summary>
+    /// Returns true when a sequential-operation cue word appears in the text
+    /// strictly between the two claim positions. This generalizes the time-only
+    /// <see cref="DetectSequentialDuration"/> rule to any context key.
+    /// </summary>
+    public static bool HasSequentialOperationCueBetween(string text, ExtractedClaim a, ExtractedClaim b)
+    {
+        if (string.IsNullOrEmpty(text)) return false;
+
+        if (!EvidenceLocator.TryParse(a.SourceLocator, out int startA, out int endA) ||
+            !EvidenceLocator.TryParse(b.SourceLocator, out int startB, out int endB))
+        {
+            return false;
+        }
+
+        if (startA > startB)
+        {
+            (startA, endA, startB, endB) = (startB, endB, startA, endA);
+        }
+
+        // Only a true between-region counts; no large overshoot.
+        int searchStart = Math.Max(0, endA);
+        int searchEnd = Math.Min(text.Length, startB);
+        if (searchStart >= searchEnd) return false;
+
+        // Cap the gap; cross-paragraph cues are not informative.
+        const int maxGap = 220;
+        if (searchEnd - searchStart > maxGap) return false;
+
+        string between = text[searchStart..searchEnd];
+        return SequentialOperationCueRegex.IsMatch(between);
     }
 }
 
